@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+
+# Enthält echte Credential-Hashes (Live-Testseite) — nicht versionieren.
+wp-idt/deploy/new_t-datenbank.sql
+wp-idt/deploy/htaccess-schutz/.htpasswd

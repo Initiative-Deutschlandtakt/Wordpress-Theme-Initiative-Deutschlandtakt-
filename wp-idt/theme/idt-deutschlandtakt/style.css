@@ -1,0 +1,742 @@
+/*
+Theme Name: IDT Deutschlandtakt
+Theme URI: https://initiative-deutschlandtakt.de
+Author: Initiative Deutschlandtakt
+Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
+Version: 2.0.8
+Requires at least: 6.0
+Requires PHP: 8.0
+Text Domain: idt
+Tags: custom-colors, custom-menu, featured-images
+*/
+
+/* =============================================================================
+   1) WEB-FONTS  — Inter (Variable), selbst gehostet (DSGVO — kein Drittanbieter-CDN mehr)
+   ============================================================================= */
+@font-face {
+  font-family: 'InterVariable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('assets/fonts/InterVariable.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'InterVariable';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('assets/fonts/InterVariable-Italic.woff2') format('woff2');
+}
+
+/* =============================================================================
+   2) DESIGN-TOKENS  — das vollständige IDT-System (vormals .lp-root, jetzt global)
+   ============================================================================= */
+:root {
+  /* ---- Brand core (DIGITAL / RGB) ------------------------------------- */
+  --idt-paper:   #FFF6F0;
+  --idt-ink:     #00373C;
+  --idt-yellow:  #FFFF96;
+  --idt-cyan:    #00DCFA;
+  --idt-violet:  #6E50FA;
+  --idt-gray:    #585857;
+
+  /* ---- Neutral-Ramp --------------------------------------------------- */
+  --idt-paper-2: #FBEDE6;
+  --idt-paper-3: #F3E2DA;
+  --idt-line:    #E2D3CB;
+  --idt-line-strong: #C9B6AC;
+  --idt-ink-70:  #3A6068;
+  --idt-ink-50:  #6E9097;
+  --idt-on-ink-muted: #8FB4BC;
+
+  /* ---- Akzent-Tints --------------------------------------------------- */
+  --idt-violet-soft: #E8E3FF;
+  --idt-cyan-soft:   #D6F8FF;
+  --idt-yellow-soft: #FFFDDB;
+
+  /* ---- State-Varianten ------------------------------------------------ */
+  --idt-violet-hover:  #5A3DE6;
+  --idt-violet-active: #4A2FCC;
+  --idt-cyan-hover:    #00C2DD;
+  --idt-cyan-active:   #00A6BE;
+  --idt-ink-hover:     #073F49;
+
+  /* ---- Semantic / Status ---------------------------------------------- */
+  --idt-success: #1F8A5B;
+  --idt-warning: #E8A100;
+  --idt-danger:  #D64545;
+  --idt-info:    var(--idt-cyan);
+
+  /* ---- Semantic Aliases ----------------------------------------------- */
+  --surface:           var(--idt-paper);
+  --surface-alt:       var(--idt-paper-2);
+  --surface-sunken:    var(--idt-paper-3);
+  --surface-inverse:   var(--idt-ink);
+  --surface-card:      var(--idt-paper);
+
+  --text-strong:       var(--idt-ink);
+  --text-body:         var(--idt-ink);
+  --text-muted:        var(--idt-gray);
+  --text-faint:        var(--idt-ink-50);
+  --text-on-inverse:   var(--idt-paper);
+  --text-on-inverse-muted: var(--idt-on-ink-muted);
+  --text-on-accent:    var(--idt-paper);
+  --text-link:         var(--idt-violet);
+
+  --border:            var(--idt-line);
+  --border-strong:     var(--idt-line-strong);
+  --border-frame:      var(--idt-ink);
+
+  --accent-primary:    var(--idt-violet);
+  --accent-primary-hover:  var(--idt-violet-hover);
+  --accent-primary-active: var(--idt-violet-active);
+  --accent-secondary:  var(--idt-cyan);
+  --accent-highlight:  var(--idt-yellow);
+
+  --focus-ring:        var(--idt-violet);
+
+  /* ---- Schrift-Familien ----------------------------------------------- */
+  --font-display: 'InterVariable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans:    'InterVariable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'InterVariable', 'Inter', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ---- Gewichte ------------------------------------------------------- */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-extrabold:800;
+
+  /* ---- Type-Scale ----------------------------------------------------- */
+  --fs-display-2xl: 5.5rem;
+  --fs-display-xl:  4rem;
+  --fs-display-lg:  3rem;
+  --fs-display-md:  2.25rem;
+  --fs-h1: 2rem;
+  --fs-h2: 1.5rem;
+  --fs-h3: 1.25rem;
+  --fs-lead: 1.375rem;
+  --fs-body: 1.0625rem;
+  --fs-sm: 0.9375rem;
+  --fs-xs: 0.8125rem;
+
+  /* ---- Zeilenhöhen ---------------------------------------------------- */
+  --lh-tight:   1.04;
+  --lh-snug:    1.18;
+  --lh-normal:  1.55;
+  --lh-relaxed: 1.7;
+
+  /* ---- Letter-Spacing ------------------------------------------------- */
+  --ls-tighter: -0.03em;
+  --ls-tight:   -0.015em;
+  --ls-normal:  0em;
+  --ls-wide:    0.04em;
+  --ls-label:   0.12em;
+
+  /* ---- Spacing-Scale (4px-Basis) -------------------------------------- */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.5rem;
+  --space-6:  2rem;
+  --space-7:  3rem;
+  --space-8:  4rem;
+  --space-9:  6rem;
+  --space-10: 8rem;
+
+  /* ---- Layout --------------------------------------------------------- */
+  --container-max: 1200px;
+  --container-wide: 1400px;
+  --content-measure: 68ch;
+  --gutter: var(--space-5);
+  --section-y: var(--space-9);
+
+  /* ---- Radii ---------------------------------------------------------- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --radius-card: var(--radius-md);
+
+  /* ---- Borders -------------------------------------------------------- */
+  --bw-hair: 1px;
+  --bw-base: 1.5px;
+  --bw-frame: 2px;
+  --bw-frame-bold: 3px;
+
+  /* ---- Shadows -------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 50, 60, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 50, 60, 0.08);
+  --shadow-lg: 0 12px 40px rgba(0, 50, 60, 0.12);
+  --shadow-block: 6px 6px 0 var(--idt-ink);
+  --shadow-block-sm: 4px 4px 0 var(--idt-ink);
+
+  /* ---- Motion --------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 360ms;
+
+  /* ---- Z-index -------------------------------------------------------- */
+  --z-sticky: 100;
+  --z-overlay: 1000;
+}
+
+/* =============================================================================
+   3) BASIS-STYLES  — globale Element-Defaults
+   ============================================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  font-weight: var(--fw-regular);
+  color: var(--text-body);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+@supports (font-variation-settings: normal) {
+  body { font-family: 'InterVariable', sans-serif; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+h1 { font-size: var(--fs-display-lg); line-height: var(--lh-tight); letter-spacing: var(--ls-tighter); }
+h2 { font-size: var(--fs-display-md); }
+h3 { font-size: var(--fs-h2); }
+h4 { font-size: var(--fs-h3); }
+
+p { margin: 0 0 1em; text-wrap: pretty; }
+p.lead, .lead { font-size: var(--fs-lead); line-height: var(--lh-relaxed); color: var(--text-body); }
+
+a { color: var(--text-link); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+
+small { font-size: var(--fs-sm); }
+code, kbd, samp { font-family: var(--font-mono); font-size: 0.92em; }
+strong, b { font-weight: var(--fw-bold); }
+
+hr { border: none; border-top: var(--bw-hair) solid var(--border); margin: var(--space-6) 0; }
+
+img, svg, video { max-width: 100%; display: block; }
+
+ul, ol { margin: 0 0 1em; padding-left: 1.4em; }
+li { margin-bottom: 0.35em; }
+
+blockquote {
+  margin: var(--space-6) 0;
+  padding: var(--space-2) 0 var(--space-2) var(--space-5);
+  border-left: var(--bw-frame-bold) solid var(--accent-primary);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-relaxed);
+  color: var(--text-strong);
+}
+
+::selection { background: var(--idt-yellow); color: var(--idt-ink); }
+:focus-visible { outline: var(--bw-frame) solid var(--focus-ring); outline-offset: 2px; }
+
+/* =============================================================================
+   4) LAYOUT-PRIMITIVE
+   ============================================================================= */
+.container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding: 0 var(--gutter); }
+.container--narrow { max-width: 760px; }
+.section { padding: var(--section-y) 0; }
+.section--alt { background: var(--surface-alt); }
+.section--ink { background: var(--surface-inverse); color: var(--text-on-inverse); }
+.section--ink h1, .section--ink h2, .section--ink h3 { color: var(--text-on-inverse); }
+.grid { display: grid; gap: var(--space-6); }
+@media (min-width: 720px) {
+  .grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .grid--3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* =============================================================================
+   5) SITE-HEADER + NAV
+   ============================================================================= */
+.site-header {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  background: color-mix(in srgb, var(--idt-paper) 92%, transparent);
+  backdrop-filter: saturate(160%) blur(10px);
+  border-bottom: var(--bw-hair) solid var(--border);
+}
+.site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: 68px; }
+.site-header__brand { display: flex; align-items: center; gap: var(--space-3); font-weight: var(--fw-bold); }
+.site-header__brand img { height: 38px; width: auto; }
+.main-nav ul { list-style: none; display: flex; flex-wrap: nowrap; align-items: center; gap: var(--space-5); margin: 0; padding: 0; }
+.main-nav a { white-space: nowrap; }
+.main-nav a { display: inline-block; color: var(--text-strong); font-weight: var(--fw-medium); font-size: var(--fs-sm); letter-spacing: var(--ls-wide); text-transform: uppercase; padding: 6px 2px; border-bottom: 2px solid transparent; transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+.main-nav a:hover { text-decoration: none; border-bottom-color: var(--accent-primary); color: var(--accent-primary); }
+.main-nav .current-menu-item > a { border-bottom-color: var(--accent-secondary); }
+
+/* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
+.nav-toggle {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  width: 46px; height: 42px; padding: 9px 8px; margin: 0;
+  background: transparent; border: var(--bw-frame) solid var(--idt-ink);
+  border-radius: var(--radius-sm); cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.nav-toggle__bar { display: block; width: 100%; height: 2.5px; background: var(--idt-ink); border-radius: 2px;
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+@media (max-width: 900px) {
+  .nav-toggle { display: flex; }
+  .main-nav {
+    position: absolute; left: 0; right: 0; top: 100%;
+    background: var(--idt-paper); border-bottom: var(--bw-hair) solid var(--border);
+    box-shadow: var(--shadow-md);
+    max-height: 0; overflow: hidden; visibility: hidden;
+    transition: max-height var(--dur-slow) var(--ease-out), visibility 0s linear var(--dur-slow);
+  }
+  .main-nav.is-open { max-height: 80vh; visibility: visible; transition: max-height var(--dur-slow) var(--ease-out), visibility 0s; }
+  .main-nav ul { flex-direction: column; align-items: stretch; gap: 0; padding: var(--space-2) var(--gutter) var(--space-4); }
+  .main-nav li { margin: 0; border-bottom: var(--bw-hair) solid var(--border); }
+  .main-nav li:last-child { border-bottom: none; }
+  .main-nav a { display: block; padding: 14px 2px; font-size: var(--fs-sm); border-bottom: none; }
+  .main-nav a:hover { border-bottom: none; }
+}
+
+/* =============================================================================
+   6) HORIZONT-SPLASH (Front-Page-Hero) — fixe 1280×800-Bühne, skaliert
+   ============================================================================= */
+.stage {
+  position: relative;
+  /* Full-Bleed-Breakout: rendert randlos, auch wenn der Baustein innerhalb
+     von .container/.entry (mit max-width + Gutter) im Editor-Inhalt sitzt. */
+  width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  height: 86vh; min-height: 560px; max-height: 800px; overflow: hidden; background: var(--idt-paper);
+}
+.canvas {
+  position: absolute; left: 50%; top: 50%;
+  width: 1280px; height: 800px;
+  background: var(--idt-paper); overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--s, 1));
+  transform-origin: center; font-family: var(--font-sans);
+}
+.band { position: absolute; left: 0; right: 0; top: 465px; bottom: 0; background: var(--idt-ink); }
+.layer { position: absolute; left: 0; right: 0; overflow: hidden; pointer-events: none; }
+.layer.top { top: 0; height: 465px; }
+.layer.bottom { top: 465px; height: 335px; }
+.bar { position: absolute; border-radius: 999px; }
+.layer.top .bar { background: #FFFFFF; }
+.layer.bottom .bar { background: var(--idt-violet); }
+/* Balken von der MITTE aus positioniert (50% ± Offset zur 1280er-Referenz):
+   die Canvas wird per Script auf Viewportbreite verbreitert (randlose Bühne),
+   Band und Balken dehnen sich mit, die Komposition bleibt zentriert.
+   Offsets = alte left-Werte minus 640 (halbe Referenzbreite). */
+.bar.b1a { width: 320px; height: 800px; left: calc(50% - 235px); rotate: 41deg; }
+.bar.b1b { width: 320px; height: 720px; left: calc(50% - 786px); rotate: 41deg; }
+.bar.b2 { width: 320px; height: 1400px; left: calc(50% + 385px); rotate: 41deg; border-radius: 0; }
+.layer.top .bar.b1a { top: -491px; }
+.layer.bottom .bar.b1a { top: -956px; }
+.layer.top .bar.b1b { top: 184px; }
+.layer.bottom .bar.b1b { top: -281px; }
+.layer.top .bar.b2 { top: -180px; }
+.layer.bottom .bar.b2 { top: -645px; }
+.splash-logo { position: absolute; left: 50%; transform: translateX(-50%); top: 118px; width: 416px; height: auto; display: block; z-index: 3; }
+/* Neutralisiert die Inhaltsbild-Regel „.entry img" (margin/border-radius),
+   die sonst per Spezifität gewinnt, sobald der Splash im Editor-Inhalt
+   (.entry) steckt — auf Mobil würde sie die auto-Zentrierung aushebeln. */
+.canvas .splash-logo { margin: 0; border-radius: 0; }
+/* Auf Desktop ist der Wrapper unsichtbar — die Kinder bleiben absolut in der
+   Canvas positioniert. Auf Mobil (s. Media Query unten) wird er zum Band. */
+.splash-bottom { display: contents; }
+.splash-links { position: absolute; left: 50%; transform: translateX(-50%); top: 518px; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.splash-caption { position: absolute; left: 50%; transform: translateX(-50%); top: 720px; z-index: 3; text-align: center; margin: 0; font-weight: 700; font-size: 14px; line-height: 1.4; letter-spacing: .01em; color: var(--idt-paper); }
+
+/* ---- Mobiler Splash (≤ 820px) ----------------------------------------------
+   Die skalierte 1280×800-Bühne macht Pills auf Handys unlesbar klein und
+   nicht antippbar. Stattdessen: gestapeltes Layout in Originalgröße —
+   Logo auf Papier, darunter dunkles Diagonal-Band (Horizont-Motiv als
+   Gradient) mit voll bedienbaren Pills. scale.js setzt in diesem Bereich
+   keine Inline-Maße (räumt sie beim Wechsel auf). */
+@media (max-width: 820px) {
+  .stage { height: auto; min-height: 0; max-height: none; }
+  .canvas {
+    position: static; width: auto; height: auto; transform: none;
+    /* Weiße Diagonalstreifen im hellen Bereich — führt das Horizont-Motiv
+       auch mobil fort (gleicher Winkel 131° wie das dunkle Band darunter;
+       .splash-bottom deckt den unteren Teil mit eigenem Hintergrund ab). */
+    background:
+      linear-gradient(
+        131deg,
+        transparent 10%,
+        #FFFFFF 10%, #FFFFFF 28%,
+        transparent 28%, transparent 56%,
+        #FFFFFF 56%, #FFFFFF 70%,
+        transparent 70%
+      ),
+      var(--idt-paper);
+  }
+  .band, .layer { display: none; }
+  .canvas .splash-logo { position: static; transform: none; margin: 40px auto 36px; width: min(300px, 72vw); }
+  .splash-bottom {
+    display: block; padding: 36px 24px 30px;
+    background:
+      linear-gradient(
+        131deg,
+        transparent 8%,
+        color-mix(in srgb, var(--idt-violet) 85%, transparent) 8%,
+        color-mix(in srgb, var(--idt-violet) 85%, transparent) 26%,
+        transparent 26%,
+        transparent 80%,
+        color-mix(in srgb, var(--idt-cyan) 55%, transparent) 80%,
+        color-mix(in srgb, var(--idt-cyan) 55%, transparent) 88%,
+        transparent 88%
+      ),
+      var(--idt-ink);
+  }
+  .splash-links { position: static; transform: none; }
+  .splash-caption { position: static; transform: none; margin-top: 26px; }
+}
+
+/* =============================================================================
+   7) SPIELERISCHE STILELEMENTE  — für die Gestaltung der Texte
+   ============================================================================= */
+
+/* Pill-Button (Outline → Gradient-Border bei Hover) */
+.pill {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans); font-weight: 500; font-size: 1rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--idt-ink); text-decoration: none;
+  padding: 12px 30px; border: 2px solid var(--idt-ink); border-radius: 999px; background: transparent;
+  white-space: nowrap; transition: color var(--dur-fast) var(--ease-out);
+}
+.pill::before {
+  content: ""; position: absolute; inset: 0; border-radius: 999px; padding: 2px;
+  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); pointer-events: none;
+}
+.pill:hover { border-color: transparent; text-decoration: none; }
+.pill:hover::before { opacity: 1; }
+.pill--on-ink { color: var(--idt-paper); border-color: var(--idt-paper); }
+.pill--solid { background: var(--accent-primary); color: var(--idt-paper); border-color: transparent; }
+.pill--solid:hover { background: var(--accent-primary-hover); }
+.pill--solid::before { display: none; }
+
+/* Pill-Stack — vertikal gestapelte Pill-Buttons in einheitlicher Breite:
+   der inline-flex-Container wird so breit wie der breiteste Button,
+   align-items:stretch zieht alle übrigen auf dieselbe Breite. */
+.idt-pillstack-outer { margin: var(--space-5) 0; }
+.idt-pillstack { display: inline-flex; flex-direction: column; align-items: stretch; gap: 14px; }
+.idt-pillstack .pill { width: 100%; }
+
+/* Social-Icon — runder Icon-Button (Pill-Verwandter, gleiche Gradient-Border bei Hover). */
+.idt-social__icon {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; margin: 4px; border: 2px solid var(--idt-ink); border-radius: 999px;
+  color: var(--idt-ink); background: transparent; vertical-align: middle;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.idt-social__icon svg { width: 20px; height: 20px; }
+.idt-social__icon::before {
+  content: ""; position: absolute; inset: 0; border-radius: 999px; padding: 2px;
+  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); pointer-events: none;
+}
+.idt-social__icon:hover { border-color: transparent; }
+.idt-social__icon:hover::before { opacity: 1; }
+.section--ink .idt-social__icon, .idt-einschub .idt-social__icon { color: var(--idt-paper); border-color: var(--idt-paper); }
+
+/* Eyebrow — Mono-Label über Überschriften */
+.eyebrow, .idt-eyebrow {
+  display: inline-block; font-family: var(--font-mono); font-size: var(--fs-xs);
+  letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--text-muted);
+  font-weight: var(--fw-regular); margin-bottom: var(--space-3);
+}
+.idt-eyebrow::before { content: "→ "; color: var(--accent-secondary); }
+
+/* Marker — handgemalter Texthighlight. Jede Farbvariante ist eigenständig
+   nutzbar: Shortcode gibt zwei Klassen aus (.idt-mark .idt-mark--cyan),
+   das Editor-Format nur eine (.idt-mark--cyan) — daher die geteilten
+   Grundeigenschaften in der gruppierten Regel. */
+.idt-mark, .idt-mark--cyan, .idt-mark--violet {
+  /* UA-Default des <mark>-Elements neutralisieren (vollflächiges Gelb +
+     schwarze Schrift) — nur der Verlaufs-Streifen unten soll sichtbar sein. */
+  background-color: transparent; color: inherit;
+  background-repeat: no-repeat; background-size: 100% 0.42em; background-position: 0 88%;
+  padding: 0 0.06em; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.idt-mark { background-image: linear-gradient(120deg, var(--idt-yellow), var(--idt-yellow)); }
+.idt-mark--cyan { background-image: linear-gradient(120deg, var(--idt-cyan-soft), var(--idt-cyan-soft)); }
+.idt-mark--violet { background-image: linear-gradient(120deg, var(--idt-violet-soft), var(--idt-violet-soft)); }
+
+/* Takt-Rhythmus — dekorative Punkt-/Strich-Sequenz (das "Takten" visualisiert) */
+.idt-takt { display: inline-flex; align-items: center; gap: 8px; vertical-align: middle; }
+.idt-takt span { display: block; width: 10px; height: 10px; border-radius: 999px; background: var(--idt-violet); }
+.idt-takt span:nth-child(odd) { background: var(--idt-cyan); }
+.idt-takt span:nth-child(3n) { width: 26px; border-radius: 999px; background: var(--idt-ink); }
+
+/* Kennzahl / Stat — große tabellarische Zahl mit Label */
+.idt-stat { display: flex; flex-direction: column; gap: 4px; }
+.idt-stat__num {
+  font-family: var(--font-display); font-weight: var(--fw-extrabold);
+  font-size: var(--fs-display-md); line-height: 1; letter-spacing: var(--ls-tight);
+  color: var(--accent-primary); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+}
+.idt-stat__label { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-muted); }
+
+/* Callout / Hinweisbox mit Block-Schatten */
+.idt-callout {
+  border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-md);
+  background: var(--idt-paper); box-shadow: var(--shadow-block-sm);
+  padding: var(--space-5) var(--space-6); margin: var(--space-6) 0;
+}
+.idt-callout--cyan { background: var(--idt-cyan-soft); }
+.idt-callout--violet { background: var(--idt-violet-soft); }
+.idt-callout--yellow { background: var(--idt-yellow-soft); }
+.idt-callout > :last-child { margin-bottom: 0; }
+
+/* Diagonal-Akzent — schräges Band hinter einem Textblock (Horizont-Motiv).
+   Ein einzelner, breiter Diagonalstreifen (Violett auf Ink) — die Aussage
+   steht im Vordergrund, kein zweifarbiges/zweistufiges Muster. */
+.idt-diagonal {
+  position: relative; overflow: hidden;
+  padding: var(--space-8) var(--space-6); border-radius: var(--radius-lg);
+  color: var(--text-on-inverse);
+  background:
+    linear-gradient(
+      131deg,
+      transparent 40%,
+      color-mix(in srgb, var(--idt-violet) 80%, transparent) 40%,
+      color-mix(in srgb, var(--idt-violet) 80%, transparent) 54%,
+      transparent 54%
+    ),
+    var(--idt-ink);
+}
+.idt-diagonal h1, .idt-diagonal h2, .idt-diagonal h3 { color: var(--text-on-inverse); }
+.idt-diagonal > * { position: relative; z-index: 1; }
+/* Zweiter, schmaler Diagonalstrich weiter rechts – läuft unten aus der Karte
+   heraus (von overflow:hidden gekappt), das obere runde Ende bleibt innen
+   sichtbar. Winkel 41° = derselbe Neigungswinkel wie der Verlauf oben.
+   Zum Justieren: right (Position) · height (Länge) · width (Dicke). */
+.idt-diagonal::after {
+  content: "";
+  position: absolute;
+  z-index: 0;            /* über dem Verlauf, unter dem Text (z-index:1) */
+  pointer-events: none;
+  right: 16%;
+  bottom: -30%;
+  width: 22px;
+  height: 120%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--idt-cyan) 70%, transparent);
+  transform: rotate(41deg);
+  transform-origin: bottom center;
+}
+
+/* Card */
+.idt-card { background: var(--surface-card); border: var(--bw-hair) solid var(--border); border-radius: var(--radius-card); padding: var(--space-6); box-shadow: var(--shadow-sm); transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+.idt-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.idt-card h3 { margin-top: 0; }
+
+/* Drop-cap — Initiale */
+.idt-dropcap::first-letter { float: left; font-family: var(--font-display); font-weight: var(--fw-extrabold); font-size: 3.4em; line-height: 0.78; padding: 0.04em 0.12em 0 0; color: var(--accent-primary); }
+
+.tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* -----------------------------------------------------------------------------
+   7b) ELEMENTE AUS DER „EXAMPLE LANDING PAGE" (Design-System)
+   ----------------------------------------------------------------------------- */
+
+/* Button (eckig, gerahmt) */
+.idt-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-sans); font-weight: var(--fw-semibold); font-size: var(--fs-sm);
+  letter-spacing: -.01em; padding: 11px 18px; border-radius: var(--radius-sm);
+  border: var(--bw-frame) solid var(--idt-ink); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.idt-btn:hover { transform: translateY(-2px); text-decoration: none; }
+.idt-btn:active { transform: translateY(0); }
+.idt-btn svg { width: 16px; height: 16px; }
+.idt-btn--lg { padding: 15px 26px; font-size: var(--fs-body); }
+.idt-btn--primary { background: var(--idt-violet); color: var(--idt-paper); border-color: var(--idt-violet); }
+.idt-btn--primary:hover { background: var(--idt-violet-hover); border-color: var(--idt-violet-hover); }
+.idt-btn--secondary { background: var(--idt-cyan); color: var(--idt-ink); border-color: var(--idt-ink); }
+.idt-btn--secondary:hover { background: var(--idt-cyan-hover); }
+.idt-btn--outline { background: transparent; color: var(--idt-ink); }
+.idt-btn--outline:hover { background: var(--idt-ink); color: var(--idt-paper); }
+.idt-btn--ghost { background: transparent; color: var(--idt-ink); border-color: transparent; }
+.idt-btn--ghost:hover { background: var(--idt-paper-2); }
+.idt-btn--inverse { background: var(--idt-paper); color: var(--idt-ink); border-color: var(--idt-paper); }
+.idt-btn--inverse:hover { background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
+/* Gradient-Rahmen — Violett→Cyan nur als Rand (Masken-Technik wie beim Pill),
+   Füllung bleibt hell. */
+.idt-btn--gradient { position: relative; z-index: 0; background: var(--idt-paper); color: var(--idt-ink); border-color: transparent; }
+.idt-btn--gradient::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--bw-frame);
+  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+}
+.idt-btn--gradient:hover { background: var(--idt-paper-2); }
+
+/* Kategorie-Tag (Chip) */
+.idt-tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+  letter-spacing: .06em; border-radius: var(--radius-xs); padding: 4px 10px; border: 1px solid currentColor;
+  /* Default-Farbe für das Editor-Format (ohne Inline-Style); die PHP-Shortcodes
+     setzen color/background/border-color inline und überschreiben das. */
+  color: var(--idt-violet); background: var(--idt-violet-soft);
+}
+
+/* Konzept-Karte mit farbiger Oberkante */
+.idt-concept {
+  background: var(--idt-paper); border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-md);
+  padding: var(--space-6); border-top-width: 6px; border-top-style: solid;
+}
+.idt-concept__ic { margin-bottom: 16px; line-height: 0; }
+.idt-concept h3 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); margin: 0 0 10px; }
+.idt-concept__body > :last-child { margin-bottom: 0; }
+.idt-concept__body p { margin: 0 0 .6em; font-size: var(--fs-body); line-height: var(--lh-normal); }
+/* Verlinkte Konzept-Karte (mit href) — klickbar wie auf der Startseite. */
+.idt-concept--link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+.idt-concept--link:hover { text-decoration: none; transform: translateY(-3px); box-shadow: var(--shadow-block-sm); }
+.idt-concept--link .idt-newscard__more { margin-top: auto; padding-top: var(--space-4); }
+
+/* Dunkler Einschub (Inverse-Band) */
+.idt-einschub {
+  background: var(--idt-ink); color: var(--idt-paper); border-radius: var(--radius-lg);
+  padding: clamp(28px, 4vw, 56px);
+}
+.idt-einschub h1, .idt-einschub h2, .idt-einschub h3 { color: var(--idt-paper); margin-top: 0; }
+.idt-einschub h2 { font-size: clamp(28px, 3.4vw, 44px); letter-spacing: var(--ls-tight); }
+.idt-einschub p { color: var(--idt-on-ink-muted); font-size: var(--fs-lead); line-height: 1.5; }
+.idt-einschub .idt-eyebrow { margin-bottom: var(--space-4); }
+.idt-einschub .idt-stat__label { color: var(--idt-paper); }
+.idt-einschub .idt-stat__num { font-size: var(--fs-display-xl); }
+.idt-einschub > :last-child { margin-bottom: 0; }
+
+/* News-Karte */
+.idt-newscard {
+  display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: var(--text-strong);
+  background: var(--idt-paper); border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-md);
+  padding: var(--space-5);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.idt-newscard:hover { transform: translateY(-3px); box-shadow: var(--shadow-block-sm); text-decoration: none; }
+.idt-newscard__meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.idt-newscard__date { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--idt-gray); }
+.idt-newscard h3 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h3); line-height: 1.18; letter-spacing: -.015em; margin: 0; }
+.idt-newscard__more { display: inline-flex; align-items: center; gap: 6px; font-weight: var(--fw-semibold); font-size: var(--fs-sm); color: var(--idt-violet); margin-top: auto; }
+.idt-newscard__more svg { width: 16px; height: 16px; }
+
+/* Dynamische Beitragsübersicht ([neuigkeiten]) — News-Karten-Reihe wie auf
+   der Startseite, als wiederverwendbares Element im Inhalt. */
+.idt-neuigkeiten { margin: var(--space-7) 0; }
+.idt-neuigkeiten__head { margin-bottom: var(--space-5); }
+.idt-neuigkeiten__head h2 { margin: 0; }
+.idt-neuigkeiten__grid { display: grid; gap: var(--space-5); grid-template-columns: 1fr; }
+@media (min-width: 720px) {
+  .idt-neuigkeiten__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* -----------------------------------------------------------------------------
+   7c) EDITOR-PALETTE — Frontend-Klassen zu den Markenfarben aus functions.php
+   (WordPress vergibt .has-<slug>-color / .has-<slug>-background-color)
+   ----------------------------------------------------------------------------- */
+.has-idt-paper-color { color: var(--idt-paper); }
+.has-idt-paper-background-color { background-color: var(--idt-paper); }
+.has-idt-paper-2-color { color: var(--idt-paper-2); }
+.has-idt-paper-2-background-color { background-color: var(--idt-paper-2); }
+.has-idt-ink-color { color: var(--idt-ink); }
+.has-idt-ink-background-color { background-color: var(--idt-ink); }
+.has-idt-gray-color { color: var(--idt-gray); }
+.has-idt-gray-background-color { background-color: var(--idt-gray); }
+.has-idt-violet-color { color: var(--idt-violet); }
+.has-idt-violet-background-color { background-color: var(--idt-violet); }
+.has-idt-cyan-color { color: var(--idt-cyan); }
+.has-idt-cyan-background-color { background-color: var(--idt-cyan); }
+.has-idt-yellow-color { color: var(--idt-yellow); }
+.has-idt-yellow-background-color { background-color: var(--idt-yellow); }
+.has-idt-violet-soft-color { color: var(--idt-violet-soft); }
+.has-idt-violet-soft-background-color { background-color: var(--idt-violet-soft); }
+.has-idt-cyan-soft-color { color: var(--idt-cyan-soft); }
+.has-idt-cyan-soft-background-color { background-color: var(--idt-cyan-soft); }
+.has-idt-yellow-soft-color { color: var(--idt-yellow-soft); }
+.has-idt-yellow-soft-background-color { background-color: var(--idt-yellow-soft); }
+.has-idt-verlauf-gradient-background { background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan)); }
+.has-idt-verlauf-dunkel-gradient-background { background: linear-gradient(131deg, var(--idt-ink), var(--idt-violet)); }
+
+/* =============================================================================
+   8) CONTENT (Seiten / Beiträge)
+   ============================================================================= */
+.section--hero { padding-top: var(--space-9); padding-bottom: var(--space-7); text-align: center; }
+.section--hero h1 { font-size: clamp(2.5rem, 6vw, var(--fs-display-xl)); max-width: 18ch; margin: 0 auto var(--space-4); }
+.section--hero .lead { color: var(--text-muted); margin-left: auto; margin-right: auto; }
+.section--hero .pill-row { display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }
+
+/* Zentrierter Abschnitts-Kopf (Eyebrow + Überschrift mittig über einem Grid) */
+.section__head { max-width: 64ch; margin: 0 auto var(--space-7); text-align: center; }
+.section__head > :last-child { margin-bottom: 0; }
+
+.page-hero { padding: var(--space-9) 0 var(--space-7); text-align: center; }
+.page-hero h1 { margin-left: auto; margin-right: auto; font-size: var(--fs-display-lg); max-width: 18ch; }
+.entry { max-width: var(--content-measure); margin-left: auto; margin-right: auto; }
+.entry img { border-radius: var(--radius-md); margin: var(--space-5) 0; }
+
+/* Abstand zum Footer — Seiteninhalt soll nie direkt am Footer kleben,
+   ohne dass im Editor manuell Abstandshalter nötig sind. */
+main#content { padding-bottom: var(--space-9); }
+/* Ausnahme: Endet der Inhalt mit der randlosen Splash-Bühne (z. B. reine
+   Splash-Startseite), schließt der dunkle Horizont direkt an den Footer an. */
+main#content:has(.entry > .stage:last-child) { padding-bottom: 0; }
+
+.post-meta { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-muted); margin-bottom: var(--space-4); }
+
+.post-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-5); }
+.post-list__item { padding-bottom: var(--space-5); border-bottom: var(--bw-hair) solid var(--border); }
+.post-list__item h2 { font-size: var(--fs-h1); margin-bottom: var(--space-2); }
+.post-list__item h2 a { color: var(--text-strong); }
+.post-list__item h2 a:hover { color: var(--accent-primary); text-decoration: none; }
+
+/* =============================================================================
+   9) SITE-FOOTER (tiefes Teal)
+   ============================================================================= */
+.site-footer { background: var(--idt-ink); color: var(--idt-paper); }
+.site-footer .fwrap { max-width: var(--container-max); margin: 0 auto; padding: clamp(48px,6vw,80px) var(--gutter) 28px; display: flex; flex-direction: column; gap: clamp(36px,5vw,56px); }
+.site-footer .frow { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; }
+.site-footer .fbrand img { height: 60px; width: auto; }
+.site-footer .fbrand p { margin: 18px 0 0; color: var(--idt-on-ink-muted); font-size: var(--fs-sm); max-width: 30ch; line-height: 1.6; }
+.site-footer .fcol h4 { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .12em; color: var(--idt-cyan); margin: 0 0 12px; }
+.site-footer .fcol ul { list-style: none; padding: 0; margin: 0; }
+.site-footer .fcol a { display: block; color: var(--idt-on-ink-muted); text-decoration: none; font-size: var(--fs-sm); padding: 5px 0; transition: color var(--dur-fast) var(--ease-out); }
+.site-footer .fcol a:hover { color: var(--idt-paper); }
+.site-footer .fbar { border-top: 1px solid rgba(255,245,240,.16); padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--idt-on-ink-muted); font-size: var(--fs-xs); font-family: var(--font-mono); }
+.site-footer .fbar a { color: inherit; margin-left: 18px; }
+.site-footer .fbar a:hover { color: var(--idt-paper); }
+
+@media (max-width: 640px) {
+  h1 { font-size: var(--fs-h1); }
+  h2 { font-size: var(--fs-h2); }
+  .page-hero h1 { font-size: var(--fs-display-md); }
+}
+
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { left: var(--gutter); top: var(--space-3); z-index: var(--z-overlay); background: var(--idt-ink); color: var(--idt-paper); padding: 8px 14px; border-radius: var(--radius-sm); }

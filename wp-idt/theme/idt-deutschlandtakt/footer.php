@@ -1,0 +1,51 @@
+<?php
+/**
+ * Fußbereich + Site-Footer.
+ *
+ * @package idt
+ */
+?>
+</main><!-- #content -->
+
+<footer class="site-footer">
+	<div class="fwrap">
+		<div class="frow">
+			<div class="fbrand">
+				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-inverse.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
+				<p>Mehr Verkehr auf die Schiene. Bürgerinitiative für einen integralen Taktfahrplan in Deutschland.</p>
+			</div>
+			<div class="fcol">
+				<h4>Themen</h4>
+				<?php
+				if ( has_nav_menu( 'footer' ) ) {
+					wp_nav_menu( array(
+						'theme_location' => 'footer',
+						'container'      => false,
+						'items_wrap'     => '<ul>%3$s</ul>',
+						'depth'          => 1,
+					) );
+				}
+				?>
+			</div>
+			<div class="fcol">
+				<h4>Mitmachen</h4>
+				<ul>
+					<li><a href="mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden">Mitglied werden</a></li>
+					<li><a href="https://initiative-deutschlandtakt.de/pressekontakt/">Pressekontakt</a></li>
+					<li><a href="https://initiative-deutschlandtakt.de/downloads/">Downloads</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="fbar">
+			<span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Initiative Deutschlandtakt · Verein</span>
+			<span>
+				<a href="<?php echo esc_url( idt_page_url( 'impressum', 'https://initiative-deutschlandtakt.de/impressum/' ) ); ?>">Impressum</a>
+				<a href="<?php echo esc_url( idt_page_url( 'datenschutz', 'https://initiative-deutschlandtakt.de/datenschutz/' ) ); ?>">Datenschutz</a>
+			</span>
+		</div>
+	</div>
+</footer>
+
+<?php wp_footer(); ?>
+</body>
+</html>

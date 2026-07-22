@@ -1,0 +1,95 @@
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:php8.3-apache
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8090:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      # Öffentlich erreichbar → kein Debug-Output.
+      WORDPRESS_DEBUG: 0
+      # Dieselbe Instanz antwortet unter localhost:8090 (Entwicklung, HTTP) UND
+      # testseite.example (öffentliche Testseite, HTTPS via
+      # Caddy-Proxy): Die Site-URL folgt dem Host-Header — aber nur für
+      # erlaubte Hosts, sonst Fallback auf die öffentliche Domain
+      # (verhindert Host-Header-Injection).
+      WORDPRESS_CONFIG_EXTRA: |
+        if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $$_SERVER['HTTPS'] = 'on';
+        }
+        $$idt_allowed = array('testseite.example', 'localhost:8090', 'wordpress');
+        $$idt_host = (isset($$_SERVER['HTTP_HOST']) && in_array($$_SERVER['HTTP_HOST'], $$idt_allowed, true))
+            ? $$_SERVER['HTTP_HOST'] : 'testseite.example';
+        $$idt_scheme = ($$idt_host === 'testseite.example') ? 'https' : 'http';
+        define('WP_HOME', $$idt_scheme . '://' . $$idt_host);
+        define('WP_SITEURL', $$idt_scheme . '://' . $$idt_host);
+        define('DISALLOW_FILE_EDIT', true);
+    volumes:
+      - wp_core:/var/www/html
+      # Live-mounted theme: edit files on the host, reload the browser.
+      - ./theme/idt-deutschlandtakt:/var/www/html/wp-content/themes/idt-deutschlandtakt
+
+  # Öffentlicher Einstiegspunkt: TLS-Terminierung + HTTP→HTTPS-Redirect für
+  # testseite.example, Zertifikat automatisch via Let's Encrypt.
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      wordpress:
+        condition: service_started
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+  # One-shot installer: installs WordPress core, activates the theme (which
+  # seeds demo pages/posts/menu on activation), and sets pretty permalinks.
+  cli:
+    image: wordpress:cli-php8.3
+    user: "33:33"  # www-data, so it can write into the shared volume
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_core:/var/www/html
+      - ./theme/idt-deutschlandtakt:/var/www/html/wp-content/themes/idt-deutschlandtakt
+      - ./wp-cli/init.sh:/init.sh:ro
+    entrypoint: ["bash", "/init.sh"]
+
+volumes:
+  db_data:
+  wp_core:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,55 @@
+<div class="lp-root">
+  <div class="stage">
+    <div class="canvas" id="canvas">
+      <div class="band"></div>
+      <div class="layer top"><span class="bar b1a"></span><span class="bar b1b"></span><span class="bar b2"></span></div>
+      <div class="layer bottom"><span class="bar b1a"></span><span class="bar b1b"></span><span class="bar b2"></span></div>
+
+      <img class="logo" src="__ASSET__/logo-idt-transparent.png" alt="Initiative Deutschlandtakt">
+
+      <nav class="links" aria-label="Hauptlinks">
+        <a class="pill" href="https://initiative-deutschlandtakt.de">Über die Initiative</a>
+        <a class="pill" href="mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden">Mitglied werden</a>
+        <a class="pill" href="Example Landing Page.html">Mehr Inhalte</a>
+      </nav>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="fwrap">
+      <div class="frow">
+        <div class="fbrand">
+          <img src="__ASSET__/logo-idt-inverse.png" alt="Initiative Deutschlandtakt">
+          <p>Mehr Verkehr auf die Schiene.</p>
+        </div>
+      </div>
+      <div class="fbar">
+        <span>© 2026 Initiative Deutschlandtakt · Verein</span>
+        <span><a href="https://initiative-deutschlandtakt.de">Impressum</a><a href="https://initiative-deutschlandtakt.de">Datenschutz</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* Skaliert die 1280×800-Bühne proportional in den Viewport und passt die
+     Footer-Breite an. In eine IIFE gekapselt und auf .lp-root eingegrenzt,
+     damit nichts ins globale WordPress-Scope leakt. */
+  (function () {
+    function fit() {
+      var c = document.getElementById('canvas');
+      if (!c) return;
+      var s = Math.min(window.innerWidth / 1280, window.innerHeight / 800);
+      c.style.setProperty('--s', s);
+      /* Bühnenhöhe an die skalierte Canvas anpassen, statt starrer 100vh —
+         verhindert auf schmalen Hochformat-Viewports (Handys) einen
+         cremefarbenen/tealfarbenen Leerraum ober-/unterhalb der Bühne. */
+      var stage = c.parentElement;
+      if (stage) stage.style.height = Math.round(800 * s) + 'px';
+      var f = document.querySelector('.lp-root .site-footer');
+      if (f) f.style.width = Math.round(1280 * s) + 'px';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+  })();
+  </script>
+</div>
