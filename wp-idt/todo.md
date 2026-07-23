@@ -4,6 +4,8 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Versions-Checkpoint (v2.0.9).** Reiner Versionsstand-Release ohne Theme-Code-Änderungen. Die tatsächlichen Änderungen betrafen die eigenständigen Splash-Fragmente `landing.html`/`landing-2.*` im Repo-Root (Einbettung in Seite page-id-992, nicht Teil dieses Themes): Skalierung nutzt jetzt `stage.clientWidth` statt `window.innerWidth` inkl. ResizeObserver (behebt Abschneiden auf breiten Displays), sowie eine neue fluide Splash-Variante „Zentriert" (`landing-2.html`/`landing-2.css`) ohne Fixmaße/Skalierungs-Script als Alternative zum Horizont-Splash.
+
 - **Mobiler Splash: weiße Diagonalstreifen im hellen Bereich (v2.0.7).** Der Creme-Bereich hinter dem Logo bekommt mobil zwei durchgehende weiße 131°-Streifen als .canvas-Hintergrund (gleicher Winkel wie das dunkle Band; .splash-bottom deckt den unteren Teil ab) — das Horizont-Motiv ist damit auch im Handy-Layout vollständig.
 
 - **Splash-Links konfigurierbar + kein Fußabstand nach Splash (v2.0.6).** idt_render_splash() nimmt Pills ([Label, URL]-Paare) und Caption als Parameter; [splash] parst „Beschriftung | Link"-Zeilen aus dem Shortcode-Inhalt (leer = Standard-Links), caption=""blendet die Schlagzeile aus. Neuer Block „Horizont-Splash" mit Seitenleisten-Feldern (Textarea + Caption). Gemeinsamer Parser idt_parse_button_lines() (auch vom Pill-Stack genutzt). CSS: main#content:has(.entry > .stage:last-child) → padding-bottom 0, Splash schließt direkt an den Footer an, wenn er das letzte Element ist.
