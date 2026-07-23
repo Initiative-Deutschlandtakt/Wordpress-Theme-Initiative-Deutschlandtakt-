@@ -1,0 +1,223 @@
+/* =============================================================================
+   landing-2.css  —  Initiative Deutschlandtakt · "Splash 4 – Zentriert"
+   -----------------------------------------------------------------------------
+   Zweite, FLUIDE Splash-Variante (Alternative zu landing.css).
+
+   Warum eine zweite Variante?
+   Der ursprüngliche "Horizont"-Splash (landing.css) baut auf einem starren
+   1280×800-Canvas mit absolut positionierten Diagonalen und einem JS, das die
+   Bühne skaliert. Das ist bei sehr breiten Seitenverhältnissen fragil. Diese
+   Variante kommt OHNE Fixmaße und OHNE Script aus: Logo + Link-Stack werden per
+   Flexbox mittig in eine 100svh-Bühne gesetzt und passen sich so jedem
+   Seitenverhältnis an – kein Abschneiden, keine Letterbox-Ränder.
+
+   Regeln wie in landing.css:
+   - Jede Stilregel ist auf `.page-id-992 .lp-root` eingegrenzt (kein Leak ins
+     WordPress-Theme, kein Bleed des Themes in den Splash).
+   - CSS-Variablen (vormals :root) liegen auf `.page-id-992 .lp-root`.
+   - @font-face bleibt global (scopt sich über den Familiennamen).
+   - `__ASSET__` bleibt Deploy-Platzhalter.
+
+   HINWEIS: landing-2.css ist eine ENTWEDER/ODER-Alternative zu landing.css.
+   Pro Seite wird nur eine der beiden Dateien eingebunden – nicht beide, da beide
+   auf denselben Root `.page-id-992 .lp-root` scopen.
+   ============================================================================= */
+
+
+/* -----------------------------------------------------------------------------
+   1) WEB-FONTS  —  GLOBAL (über Familiennamen 'InterVariable' gescopt)
+   ----------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'InterVariable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1') format('woff2');
+}
+@font-face {
+  font-family: 'InterVariable';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://rsms.me/inter/font-files/InterVariable-Italic.woff2?v=4.1') format('woff2');
+}
+
+
+/* -----------------------------------------------------------------------------
+   2) DESIGN-TOKENS  —  auf den Landing-Root (vormals :root)
+   ----------------------------------------------------------------------------- */
+.page-id-992 .lp-root {
+  /* ---- Brand core (DIGITAL / RGB) ------------------------------------- */
+  --idt-paper:   #FFF6F0;
+  --idt-ink:     #00373C;
+  --idt-yellow:  #FFFF96;
+  --idt-cyan:    #00DCFA;
+  --idt-violet:  #6E50FA;
+  --idt-gray:    #585857;
+
+  /* ---- Neutral-Ramp --------------------------------------------------- */
+  --idt-paper-2: #FBEDE6;
+  --idt-paper-3: #F3E2DA;
+  --idt-line:    #E2D3CB;
+  --idt-line-strong: #C9B6AC;
+  --idt-ink-70:  #3A6068;
+  --idt-ink-50:  #6E9097;
+  --idt-on-ink-muted: #8FB4BC;
+
+  /* ---- State-Varianten ------------------------------------------------ */
+  --idt-violet-hover:  #5A3DE6;
+  --idt-violet-active: #4A2FCC;
+
+  /* ---- Semantic Aliases ----------------------------------------------- */
+  --surface:           var(--idt-paper);
+  --surface-inverse:   var(--idt-ink);
+  --text-strong:       var(--idt-ink);
+  --text-body:         var(--idt-ink);
+  --text-on-inverse:   var(--idt-paper);
+  --text-on-inverse-muted: var(--idt-on-ink-muted);
+  --text-link:         var(--idt-violet);
+  --border-frame:      var(--idt-ink);
+  --accent-primary:    var(--idt-violet);
+  --accent-primary-hover:  var(--idt-violet-hover);
+  --focus-ring:        var(--idt-violet);
+
+  /* ---- Schrift-Familien ----------------------------------------------- */
+  --font-sans: 'InterVariable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'InterVariable', 'Inter', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ---- Gewichte ------------------------------------------------------- */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* ---- Type-Scale (nur was diese Variante braucht) -------------------- */
+  --fs-body: 1.0625rem;
+  --fs-sm: 0.9375rem;
+  --fs-xs: 0.8125rem;
+
+  /* ---- Zeilenhöhen / Letter-Spacing ----------------------------------- */
+  --lh-normal:  1.55;
+  --ls-label:   0.12em;
+
+  /* ---- Motion --------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+}
+
+
+/* -----------------------------------------------------------------------------
+   3) BASIS-STYLES  —  auf `.page-id-992 .lp-root` eingegrenzt
+   ----------------------------------------------------------------------------- */
+.page-id-992 .lp-root *,
+.page-id-992 .lp-root *::before,
+.page-id-992 .lp-root *::after { box-sizing: border-box; }
+
+.page-id-992 .lp-root {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  font-weight: var(--fw-regular);
+  color: var(--text-body);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+@supports (font-variation-settings: normal) {
+  .page-id-992 .lp-root { font-family: 'InterVariable', sans-serif; }
+}
+
+.page-id-992 .lp-root a { color: var(--text-link); text-decoration: none; }
+
+.page-id-992 .lp-root img,
+.page-id-992 .lp-root svg { max-width: 100%; display: block; }
+
+.page-id-992 .lp-root ::selection { background: var(--idt-yellow); color: var(--idt-ink); }
+
+.page-id-992 .lp-root :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   4) FLUIDES LAYOUT  —  zentrierter Splash ohne Fixmaße
+   -----------------------------------------------------------------------------
+   Die Bühne füllt mind. die volle sichtbare Viewport-Höhe (svh vermeidet den
+   Sprung durch mobile Browser-Toolbars) und zentriert den Inhalt per Flexbox.
+   Dadurch funktioniert das Layout bei JEDEM Seitenverhältnis: schmal, breit,
+   hoch oder ultrabreit – der Inhalt bleibt mittig, nichts wird abgeschnitten.
+   ----------------------------------------------------------------------------- */
+.page-id-992 .lp-root .stage2 {
+  min-height: 100vh;      /* Fallback für Browser ohne svh */
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--idt-paper);
+  padding: clamp(24px, 5vw, 72px) clamp(20px, 5vw, 64px);
+}
+
+/* Zentrierte Inhaltsspalte: fluide Breite mit sinnvoller Obergrenze. */
+.page-id-992 .lp-root .center {
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Logo – skaliert mit der Spalte, aber nie größer als die Designgröße. */
+.page-id-992 .lp-root .center .logo {
+  width: min(460px, 82%);
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Link-Stack mit horizontalen Trennlinien (oben je Zeile, unten am Ende). */
+.page-id-992 .lp-root .menu {
+  width: min(460px, 100%);
+  margin-top: clamp(36px, 8vh, 72px);
+  border-bottom: 2px solid var(--idt-ink);
+}
+.page-id-992 .lp-root .menu .row {
+  display: block;
+  border-top: 2px solid var(--idt-ink);
+  padding: clamp(16px, 3.4vh, 30px) 12px;
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: clamp(0.8125rem, 1.4vw, 1rem);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--idt-ink);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
+}
+/* Hervorgehobener Primär-Link (im Mockup violett): "Mitglied werden". */
+.page-id-992 .lp-root .menu .row.is-primary { color: var(--accent-primary); }
+
+.page-id-992 .lp-root .menu .row:hover {
+  color: var(--idt-paper);
+  background: var(--idt-ink);
+  text-decoration: none;
+}
+.page-id-992 .lp-root .menu .row.is-primary:hover {
+  color: var(--idt-paper);
+  background: var(--accent-primary);
+}
+
+
+/* -----------------------------------------------------------------------------
+   5) FOOTER  —  identisch zur Horizont-Variante (beim Scrollen sichtbar)
+   ----------------------------------------------------------------------------- */
+.page-id-992 .lp-root .site-footer { background: var(--idt-ink); color: var(--idt-paper); }
+.page-id-992 .lp-root .fwrap { max-width: 1280px; margin: 0 auto; padding: clamp(48px,6vw,80px) clamp(24px,5vw,64px) 28px; display: flex; flex-direction: column; gap: clamp(36px,5vw,56px); }
+.page-id-992 .lp-root .frow { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; flex-wrap: wrap; }
+.page-id-992 .lp-root .fbrand img { height: 60px; width: auto; display: block; }
+.page-id-992 .lp-root .fbrand p { margin: 18px 0 0; color: var(--idt-on-ink-muted); font-size: var(--fs-sm); max-width: 30ch; line-height: 1.6; }
+.page-id-992 .lp-root .fbar { border-top: 1px solid rgba(255,245,240,.16); padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--idt-on-ink-muted); font-size: var(--fs-xs); font-family: var(--font-mono); }
+.page-id-992 .lp-root .fbar a { color: inherit; text-decoration: none; margin-left: 18px; transition: color var(--dur-fast) var(--ease-out); }
+.page-id-992 .lp-root .fbar a:hover { color: var(--idt-paper); }

@@ -1,0 +1,44 @@
+<!-- =============================================================================
+     landing-2.html  —  Initiative Deutschlandtakt · "Splash 4 – Zentriert"
+     -----------------------------------------------------------------------------
+     Zweite, bewusst FLUIDE Splash-Variante (Alternative zu landing.html).
+     Kein starres 1280×800-Canvas und kein Skalierungs-Script mehr: Der Inhalt
+     (Logo + zentrierter Link-Stack mit Trennlinien) wird per Flexbox mittig in
+     die Bühne gesetzt und passt sich damit JEDEM Seitenverhältnis an – ohne
+     Abschneiden und ohne Letterbox-Ränder.
+
+     Wie landing.html ist dies ein HTML-Fragment (kein <html>/<head>/<body>);
+     WordPress liefert die Dokumenthülle. Es ist eine ENTWEDER/ODER-Alternative
+     zu landing.html – pro Seite wird nur eine Variante samt zugehörigem CSS
+     eingebunden (landing-2.css).
+
+     __ASSET__ ist ein Deploy-Platzhalter für die echte Asset-Basis-URL.
+     ============================================================================= -->
+<div class="lp-root">
+  <div class="stage2">
+    <div class="center">
+      <img class="logo" src="__ASSET__/logo-idt-transparent.png" alt="Initiative Deutschlandtakt">
+
+      <nav class="menu" aria-label="Hauptlinks">
+        <a class="row" href="https://initiative-deutschlandtakt.de">Über die Initiative</a>
+        <a class="row is-primary" href="mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden">Mitglied werden</a>
+        <a class="row" href="Example Landing Page.html">Mehr Inhalte</a>
+      </nav>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="fwrap">
+      <div class="frow">
+        <div class="fbrand">
+          <img src="__ASSET__/logo-idt-inverse.png" alt="Initiative Deutschlandtakt">
+          <p>Mehr Verkehr auf die Schiene.</p>
+        </div>
+      </div>
+      <div class="fbar">
+        <span>© 2026 Initiative Deutschlandtakt · Verein</span>
+        <span><a href="https://initiative-deutschlandtakt.de">Impressum</a><a href="https://initiative-deutschlandtakt.de">Datenschutz</a></span>
+      </div>
+    </div>
+  </footer>
+</div>
