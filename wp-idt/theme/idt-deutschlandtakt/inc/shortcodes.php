@@ -133,6 +133,22 @@ function idt_sc_splash( $atts, $content = '' ) {
 }
 add_shortcode( 'splash', 'idt_sc_splash' );
 
+/**
+ * Horizont-Splash v2 ("Zentriert") — fluide Alternative zu [splash], siehe
+ * idt_render_splash2() aus functions.php. Gleiche Syntax:
+ *   [splash2 caption="Mehr Verkehr auf die Schiene."]
+ *   Über die Initiative | /ueber-uns/
+ *   Mitglied werden | mailto:mail@initiative-deutschlandtakt.de
+ *   [/splash2]
+ */
+function idt_sc_splash2( $atts, $content = '' ) {
+	$atts = shortcode_atts( array( 'caption' => null ), $atts, 'splash2' );
+	ob_start();
+	idt_render_splash2( idt_parse_button_lines( $content ), $atts['caption'] );
+	return ob_get_clean();
+}
+add_shortcode( 'splash2', 'idt_sc_splash2' );
+
 /* =========================================================================
  * Elemente aus der „Example Landing Page" (Design-System) — für den Editor.
  * ====================================================================== */

@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.9
+Version: 2.0.10
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -409,6 +409,40 @@ blockquote {
 }
 
 /* =============================================================================
+   6b) HORIZONT-SPLASH V2 "Zentriert" (Front-Page-Hero, fluide Alternative)
+   -----------------------------------------------------------------------------
+   Alternative zur fixen 1280×800-Bühne oben: Logo + Link-Stack werden per
+   Flexbox mittig in eine 100svh-Bühne gesetzt statt in ein skaliertes Canvas.
+   Passt sich dadurch jedem Seitenverhältnis an (schmal, breit, ultrabreit)
+   ohne Abschneiden oder Letterbox-Ränder — kein Scaling-Script nötig.
+   ============================================================================= */
+.stage2 {
+  position: relative;
+  /* Full-Bleed-Breakout wie .stage, s. Kommentar dort. */
+  width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  min-height: 100vh; min-height: 100svh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--idt-paper);
+  padding: clamp(24px, 5vw, 72px) var(--gutter);
+}
+.stage2__center {
+  width: min(560px, 100%);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.stage2__logo { width: min(460px, 82%); height: auto; margin: 0 auto; }
+/* Neutralisiert „.entry img" (margin/border-radius), s. Kommentar bei .splash-logo. */
+.stage2 .stage2__logo { margin: 0; border-radius: 0; }
+.stage2__menu { width: min(460px, 100%); margin-top: clamp(36px, 8vh, 72px); border-bottom: 2px solid var(--idt-ink); }
+.stage2__row {
+  display: block; border-top: 2px solid var(--idt-ink); padding: clamp(16px, 3.4vh, 30px) 12px;
+  font-family: var(--font-sans); font-weight: var(--fw-semibold); font-size: clamp(0.8125rem, 1.4vw, 1rem);
+  letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--idt-ink); text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.stage2__row:hover { color: var(--idt-paper); background: var(--idt-ink); text-decoration: none; }
+.stage2__caption { margin: clamp(24px, 5vh, 40px) 0 0; text-align: center; font-weight: 700; font-size: var(--fs-sm); line-height: 1.4; letter-spacing: .01em; color: var(--idt-ink); }
+
+/* =============================================================================
    7) SPIELERISCHE STILELEMENTE  — für die Gestaltung der Texte
    ============================================================================= */
 
@@ -704,9 +738,10 @@ blockquote {
 /* Abstand zum Footer — Seiteninhalt soll nie direkt am Footer kleben,
    ohne dass im Editor manuell Abstandshalter nötig sind. */
 main#content { padding-bottom: var(--space-9); }
-/* Ausnahme: Endet der Inhalt mit der randlosen Splash-Bühne (z. B. reine
-   Splash-Startseite), schließt der dunkle Horizont direkt an den Footer an. */
-main#content:has(.entry > .stage:last-child) { padding-bottom: 0; }
+/* Ausnahme: Endet der Inhalt mit einer randlosen Splash-Bühne (z. B. reine
+   Splash-Startseite), schließt sie direkt an den Footer an — gilt für beide
+   Splash-Varianten (Horizont v1 und v2 "Zentriert"). */
+main#content:has(.entry > :is(.stage, .stage2):last-child) { padding-bottom: 0; }
 
 .post-meta { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-muted); margin-bottom: var(--space-4); }
 

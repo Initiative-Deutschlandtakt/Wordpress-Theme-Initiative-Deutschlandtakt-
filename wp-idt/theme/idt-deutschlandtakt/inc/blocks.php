@@ -125,6 +125,16 @@ function idt_blocks_config() {
 			),
 			'render'   => function ( $a ) { return idt_sc_splash( array( 'caption' => $a['caption'] ), $a['buttons'] ); },
 		),
+		'splash2' => array(
+			'title'    => __( 'Horizont-Splash v2 (Zentriert)', 'idt' ),
+			'icon'     => 'cover-image',
+			'keywords' => array( 'splash', 'hero', 'zentriert', 'startseite', 'dt' ),
+			'fields'   => array(
+				array( 'key' => 'buttons', 'label' => __( 'Links — eine Zeile je Button: Beschriftung | Link (leer = Standard-Links)', 'idt' ), 'type' => 'textarea', 'default' => '' ),
+				array( 'key' => 'caption', 'label' => __( 'Schlagzeile unter den Links (optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
+			),
+			'render'   => function ( $a ) { return idt_sc_splash2( array( 'caption' => $a['caption'] ), $a['buttons'] ); },
+		),
 		'pillstack' => array(
 			'title'    => __( 'Pill-Button-Stack', 'idt' ),
 			'icon'     => 'button',

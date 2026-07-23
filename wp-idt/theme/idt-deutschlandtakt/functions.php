@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.0.8' );
+define( 'IDT_VERSION', '2.0.10' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -137,6 +137,45 @@ function idt_render_splash( $pills = null, $caption = null ) {
 					<p class="splash-caption"><?php echo esc_html( $caption ); ?></p>
 				<?php endif; ?>
 			</div>
+		</div>
+	</div>
+	<?php
+}
+
+/**
+ * Horizont-Splash v2 ("Zentriert") — fluide Alternative zum starren
+ * 1280×800-Horizont-Splash: Logo + Link-Stack mittig per Flexbox in einer
+ * 100svh-Bühne, ohne Fixmaße und ohne Scaling-Script (passt sich jedem
+ * Seitenverhältnis an, kein Abschneiden/Letterboxing).
+ *
+ * @param array|null  $pills   Liste von [Beschriftung, URL]-Paaren; null = Standard-Links.
+ * @param string|null $caption Optionale Schlagzeile unter den Links; leer/null = keine.
+ */
+function idt_render_splash2( $pills = null, $caption = null ) {
+	$logo = get_template_directory_uri() . '/assets/logo-idt-transparent.png';
+
+	if ( null === $pills ) {
+		$pills = array(
+			array( 'Über die Initiative', idt_page_url( 'ueber-die-initiative', 'https://initiative-deutschlandtakt.de/ueber-uns/' ) ),
+			array( 'Mitglied werden', 'mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden' ),
+			array( 'Mehr Inhalte', idt_page_url( 'aktuelles', '#aktuelles' ) ),
+		);
+	}
+	$caption = (string) $caption;
+	?>
+	<div class="stage2">
+		<div class="stage2__center">
+			<img class="stage2__logo" src="<?php echo esc_url( $logo ); ?>" alt="Initiative Deutschlandtakt">
+
+			<nav class="stage2__menu" aria-label="<?php esc_attr_e( 'Hauptlinks', 'idt' ); ?>">
+				<?php foreach ( $pills as $pill ) : ?>
+					<a class="stage2__row" href="<?php echo esc_url( $pill[1] ); ?>"><?php echo esc_html( $pill[0] ); ?></a>
+				<?php endforeach; ?>
+			</nav>
+
+			<?php if ( '' !== $caption ) : ?>
+				<p class="stage2__caption"><?php echo esc_html( $caption ); ?></p>
+			<?php endif; ?>
 		</div>
 	</div>
 	<?php
