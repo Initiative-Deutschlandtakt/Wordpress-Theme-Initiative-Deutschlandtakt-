@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.10
+Version: 2.0.11
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -432,9 +432,17 @@ blockquote {
 .stage2__logo { width: min(460px, 82%); height: auto; margin: 0 auto; }
 /* Neutralisiert „.entry img" (margin/border-radius), s. Kommentar bei .splash-logo. */
 .stage2 .stage2__logo { margin: 0; border-radius: 0; }
-.stage2__menu { width: min(460px, 100%); margin-top: clamp(36px, 8vh, 72px); border-bottom: 2px solid var(--idt-ink); }
+.stage2__menu {
+  width: min(460px, 100%); margin-top: clamp(36px, 8vh, 72px); border-bottom: 2px solid var(--idt-ink);
+  /* Flex-Column statt nur `display:block` auf den Zeilen: Flex-Items werden laut
+     Spezifikation immer "blockified" (nehmen die volle Breite der Cross-Achse ein,
+     Default align-items:stretch) — dieselbe robuste Technik wie bei .splash-links
+     (Horizont-Splash v1). Verhindert, dass die Links nebeneinander landen, falls
+     eine display-Regel auf .stage2__row anderweitig überschrieben wird. */
+  display: flex; flex-direction: column;
+}
 .stage2__row {
-  display: block; border-top: 2px solid var(--idt-ink); padding: clamp(16px, 3.4vh, 30px) 12px;
+  display: block; width: 100%; border-top: 2px solid var(--idt-ink); padding: clamp(16px, 3.4vh, 30px) 12px;
   font-family: var(--font-sans); font-weight: var(--fw-semibold); font-size: clamp(0.8125rem, 1.4vw, 1rem);
   letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--idt-ink); text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);

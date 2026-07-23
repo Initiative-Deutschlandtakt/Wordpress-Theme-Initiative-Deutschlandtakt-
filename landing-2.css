@@ -161,7 +161,7 @@
 }
 
 /* Zentrierte Inhaltsspalte: fluide Breite mit sinnvoller Obergrenze. */
-.page-id-992 .lp-root .center {
+.page-id-992 .lp-root .stage2__center {
   width: min(560px, 100%);
   display: flex;
   flex-direction: column;
@@ -170,20 +170,30 @@
 }
 
 /* Logo – skaliert mit der Spalte, aber nie größer als die Designgröße. */
-.page-id-992 .lp-root .center .logo {
+.page-id-992 .lp-root .stage2__center .logo {
   width: min(460px, 82%);
   height: auto;
   margin: 0 auto;
 }
 
-/* Link-Stack mit horizontalen Trennlinien (oben je Zeile, unten am Ende). */
-.page-id-992 .lp-root .menu {
+/* Link-Stack mit horizontalen Trennlinien (oben je Zeile, unten am Ende).
+   Klassennamen bewusst mit stage2__-Präfix statt generischer .menu/.row —
+   die Host-Seite (fremdes WordPress-Theme) könnte sonst eigene, gleichnamige
+   Klassen mit widerstreitendem Layout mitbringen. */
+.page-id-992 .lp-root .stage2__menu {
   width: min(460px, 100%);
   margin-top: clamp(36px, 8vh, 72px);
   border-bottom: 2px solid var(--idt-ink);
+  /* Flex-Column statt nur `display:block` auf den Zeilen: Flex-Items werden
+     laut Spezifikation immer "blockified" (nehmen die volle Breite der
+     Cross-Achse ein, Default align-items:stretch) — robuster gegen ein
+     versehentlich überschriebenes `display` auf den Zeilen als reines Block. */
+  display: flex;
+  flex-direction: column;
 }
-.page-id-992 .lp-root .menu .row {
+.page-id-992 .lp-root .stage2__row {
   display: block;
+  width: 100%;
   border-top: 2px solid var(--idt-ink);
   padding: clamp(16px, 3.4vh, 30px) 12px;
   font-family: var(--font-sans);
@@ -197,14 +207,14 @@
               background-color var(--dur-fast) var(--ease-out);
 }
 /* Hervorgehobener Primär-Link (im Mockup violett): "Mitglied werden". */
-.page-id-992 .lp-root .menu .row.is-primary { color: var(--accent-primary); }
+.page-id-992 .lp-root .stage2__row.is-primary { color: var(--accent-primary); }
 
-.page-id-992 .lp-root .menu .row:hover {
+.page-id-992 .lp-root .stage2__row:hover {
   color: var(--idt-paper);
   background: var(--idt-ink);
   text-decoration: none;
 }
-.page-id-992 .lp-root .menu .row.is-primary:hover {
+.page-id-992 .lp-root .stage2__row.is-primary:hover {
   color: var(--idt-paper);
   background: var(--accent-primary);
 }
