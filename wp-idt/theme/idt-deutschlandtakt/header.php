@@ -43,7 +43,11 @@ if ( ! $idt_no_nav ) : ?>
 				'theme_location' => 'primary',
 				'container'      => false,
 				'fallback_cb'    => false,
-				'depth'          => 1,
+				/* depth 2 = Hauptpunkte plus eine Ebene Dropdown-Untermenüs.
+				   Ohne Untermenü-Punkte bleibt das Menü unverändert einzeilig;
+				   sobald im WP-Menü einem Punkt Unterpunkte zugeordnet werden,
+				   erscheinen sie als Dropdown (Desktop) bzw. eingerückt (Mobil). */
+				'depth'          => 2,
 			) );
 			?>
 			<?php get_search_form(); ?>

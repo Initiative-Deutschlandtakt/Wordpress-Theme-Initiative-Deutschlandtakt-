@@ -308,6 +308,50 @@ blockquote {
 .idt-search__submit:hover { background: var(--accent-primary-hover); }
 .idt-search__submit svg { width: 18px; height: 18px; }
 
+/* ---- Dropdown-Untermenüs ----
+   Aktiv nur, wenn im WP-Menü Unterpunkte gepflegt sind (WordPress vergibt
+   dann .menu-item-has-children + eine .sub-menu-Liste). Desktop: Flyout unter
+   dem Elternpunkt, sichtbar bei :hover und – tastaturtauglich – bei
+   :focus-within. Mobil (Media Query unten) werden die Untermenüs stattdessen
+   eingerückt dauerhaft angezeigt. */
+.main-nav li { position: relative; }
+.main-nav .menu-item-has-children > a::after {
+  content: ""; display: inline-block; width: 0.4em; height: 0.4em;
+  margin-left: 0.45em; vertical-align: 0.12em;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(45deg); transform-origin: 60% 60%;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.main-nav .menu-item-has-children:hover > a::after,
+.main-nav .menu-item-has-children:focus-within > a::after { transform: rotate(-135deg); }
+
+.main-nav .sub-menu {
+  list-style: none; margin: 0; padding: var(--space-2) 0;
+  position: absolute; top: 100%; left: 0; min-width: 220px;
+  display: flex; flex-direction: column; align-items: stretch; gap: 0;
+  background: var(--surface-card); border: var(--bw-hair) solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  opacity: 0; visibility: hidden; transform: translateY(4px);
+  transition: opacity var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              visibility 0s linear var(--dur-fast);
+}
+.main-nav .menu-item-has-children:hover > .sub-menu,
+.main-nav .menu-item-has-children:focus-within > .sub-menu {
+  opacity: 1; visibility: visible; transform: translateY(0);
+  transition: opacity var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out), visibility 0s;
+}
+.main-nav .sub-menu li { border-bottom: none; }
+.main-nav .sub-menu a {
+  display: block; white-space: nowrap; padding: 8px var(--space-4);
+  border-bottom: none; text-transform: none; letter-spacing: normal;
+}
+.main-nav .sub-menu a:hover {
+  border-bottom: none; color: var(--accent-primary); background: var(--surface-alt);
+}
+.main-nav .sub-menu .current-menu-item > a { color: var(--accent-primary); }
+
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
   display: none; flex-direction: column; justify-content: center; gap: 5px;
@@ -338,6 +382,17 @@ blockquote {
   .main-nav a:hover { border-bottom: none; }
   .main-nav { flex-direction: column; align-items: stretch; gap: 0; }
   .main-nav .idt-search { width: auto; margin: 0 var(--gutter) var(--space-4); }
+
+  /* Untermenüs mobil: kein Flyout, sondern eingerückt dauerhaft sichtbar,
+     sobald das Menüband aufgeklappt ist — kein Hover auf Touch nötig. */
+  .main-nav .menu-item-has-children > a::after { display: none; }
+  .main-nav .sub-menu {
+    position: static; opacity: 1; visibility: visible; transform: none;
+    min-width: 0; padding: 0 0 var(--space-2) var(--space-4);
+    background: transparent; border: none; border-radius: 0; box-shadow: none;
+    transition: none;
+  }
+  .main-nav .sub-menu a { padding: 12px 2px; }
 }
 
 /* =============================================================================
