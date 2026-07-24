@@ -9,7 +9,6 @@ get_header();
 while ( have_posts() ) : the_post(); ?>
 	<article class="container">
 		<header class="page-hero">
-			<span class="idt-eyebrow"><?php bloginfo( 'name' ); ?></span>
 			<h1><?php the_title(); ?></h1>
 		</header>
 		<div class="entry">

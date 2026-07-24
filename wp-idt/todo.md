@@ -4,6 +4,8 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Seiten-Hero: Website-Name mit Pfeil entfernt (v2.0.12).** Über jeder Seitenüberschrift stand als Eyebrow der Website-Name (`bloginfo('name')`), dem die `.idt-eyebrow`-Regel per `::before` einen Pfeil `→` voranstellte — auf jeder Seite also „→ Website-Name" über dem eigentlichen Titel. Diese Zeile ist jetzt aus `page.php` entfernt, sodass nur noch der Seitentitel (`<h1>`) im `.page-hero` steht. Die `.idt-eyebrow`-CSS-Regel selbst bleibt unangetastet, da sie an anderen Stellen (Shortcodes, Übersichtsseiten, 404) bewusst genutzt wird.
+
 - **Fehlende Standard-Theme-Funktionen ergänzt (v2.0.12).** Vier Lücken geschlossen, die das Theme trotz sonst hohem Reifegrad noch hatte:
   - **Beitragsbilder werden jetzt angezeigt.** `add_theme_support('post-thumbnails')` und der Theme-Tag `featured-images` waren gesetzt, aber kein Template rief je `the_post_thumbnail()` auf — gesetzte Beitragsbilder blieben unsichtbar. Jetzt gerendert im Einzelbeitrag (`single.php`, im Textmaß über dem Fließtext, `.post-hero-img`), in der Beitragsliste (`index.php`, `.post-list__thumb`) und in den dynamischen News-Karten des `[neuigkeiten]`-Loops (`inc/shortcodes.php`, randlos an der Kartenoberkante, `.idt-newscard__img`). Alle konditional (`has_post_thumbnail()`), also kein Layoutbruch für Beiträge ohne Bild.
   - **Beitrags-Navigation (vorheriger/nächster Beitrag)** am Ende von `single.php` (`previous_post_link`/`next_post_link`, `.post-nav`) — Leser landen nicht mehr in der Sackgasse.
