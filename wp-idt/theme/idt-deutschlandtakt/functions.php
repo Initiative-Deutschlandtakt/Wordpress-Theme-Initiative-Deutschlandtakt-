@@ -187,6 +187,45 @@ function idt_page_url( $slug, $fallback = '#' ) {
 	return $page ? get_permalink( $page ) : $fallback;
 }
 
+/*
+ * Liefert die URL der Beitrags-Übersicht („Aktuelles"). Bevorzugt die in
+ * WordPress konfigurierte Beitragsseite (Einstellungen → Lesen → Beitragsseite),
+ * damit der Link auch dann korrekt ist, wenn die Übersichtsseite einen anderen
+ * Slug als „aktuelles" hat. Fällt sonst auf die Slug-Suche und die Startseite
+ * zurück.
+ */
+function idt_blog_url() {
+	$posts_page = (int) get_option( 'page_for_posts' );
+	if ( $posts_page && 'publish' === get_post_status( $posts_page ) ) {
+		return get_permalink( $posts_page );
+	}
+	return idt_page_url( 'aktuelles', home_url( '/' ) );
+}
+
+/*
+ * Übernimmt einmalig die Beitragsseite („Aktuelles") in die WordPress-
+ * Einstellungen (Einstellungen → Lesen → Beitragsseite), falls dort keine
+ * gesetzt ist. Damit funktioniert der „← Alle Beiträge"-Link auch auf
+ * Bestandsinstallationen ohne manuelles Nachpflegen. Läuft genau einmal
+ * (Option-Guard idt_posts_page_adopted); eine bewusste spätere Änderung
+ * durch die Redaktion (z. B. Beitragsseite absichtlich leeren) wird dadurch
+ * nicht wieder überschrieben. Ergänzt das einmalige Seeding (idt_seeded),
+ * das bei Bestandsinstallationen bereits gelaufen sein kann.
+ */
+function idt_adopt_posts_page() {
+	if ( get_option( 'idt_posts_page_adopted' ) ) {
+		return;
+	}
+	if ( ! (int) get_option( 'page_for_posts' ) ) {
+		$page = get_page_by_path( 'aktuelles' );
+		if ( $page && 'publish' === $page->post_status ) {
+			update_option( 'page_for_posts', $page->ID );
+		}
+	}
+	update_option( 'idt_posts_page_adopted', 1 );
+}
+add_action( 'after_setup_theme', 'idt_adopt_posts_page' );
+
 /* Lesezeit-Helfer für Beiträge. */
 function idt_reading_time( $content ) {
 	$words = str_word_count( wp_strip_all_tags( $content ) );

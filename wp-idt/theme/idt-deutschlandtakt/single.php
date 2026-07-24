@@ -17,7 +17,7 @@ while ( have_posts() ) : the_post(); ?>
 		<div class="entry idt-dropcap">
 			<?php the_content(); ?>
 		</div>
-		<p style="margin-top:var(--space-7)"><a class="pill" href="<?php echo esc_url( idt_page_url( 'aktuelles', home_url( '/' ) ) ); ?>">← Alle Beiträge</a></p>
+		<p style="margin-top:var(--space-7)"><a class="pill" href="<?php echo esc_url( idt_blog_url() ); ?>">← Alle Beiträge</a></p>
 	</article>
 <?php endwhile;
 get_footer();
