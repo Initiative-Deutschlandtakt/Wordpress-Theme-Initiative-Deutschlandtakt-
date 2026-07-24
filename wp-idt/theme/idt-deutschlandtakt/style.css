@@ -237,7 +237,20 @@ hr { border: none; border-top: var(--bw-hair) solid var(--border); margin: var(-
 img, svg, video { max-width: 100%; display: block; }
 
 ul, ol { margin: 0 0 1em; padding-left: 1.4em; }
+/* Listen-Marker explizit setzen (nicht nur UA-Default): so zeigen
+   Aufzählungen zuverlässig Punkte und nummerierte Aufzählungen Ziffern —
+   auch als WordPress-Listenblock (ul/ol.wp-block-list). */
+ul { list-style: disc; }
+ol { list-style: decimal; }
 li { margin-bottom: 0.35em; }
+/* Marker im Markenton: violette, kräftige Aufzählungszeichen. Die Ziffern
+   nummerierter Listen zusätzlich in der Mono-Schrift mit Tabellenziffern —
+   passend zum übrigen Kennzahlen-/Label-Look. */
+li::marker { color: var(--accent-primary); font-weight: var(--fw-bold); }
+ol > li::marker { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+/* Verschachtelte Ordnungslisten sauber weiterzählen (a, i …). */
+ol ol { list-style: lower-alpha; }
+ol ol ol { list-style: lower-roman; }
 
 blockquote {
   margin: var(--space-6) 0;
