@@ -669,6 +669,23 @@ blockquote {
   color: var(--idt-violet); background: var(--idt-violet-soft);
 }
 
+/* Verlinkter Tag-Chip (Filterleiste, Beitragslisten, Einzelbeitrag) */
+.idt-tag--link {
+  text-decoration: none; cursor: pointer;
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), filter var(--dur-base) var(--ease-out);
+}
+.idt-tag--link:hover { text-decoration: none; transform: translateY(-1px); filter: saturate(1.15) brightness(.98); }
+.idt-tag--link:focus-visible { outline: 2px solid var(--idt-violet); outline-offset: 2px; }
+/* Aktives Schlagwort in der Filterleiste — überschreibt die Inline-Chipfarbe. */
+.idt-tag.is-active { color: var(--idt-paper) !important; background: var(--idt-ink) !important; border-color: var(--idt-ink) !important; }
+
+/* Filterleiste über der Beitragsansicht */
+.idt-tagfilter { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 var(--space-7); }
+
+/* Schlagwörter innerhalb der Beitragsliste / des Einzelbeitrags */
+.post-list__tags, .post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: var(--space-3) 0; }
+.post-tags { margin-top: var(--space-7); }
+
 /* Konzept-Karte mit farbiger Oberkante */
 .idt-concept {
   background: var(--idt-paper); border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-md);

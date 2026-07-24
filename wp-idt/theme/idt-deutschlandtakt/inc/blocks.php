@@ -239,10 +239,11 @@ function idt_blocks_config() {
 			'keywords' => array( 'neuigkeiten', 'beiträge', 'news', 'dt' ),
 			'fields'   => array(
 				array( 'key' => 'count', 'label' => __( 'Anzahl Beiträge', 'idt' ), 'type' => 'range', 'default' => 3, 'min' => 1, 'max' => 12 ),
+				array( 'key' => 'tag', 'label' => __( 'Schlagwort-Filter (Slug, optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
 				array( 'key' => 'eyebrow', 'label' => __( 'Eyebrow', 'idt' ), 'type' => 'text', 'default' => 'Aktuelles' ),
 				array( 'key' => 'title', 'label' => __( 'Überschrift', 'idt' ), 'type' => 'text', 'default' => 'Aus der Initiative' ),
 			),
-			'render'   => function ( $a ) { return idt_sc_neuigkeiten( array( 'count' => $a['count'], 'eyebrow' => $a['eyebrow'], 'title' => $a['title'] ) ); },
+			'render'   => function ( $a ) { return idt_sc_neuigkeiten( array( 'count' => $a['count'], 'tag' => $a['tag'], 'eyebrow' => $a['eyebrow'], 'title' => $a['title'] ) ); },
 		),
 	);
 }

@@ -82,12 +82,18 @@ function idt_seed_demo_content() {
 	 * 2) Beiträge (Aktuelles)
 	 * ------------------------------------------------------------------ */
 	foreach ( idt_demo_posts() as $slug => $p ) {
-		idt_upsert( $slug, array(
+		$post_id = idt_upsert( $slug, array(
 			'post_type'    => 'post',
 			'post_title'   => $p['title'],
 			'post_excerpt' => $p['excerpt'],
 			'post_content' => $p['content'],
 		) );
+		/* Echte Schlagwörter (post_tag) zuweisen — Grundlage fürs Filtern der
+		 * Beitragsansicht. Bestehende Zuordnungen werden nicht überschrieben,
+		 * da idt_upsert vorhandene Beiträge unangetastet lässt. */
+		if ( $post_id && ! is_wp_error( $post_id ) && ! empty( $p['tags'] ) ) {
+			wp_set_post_tags( $post_id, $p['tags'] );
+		}
 	}
 
 	/* Startseite jetzt mit dem editierbaren Homepage-Design befüllen — erst hier,
@@ -413,16 +419,19 @@ function idt_demo_posts() {
 	return array(
 		'beschleunigungsgesetz-verankert-den-takt' => array(
 			'title'   => 'Beschleunigungsgesetz verankert den Takt im Recht',
+			'tags'    => array( 'Gesetzgebung', 'Infrastruktur' ),
 			'excerpt' => 'Mit dem Beschleunigungsgesetz 2023 wurde die fahrplanbasierte Planung erstmals rechtlich verankert — ein Meilenstein für den Deutschlandtakt.',
 			'content' => "<!-- wp:paragraph --><p>Lange war der Zielfahrplan vor allem eine gute Idee. Mit dem Beschleunigungsgesetz 2023 ist daraus ein rechtlicher Maßstab geworden: Der Ausbau des Netzes orientiert sich nun am Fahrplan — nicht umgekehrt.</p><!-- /wp:paragraph -->\n\n<!-- wp:paragraph --><p>Für die Initiative ist das ein wichtiger Etappensieg. Jahrzehntelang wurden Strecken nach Zielfahrzeiten oder Nachfrageprognosen geplant, ohne das Gesamtnetz im Blick zu haben. Die Machbarkeitsstudie von 2015 hatte gezeigt, dass es auch anders geht.</p><!-- /wp:paragraph -->\n\n<!-- wp:shortcode -->[callout type=\"cyan\"]Was bedeutet das konkret? Künftig wird zuerst gefragt, wann welche Züge fahren sollen — und daraus abgeleitet, welche Infrastruktur dafür nötig ist.[/callout]<!-- /wp:shortcode -->",
 		),
 		'warum-knoten-das-herz-des-taktes-sind' => array(
 			'title'   => 'Warum Knotenbahnhöfe das Herz des Taktes sind',
+			'tags'    => array( 'Infrastruktur', 'Fahrplan' ),
 			'excerpt' => 'In den Knotenbahnhöfen entscheidet sich, ob der Deutschlandtakt funktioniert: Hier müssen die Anschlüsse in alle Richtungen kurz sein.',
 			'content' => "<!-- wp:paragraph --><p>Ein integraler Taktfahrplan lebt von seinen Knoten. Treffen sich dort die Züge zur vollen oder halben Stunde, sind kurze Anschlüsse in alle Richtungen möglich — egal, woher man kommt und wohin man will.</p><!-- /wp:paragraph -->\n\n<!-- wp:paragraph --><p>Das klingt einfach, stellt die Infrastruktur aber vor klare Anforderungen: Die Fahrzeiten zwischen den Knoten müssen passen. Genau hier setzt die Planung an — sie leitet aus dem gewünschten Takt ab, wo ausgebaut werden muss.</p><!-- /wp:paragraph -->\n\n<!-- wp:paragraph --><p>Der Rhythmus [takt count=\"6\"] entsteht so im ganzen Land.</p><!-- /wp:paragraph -->",
 		),
 		'mehr-verkehr-auf-die-schiene-und-das-klima' => array(
 			'title'   => 'Mehr Verkehr auf die Schiene — gut fürs Klima',
+			'tags'    => array( 'Klimaschutz', 'Fahrplan' ),
 			'excerpt' => 'Wird Verkehr von der Straße auf die Schiene verlagert, sinkt der Energieverbrauch erheblich. Der Deutschlandtakt schafft die Voraussetzungen dafür.',
 			'content' => "<!-- wp:paragraph --><p>Die Bahn fährt schon heute weitgehend lokal emissionsfrei. Mit Grünstrom fahren auch schnelle Züge klimaneutral. Entscheidend ist die Verlagerung: Jeder Pkw-Kilometer, der zur Schiene wechselt, spart Energie, Rohstoffe und Fläche.</p><!-- /wp:paragraph -->\n\n<!-- wp:paragraph --><p>Der Deutschlandtakt macht das Bahnfahren so attraktiv, dass diese Verlagerung im großen Maßstab möglich wird. Damit ist er zugleich eine Voraussetzung für die Energiewende.</p><!-- /wp:paragraph -->\n\n<!-- wp:shortcode -->[diagonal]Mehr Verkehr auf die Schiene heißt: weniger Energie, weniger Rohstoffe, weniger Fläche.[/diagonal]<!-- /wp:shortcode -->",
 		),

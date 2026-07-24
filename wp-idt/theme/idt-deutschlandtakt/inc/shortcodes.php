@@ -188,6 +188,98 @@ function idt_accent( $color ) {
 }
 
 /**
+ * Markenfarbe eines Schlagworts (deterministisch über die Term-ID), damit ein
+ * Schlagwort überall im Auftritt dieselbe Chip-Farbe trägt.
+ */
+function idt_tag_accent( $term ) {
+	$palette = array( 'violet', 'cyan', 'yellow' );
+	return idt_accent( $palette[ (int) $term->term_id % 3 ] );
+}
+
+/**
+ * Rendert die echten WordPress-Schlagwörter (Taxonomie post_tag) eines Beitrags
+ * als farbige Chips. Anders als der dekorative [tag]-Shortcode spiegeln diese
+ * Chips die tatsächlich vergebenen Schlagwörter wider und sind (optional) mit
+ * der jeweiligen Schlagwort-Archivseite verlinkt — die Grundlage fürs Filtern.
+ *
+ * @param int  $post_id Beitrag (0 = aktueller im Loop).
+ * @param int  $limit   Maximale Anzahl Chips (0 = alle).
+ * @param bool $link    true = Chips verlinken auf die Schlagwort-Archivseite.
+ */
+function idt_post_tags_html( $post_id = 0, $limit = 0, $link = true ) {
+	$post_id = $post_id ? $post_id : get_the_ID();
+	$tags    = get_the_tags( $post_id );
+	if ( empty( $tags ) || is_wp_error( $tags ) ) {
+		return '';
+	}
+	if ( $limit > 0 ) {
+		$tags = array_slice( $tags, 0, $limit );
+	}
+
+	$out = '';
+	foreach ( $tags as $t ) {
+		$a     = idt_tag_accent( $t );
+		$style = 'color:' . $a['text'] . ';background:' . $a['soft'] . ';border-color:' . $a['border'];
+		$cls   = 'idt-tag' . ( $link ? ' idt-tag--link' : '' );
+		if ( $link ) {
+			$url = get_term_link( $t );
+			if ( is_wp_error( $url ) ) {
+				continue;
+			}
+			$out .= '<a class="' . $cls . '" href="' . esc_url( $url ) . '" style="' . esc_attr( $style ) . '">' . esc_html( $t->name ) . '</a>';
+		} else {
+			$out .= '<span class="' . $cls . '" style="' . esc_attr( $style ) . '">' . esc_html( $t->name ) . '</span>';
+		}
+	}
+	return $out;
+}
+
+/**
+ * Filterleiste aus allen tatsächlich vergebenen Schlagwörtern. Jeder Chip
+ * verlinkt auf die Schlagwort-Archivseite; auf einer Tag-Archivseite wird das
+ * aktive Schlagwort hervorgehoben, ein „Alle"-Chip setzt den Filter zurück.
+ * Liefert einen leeren String, wenn noch keine Schlagwörter vergeben sind.
+ *
+ * @param string $reset_url Ziel des „Alle"-Chips (Standard: Beitragsseite/Start).
+ */
+function idt_render_tag_filter( $reset_url = '' ) {
+	$tags = get_terms( array(
+		'taxonomy'   => 'post_tag',
+		'hide_empty' => true,
+		'orderby'    => 'name',
+	) );
+	if ( empty( $tags ) || is_wp_error( $tags ) ) {
+		return '';
+	}
+
+	if ( '' === $reset_url ) {
+		$blog      = (int) get_option( 'page_for_posts' );
+		$reset_url = $blog ? get_permalink( $blog ) : home_url( '/' );
+	}
+	$active_id = is_tag() ? (int) get_queried_object_id() : 0;
+
+	ob_start();
+	?>
+	<nav class="idt-tagfilter" aria-label="<?php esc_attr_e( 'Beiträge nach Schlagwort filtern', 'idt' ); ?>">
+		<a class="idt-tag idt-tag--link idt-tagfilter__all<?php echo $active_id ? '' : ' is-active'; ?>" href="<?php echo esc_url( $reset_url ); ?>"<?php echo $active_id ? '' : ' aria-current="page"'; ?>><?php esc_html_e( 'Alle', 'idt' ); ?></a>
+		<?php
+		foreach ( $tags as $t ) :
+			$a     = idt_tag_accent( $t );
+			$style = 'color:' . $a['text'] . ';background:' . $a['soft'] . ';border-color:' . $a['border'];
+			$is    = ( (int) $t->term_id === $active_id );
+			$url   = get_term_link( $t );
+			if ( is_wp_error( $url ) ) {
+				continue;
+			}
+			?>
+			<a class="idt-tag idt-tag--link<?php echo $is ? ' is-active' : ''; ?>" href="<?php echo esc_url( $url ); ?>" style="<?php echo esc_attr( $style ); ?>"<?php echo $is ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $t->name ); ?></a>
+		<?php endforeach; ?>
+	</nav>
+	<?php
+	return ob_get_clean();
+}
+
+/**
  * Button (eckig, gerahmt) mit Varianten und optionalem Pfeil.
  * [btn href="#" variant="primary" size="lg" arrow="true"]Label[/btn]
  * Varianten: primary | secondary | outline | ghost | inverse
@@ -275,25 +367,32 @@ add_shortcode( 'social', 'idt_sc_social' );
 /**
  * Dynamische Beitragsübersicht als News-Karten-Reihe („Aus der Initiative").
  * Zeigt automatisch die neuesten Beiträge — dieselbe Darstellung wie auf der
- * Startseite, aber als wiederverwendbares Element für jede Seite.
- * [neuigkeiten count="3" eyebrow="Aktuelles" title="Aus der Initiative"]
+ * Startseite, aber als wiederverwendbares Element für jede Seite. Mit tag=""
+ * lässt sich die Auswahl auf ein oder mehrere Schlagwörter (Slugs, kommagetrennt)
+ * eingrenzen; die Chips auf den Karten zeigen die echten Schlagwörter des Beitrags.
+ * [neuigkeiten count="3" tag="klimaschutz" eyebrow="Aktuelles" title="Aus der Initiative"]
  */
 function idt_sc_neuigkeiten( $atts ) {
 	$atts = shortcode_atts( array(
 		'count'   => 3,
+		'tag'     => '',
 		'eyebrow' => 'Aktuelles',
 		'title'   => 'Aus der Initiative',
 	), $atts, 'neuigkeiten' );
 
-	$posts = get_posts( array( 'numberposts' => max( 1, min( 12, (int) $atts['count'] ) ) ) );
-	if ( ! $posts ) { return ''; }
-
-	/* Rotierende Tag-Beschriftung/-Farbe wie in front-page.php. */
-	$tagmap = array(
-		array( 'Stellungnahme', 'violet' ),
-		array( 'Gesetzgebung', 'cyan' ),
-		array( 'Prognose', 'yellow' ),
+	$query = array(
+		'numberposts'      => max( 1, min( 12, (int) $atts['count'] ) ),
+		'suppress_filters' => false,
 	);
+	/* Optionaler Schlagwort-Filter: kommagetrennte Slugs (oder Namen). */
+	if ( '' !== trim( (string) $atts['tag'] ) ) {
+		$slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $atts['tag'] ) ) ) );
+		if ( $slugs ) {
+			$query['tag'] = implode( ',', $slugs );
+		}
+	}
+	$posts = get_posts( $query );
+	if ( ! $posts ) { return ''; }
 
 	ob_start();
 	?>
@@ -310,11 +409,15 @@ function idt_sc_neuigkeiten( $atts ) {
 			 * setup_postdata()/the_title()/the_permalink() den jeweiligen
 			 * Beitrag sehen — sonst zeigen alle Karten die aktuelle Seite. */
 			global $post;
-			$i = 0; foreach ( $posts as $post ) : setup_postdata( $post );
-				$tm = $tagmap[ $i % 3 ]; $a = idt_accent( $tm[1] ); $i++; ?>
+			foreach ( $posts as $post ) : setup_postdata( $post );
+				/* Echte Schlagwörter des Beitrags — hier nicht verlinkt, weil die
+				 * ganze Karte bereits ein <a> ist (kein verschachteltes <a>).
+				 * Gefiltert wird über die Filterleiste im Archiv bzw. tag="". */
+				$card_tags = idt_post_tags_html( $post->ID, 2, false );
+				?>
 				<a class="idt-newscard" href="<?php the_permalink(); ?>">
 					<div class="idt-newscard__meta">
-						<span class="idt-tag" style="color:<?php echo esc_attr( $a['text'] ); ?>;background:<?php echo esc_attr( $a['soft'] ); ?>;border-color:<?php echo esc_attr( $a['border'] ); ?>"><?php echo esc_html( $tm[0] ); ?></span>
+						<?php echo $card_tags; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<span class="idt-newscard__date"><?php echo esc_html( get_the_date() ); ?></span>
 					</div>
 					<h3><?php the_title(); ?></h3>

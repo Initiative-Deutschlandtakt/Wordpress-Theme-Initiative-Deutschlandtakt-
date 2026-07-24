@@ -17,6 +17,10 @@ while ( have_posts() ) : the_post(); ?>
 		<div class="entry idt-dropcap">
 			<?php the_content(); ?>
 		</div>
+		<?php $post_tags = idt_post_tags_html( get_the_ID(), 0, true ); ?>
+		<?php if ( $post_tags ) : ?>
+			<footer class="post-tags" aria-label="<?php esc_attr_e( 'Schlagwörter', 'idt' ); ?>"><?php echo $post_tags; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></footer>
+		<?php endif; ?>
 		<p style="margin-top:var(--space-7)"><a class="pill" href="<?php echo esc_url( idt_blog_url() ); ?>">← Alle Beiträge</a></p>
 	</article>
 <?php endwhile;
