@@ -476,6 +476,14 @@ blockquote {
 .pill--solid { background: var(--accent-primary); color: var(--idt-paper); border-color: transparent; }
 .pill--solid:hover { background: var(--accent-primary-hover); }
 .pill--solid::before { display: none; }
+/* Violett-Outline — Rand violett, beim Klick (bzw. Tastatur-Fokus) Gradient-Rand
+   Violett→Cyan wie das Logo. Hover bleibt bewusst schlicht (nur violetter Rand),
+   damit der Farbverlauf klar als Klick-Feedback erscheint. */
+.pill--violet { color: var(--idt-violet); border-color: var(--idt-violet); }
+.pill--violet:hover { border-color: var(--idt-violet); color: var(--idt-violet); }
+.pill--violet:hover::before { opacity: 0; }
+.pill--violet:active, .pill--violet:focus-visible { border-color: transparent; color: var(--idt-violet); }
+.pill--violet:active::before, .pill--violet:focus-visible::before { opacity: 1; }
 
 /* Pill-Stack — vertikal gestapelte Pill-Buttons in einheitlicher Breite:
    der inline-flex-Container wird so breit wie der breiteste Button,

@@ -55,12 +55,13 @@ function idt_sc_stat( $atts ) {
 }
 add_shortcode( 'stat', 'idt_sc_stat' );
 
-/** Pill-Button. Stile: '' (Outline) | solid | on-ink (helle Outline für dunklen Grund). */
+/** Pill-Button. Stile: '' (Outline) | solid | on-ink (helle Outline für dunklen Grund) | violet (violette Outline, Gradient-Rand bei Klick). */
 function idt_sc_pill( $atts, $content = '' ) {
 	$atts = shortcode_atts( array( 'href' => '#', 'style' => '' ), $atts, 'pill' );
 	$cls  = 'pill';
 	if ( 'solid' === $atts['style'] )  { $cls .= ' pill--solid'; }
 	if ( 'on-ink' === $atts['style'] ) { $cls .= ' pill--on-ink'; }
+	if ( 'violet' === $atts['style'] ) { $cls .= ' pill--violet'; }
 	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '">' . wp_kses_post( do_shortcode( $content ) ) . '</a>';
 }
 add_shortcode( 'pill', 'idt_sc_pill' );

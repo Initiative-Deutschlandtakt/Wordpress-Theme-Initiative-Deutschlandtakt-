@@ -111,6 +111,7 @@ function idt_blocks_config() {
 				array( 'key' => 'style', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
 					array( 'label' => 'Outline', 'value' => '' ),
 					array( 'label' => 'Solid (gefüllt)', 'value' => 'solid' ),
+					array( 'label' => 'Violett-Outline (Gradient-Rand bei Klick)', 'value' => 'violet' ),
 				) ),
 			),
 			'render'   => function ( $a ) { return idt_sc_pill( array( 'href' => $a['href'], 'style' => $a['style'] ), $a['text'] ); },
@@ -144,6 +145,7 @@ function idt_blocks_config() {
 				array( 'key' => 'style', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
 					array( 'label' => 'Outline', 'value' => '' ),
 					array( 'label' => 'Solid (gefüllt)', 'value' => 'solid' ),
+					array( 'label' => 'Violett-Outline (Gradient-Rand bei Klick)', 'value' => 'violet' ),
 					array( 'label' => 'Outline hell (für dunklen Grund)', 'value' => 'on-ink' ),
 				) ),
 				array( 'key' => 'align', 'label' => __( 'Ausrichtung', 'idt' ), 'type' => 'select', 'default' => 'center', 'options' => array(

@@ -84,7 +84,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[lead]Text[/lead]` | hervorgehobener Einleitungsabsatz |
 | `[takt count="8"]` | dekorativer Takt-Rhythmus |
 | `[stat number="2008" label="gegründet"]` | große Kennzahl mit Label |
-| `[pill href="…"]Text[/pill]` | Pill-Button (`style="solid"`) |
+| `[pill href="…"]Text[/pill]` | Pill-Button (`style="solid"` / `style="violet"`) |
 | `[callout type="cyan"]…[/callout]` | Hinweisbox (`cyan`/`violet`/`yellow`) |
 | `[diagonal]…[/diagonal]` | Aussageblock mit durchgehenden Horizont-Diagonalen |
 | `[card]…[/card]` | Karte mit Rahmen und Schatten |

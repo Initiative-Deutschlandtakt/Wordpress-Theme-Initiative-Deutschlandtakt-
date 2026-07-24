@@ -323,8 +323,8 @@ function idt_content_stilelemente() {
 <!-- wp:paragraph --><p><code>[stat number="2008" label="gegründet"]</code></p><!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":2} --><h2>Pill-Buttons</h2><!-- /wp:heading -->
-<!-- wp:shortcode -->[pill href="#"]Outline-Button[/pill] [pill href="#" style="solid"]Solid-Button[/pill]<!-- /wp:shortcode -->
-<!-- wp:paragraph --><p><code>[pill href="…"]Text[/pill]</code>, <code>[pill style="solid"]…[/pill]</code></p><!-- /wp:paragraph -->
+<!-- wp:shortcode -->[pill href="#"]Outline-Button[/pill] [pill href="#" style="solid"]Solid-Button[/pill] [pill href="#" style="violet"]Violett-Outline[/pill]<!-- /wp:shortcode -->
+<!-- wp:paragraph --><p><code>[pill href="…"]Text[/pill]</code>, <code>[pill style="solid"]…[/pill]</code>, <code>[pill style="violet"]…[/pill]</code> (violette Outline, Gradient-Rand bei Klick)</p><!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":2} --><h2>Callouts</h2><!-- /wp:heading -->
 <!-- wp:shortcode -->[callout type="cyan"]Cyan-Hinweis — <code>[callout type="cyan"]…[/callout]</code>[/callout]<!-- /wp:shortcode -->
