@@ -29,11 +29,15 @@
 			</div>
 			<div class="fcol">
 				<h4>Mitmachen</h4>
-				<ul>
-					<li><a href="mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden">Mitglied werden</a></li>
-					<li><a href="https://initiative-deutschlandtakt.de/pressekontakt/">Pressekontakt</a></li>
-					<li><a href="https://initiative-deutschlandtakt.de/downloads/">Downloads</a></li>
-				</ul>
+				<?php
+				wp_nav_menu( array(
+					'theme_location' => 'footer-mitmachen',
+					'container'      => false,
+					'items_wrap'     => '<ul>%3$s</ul>',
+					'depth'          => 1,
+					'fallback_cb'    => 'idt_footer_mitmachen_fallback',
+				) );
+				?>
 			</div>
 			<?php /* Optionale, im Backend pflegbare Zusatzspalten (Widgets). */
 			if ( is_active_sidebar( 'footer' ) ) {

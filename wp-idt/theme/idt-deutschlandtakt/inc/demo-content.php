@@ -135,6 +135,12 @@ function idt_seed_demo_content() {
 		array( 'page', $ueber_id ),
 	) );
 
+	idt_build_menu( 'Footer-Menü „Mitmachen“', 'footer-mitmachen', array(
+		array( 'custom', 'mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden', 'Mitglied werden' ),
+		array( 'custom', 'https://initiative-deutschlandtakt.de/pressekontakt/', 'Pressekontakt' ),
+		array( 'custom', 'https://initiative-deutschlandtakt.de/downloads/', 'Downloads' ),
+	) );
+
 	update_option( 'idt_seeded', 1 );
 	flush_rewrite_rules();
 }
@@ -152,6 +158,19 @@ function idt_build_menu( $name, $location, $items ) {
 
 	foreach ( $items as $item ) {
 		list( $type, $object_id ) = $item;
+
+		/* Externe/benutzerdefinierte Links (z. B. mailto: oder fremde Domains). */
+		if ( 'custom' === $type ) {
+			$label = isset( $item[2] ) ? $item[2] : $object_id;
+			wp_update_nav_menu_item( $menu_id, 0, array(
+				'menu-item-type'   => 'custom',
+				'menu-item-url'    => $object_id,
+				'menu-item-title'  => $label,
+				'menu-item-status' => 'publish',
+			) );
+			continue;
+		}
+
 		$label = isset( $item[2] ) ? $item[2] : get_the_title( $object_id );
 		wp_update_nav_menu_item( $menu_id, 0, array(
 			'menu-item-object-id' => $object_id,

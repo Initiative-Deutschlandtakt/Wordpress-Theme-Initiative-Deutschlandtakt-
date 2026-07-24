@@ -31,8 +31,9 @@ function idt_setup() {
 	) );
 
 	register_nav_menus( array(
-		'primary' => __( 'Hauptmenü', 'idt' ),
-		'footer'  => __( 'Footer-Menü', 'idt' ),
+		'primary'          => __( 'Hauptmenü', 'idt' ),
+		'footer'           => __( 'Footer-Menü', 'idt' ),
+		'footer-mitmachen' => __( 'Footer-Menü „Mitmachen“', 'idt' ),
 	) );
 
 	/* Farbvorschläge im Editor = IDT-Markenfarben (ersetzt die WP-Standard-
@@ -215,6 +216,27 @@ function idt_render_splash2( $pills = null, $caption = null ) {
 function idt_page_url( $slug, $fallback = '#' ) {
 	$page = get_page_by_path( $slug );
 	return $page ? get_permalink( $page ) : $fallback;
+}
+
+/* Standard-Links für die Footer-Spalte „Mitmachen“, solange dem Standort
+ * „Footer-Menü ‚Mitmachen‘“ kein Menü zugewiesen ist. Sobald im Backend
+ * (Design → Menüs) ein Menü an diesen Standort gehängt wird, ersetzt es
+ * diese Ausgabe — die Spalte ist damit ebenso pflegbar wie „Themen“. */
+function idt_footer_mitmachen_fallback() {
+	$items = array(
+		array( 'mailto:mail@initiative-deutschlandtakt.de?subject=Mitglied%20werden', 'Mitglied werden' ),
+		array( 'https://initiative-deutschlandtakt.de/pressekontakt/', 'Pressekontakt' ),
+		array( 'https://initiative-deutschlandtakt.de/downloads/', 'Downloads' ),
+	);
+	echo '<ul>';
+	foreach ( $items as $item ) {
+		printf(
+			'<li><a href="%s">%s</a></li>',
+			esc_url( $item[0], array( 'http', 'https', 'mailto' ) ),
+			esc_html( $item[1] )
+		);
+	}
+	echo '</ul>';
 }
 
 /*
