@@ -35,6 +35,10 @@
 					<li><a href="https://initiative-deutschlandtakt.de/downloads/">Downloads</a></li>
 				</ul>
 			</div>
+			<?php /* Optionale, im Backend pflegbare Zusatzspalten (Widgets). */
+			if ( is_active_sidebar( 'footer' ) ) {
+				dynamic_sidebar( 'footer' );
+			} ?>
 		</div>
 		<div class="fbar">
 			<span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Initiative Deutschlandtakt · Verein</span>

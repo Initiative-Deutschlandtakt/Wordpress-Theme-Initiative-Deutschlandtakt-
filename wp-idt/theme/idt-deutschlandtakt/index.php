@@ -32,6 +32,9 @@ get_header(); ?>
 		<ul class="post-list">
 			<?php while ( have_posts() ) : the_post(); ?>
 				<li class="post-list__item">
+					<?php if ( has_post_thumbnail() ) : ?>
+						<a class="post-list__thumb" href="<?php the_permalink(); ?>" tabindex="-1" aria-hidden="true"><?php the_post_thumbnail( 'medium_large' ); ?></a>
+					<?php endif; ?>
 					<div class="post-meta"><?php echo esc_html( get_the_date() ); ?></div>
 					<h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 					<p style="color:var(--text-muted)"><?php echo esc_html( get_the_excerpt() ); ?></p>

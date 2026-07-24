@@ -162,6 +162,7 @@ function idt_icon( $name, $size = 24 ) {
 		'clock'  => '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
 		'rail'   => '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
 		'netz'   => '<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/>',
+		'search' => '<circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>',
 		/* Social-Icons — vereinfachte Strichzeichnungen im Stil der übrigen Icons (kein Marken-Logo 1:1). */
 		'x'         => '<line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>',
 		'facebook'  => '<path d="M15 4h-2a3 3 0 0 0-3 3v3H7v3h3v7h3v-7h2.5l.5-3H13V7a1 1 0 0 1 1-1h2z"/>',
@@ -416,6 +417,9 @@ function idt_sc_neuigkeiten( $atts ) {
 				$card_tags = idt_post_tags_html( $post->ID, 2, false );
 				?>
 				<a class="idt-newscard" href="<?php the_permalink(); ?>">
+					<?php if ( has_post_thumbnail() ) : ?>
+						<span class="idt-newscard__img"><?php the_post_thumbnail( 'medium_large' ); ?></span>
+					<?php endif; ?>
 					<div class="idt-newscard__meta">
 						<?php echo $card_tags; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<span class="idt-newscard__date"><?php echo esc_html( get_the_date() ); ?></span>

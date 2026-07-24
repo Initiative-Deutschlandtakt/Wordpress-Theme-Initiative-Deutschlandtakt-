@@ -20,6 +20,16 @@ function idt_setup() {
 	add_theme_support( 'editor-styles' );
 	add_editor_style( 'style.css' );
 
+	/* Website-Logo über „Design → Website-Identität" pflegbar (Fallback bleibt
+	   das mitgelieferte Marken-PNG, s. header.php). Der dunkle Footer nutzt
+	   weiterhin die Inverse-Variante als Theme-Asset. */
+	add_theme_support( 'custom-logo', array(
+		'height'      => 76,
+		'width'       => 240,
+		'flex-height' => true,
+		'flex-width'  => true,
+	) );
+
 	register_nav_menus( array(
 		'primary' => __( 'Hauptmenü', 'idt' ),
 		'footer'  => __( 'Footer-Menü', 'idt' ),
@@ -47,6 +57,26 @@ function idt_setup() {
 	) );
 }
 add_action( 'after_setup_theme', 'idt_setup' );
+
+/* -------------------------------------------------------------------------
+ * Widget-Bereiche
+ * ----------------------------------------------------------------------
+ * Ein pflegbarer Footer-Bereich: Jedes zugewiesene Widget wird als weitere
+ * Footer-Spalte (.fcol) neben „Themen" und „Mitmachen" gerendert, der
+ * Widget-Titel als Spaltenüberschrift (<h4>). So lassen sich Footer-Inhalte
+ * (z. B. eine Social-/Kontakt-Spalte) ohne Code-Änderung ergänzen. */
+function idt_widgets_init() {
+	register_sidebar( array(
+		'name'          => __( 'Footer', 'idt' ),
+		'id'            => 'footer',
+		'description'   => __( 'Zusätzliche Spalte(n) im Footer. Jedes Widget wird eine eigene Spalte, der Widget-Titel ihre Überschrift.', 'idt' ),
+		'before_widget' => '<div class="fcol %2$s">',
+		'after_widget'  => '</div>',
+		'before_title'  => '<h4>',
+		'after_title'   => '</h4>',
+	) );
+}
+add_action( 'widgets_init', 'idt_widgets_init' );
 
 /* -------------------------------------------------------------------------
  * Assets

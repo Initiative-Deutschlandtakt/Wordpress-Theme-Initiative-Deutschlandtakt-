@@ -25,9 +25,13 @@ $idt_no_nav = is_singular( 'page' ) && 'page-no-nav.php' === get_page_template_s
 if ( ! $idt_no_nav ) : ?>
 <header class="site-header">
 	<div class="container site-header__inner">
-		<a class="site-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-			<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-transparent.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
-		</a>
+		<?php if ( has_custom_logo() ) : /* Logo aus „Website-Identität", falls gesetzt … */ ?>
+			<div class="site-header__brand"><?php the_custom_logo(); ?></div>
+		<?php else : /* … sonst das mitgelieferte Marken-PNG. */ ?>
+			<a class="site-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-transparent.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
+			</a>
+		<?php endif; ?>
 		<button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="<?php esc_attr_e( 'Menü öffnen', 'idt' ); ?>">
 			<span class="nav-toggle__bar"></span>
 			<span class="nav-toggle__bar"></span>
@@ -42,6 +46,7 @@ if ( ! $idt_no_nav ) : ?>
 				'depth'          => 1,
 			) );
 			?>
+			<?php get_search_form(); ?>
 		</nav>
 	</div>
 </header>
