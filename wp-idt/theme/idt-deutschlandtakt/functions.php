@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.0.15' );
+define( 'IDT_VERSION', '2.0.16' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -78,6 +78,39 @@ function idt_widgets_init() {
 	) );
 }
 add_action( 'widgets_init', 'idt_widgets_init' );
+
+/* -------------------------------------------------------------------------
+ * Customizer
+ * ---------------------------------------------------------------------- */
+
+/** Vorgabetext für den Footer-Slogan (auch als Fallback in footer.php genutzt). */
+function idt_footer_slogan_default() {
+	return __( 'Mehr Verkehr auf die Schiene. Bürgerinitiative für einen integralen Taktfahrplan in Deutschland.', 'idt' );
+}
+
+/* Slogan neben dem Footer-Logo über „Design → Customizer → Footer" pflegbar,
+ * statt fest im Template zu stehen — analog zur Footer-Spalte „Mitmachen“,
+ * die ebenfalls ohne Code-Änderung im Backend anpassbar ist. */
+function idt_customize_register( $wp_customize ) {
+	$wp_customize->add_section( 'idt_footer', array(
+		'title'    => __( 'Footer', 'idt' ),
+		'priority' => 160,
+	) );
+
+	$wp_customize->add_setting( 'idt_footer_slogan', array(
+		'default'           => idt_footer_slogan_default(),
+		'sanitize_callback' => 'sanitize_textarea_field',
+		'transport'         => 'refresh',
+	) );
+
+	$wp_customize->add_control( 'idt_footer_slogan', array(
+		'type'        => 'textarea',
+		'section'     => 'idt_footer',
+		'label'       => __( 'Slogan', 'idt' ),
+		'description' => __( 'Text neben dem Logo in der Fußleiste.', 'idt' ),
+	) );
+}
+add_action( 'customize_register', 'idt_customize_register' );
 
 /* -------------------------------------------------------------------------
  * Assets

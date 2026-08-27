@@ -12,7 +12,7 @@
 		<div class="frow">
 			<div class="fbrand">
 				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-inverse.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
-				<p>Mehr Verkehr auf die Schiene. Bürgerinitiative für einen integralen Taktfahrplan in Deutschland.</p>
+				<p><?php echo esc_html( get_theme_mod( 'idt_footer_slogan', idt_footer_slogan_default() ) ); ?></p>
 			</div>
 			<div class="fcol">
 				<h4>Themen</h4>
