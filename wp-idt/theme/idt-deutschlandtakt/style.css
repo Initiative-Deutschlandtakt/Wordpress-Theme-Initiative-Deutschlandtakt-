@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.13
+Version: 2.0.14
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -289,6 +289,10 @@ blockquote {
   border-bottom: var(--bw-hair) solid var(--border);
 }
 .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: 68px; }
+/* Vorlage „Menü ohne Logo": ohne Marken-Block bleibt vom Flex-Item nur das
+   Menü übrig — space-between würde es an den linken Rand ziehen, daher hier
+   an den rechten Rand. */
+.site-header--no-logo .site-header__inner { justify-content: flex-end; }
 .site-header__brand { display: flex; align-items: center; gap: var(--space-3); font-weight: var(--fw-bold); }
 .site-header__brand img { height: 38px; width: auto; }
 .main-nav ul { list-style: none; display: flex; flex-wrap: nowrap; align-items: center; gap: var(--space-5); margin: 0; padding: 0; }

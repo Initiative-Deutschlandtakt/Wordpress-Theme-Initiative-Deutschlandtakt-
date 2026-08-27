@@ -22,10 +22,15 @@
    greift — dort rendert front-page.php, die Vorlagen-Wahl bleibt aber
    in der Seiten-Einstellung sichtbar. */
 $idt_no_nav = is_singular( 'page' ) && 'page-no-nav.php' === get_page_template_slug();
+/* Logo ausblendbar, Menü bleibt: Vorlage „Menü ohne Logo" — für die
+   Startseite, deren Splash-Bühne das Logo bereits selbst zeigt. Gleiches
+   Prinzip wie bei $idt_no_nav (Template-Slug statt aktivem Template-File). */
+$idt_no_logo = is_singular( 'page' ) && 'page-no-logo.php' === get_page_template_slug();
 if ( ! $idt_no_nav ) : ?>
-<header class="site-header">
+<header class="site-header<?php echo $idt_no_logo ? ' site-header--no-logo' : ''; ?>">
 	<div class="container site-header__inner">
-		<?php if ( has_custom_logo() ) : /* Logo aus „Website-Identität", falls gesetzt … */ ?>
+		<?php if ( $idt_no_logo ) : /* Logo bewusst ausgeblendet, siehe oben. */ ?>
+		<?php elseif ( has_custom_logo() ) : /* Logo aus „Website-Identität", falls gesetzt … */ ?>
 			<div class="site-header__brand"><?php the_custom_logo(); ?></div>
 		<?php else : /* … sonst das mitgelieferte Marken-PNG. */ ?>
 			<a class="site-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">

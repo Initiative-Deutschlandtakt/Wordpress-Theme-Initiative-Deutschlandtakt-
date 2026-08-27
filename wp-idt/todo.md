@@ -4,6 +4,8 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Neue Seitenvorlage „Menü ohne Logo" (v2.0.14).** Für die Startseite, deren Splash-Bühne das Logo bereits selbst zeigt und es im Menüband daher nicht doppelt braucht: neue Vorlage `page-no-logo.php` (analog zu `page-no-nav.php`) zeigt weiterhin Menü + Suche im Header, blendet aber nur den Marken-Block (`.site-header__brand`) links oben aus. Geprüft wird wie beim „Ohne Menüband"-Pendant der Template-Slug (`get_page_template_slug()` in `header.php`), damit es auch für die statische Startseite greift, die von `front-page.php` gerendert wird. CSS: `.site-header--no-logo .site-header__inner` schaltet `justify-content` auf `flex-end`, damit das Menü ohne Logo-Gegengewicht rechtsbündig bleibt statt an den linken Rand zu rutschen.
+
 - **Seiten-Hero: Website-Name mit Pfeil entfernt (v2.0.12).** Über jeder Seitenüberschrift stand als Eyebrow der Website-Name (`bloginfo('name')`), dem die `.idt-eyebrow`-Regel per `::before` einen Pfeil `→` voranstellte — auf jeder Seite also „→ Website-Name" über dem eigentlichen Titel. Diese Zeile ist jetzt aus `page.php` entfernt, sodass nur noch der Seitentitel (`<h1>`) im `.page-hero` steht. Die `.idt-eyebrow`-CSS-Regel selbst bleibt unangetastet, da sie an anderen Stellen (Shortcodes, Übersichtsseiten, 404) bewusst genutzt wird.
 
 - **Fehlende Standard-Theme-Funktionen ergänzt (v2.0.12).** Vier Lücken geschlossen, die das Theme trotz sonst hohem Reifegrad noch hatte:
