@@ -259,7 +259,7 @@
 .page-id-992 .lp-root h3 { font-size: var(--fs-h2); }
 .page-id-992 .lp-root h4 { font-size: var(--fs-h3); }
 
-.page-id-992 .lp-root p { margin: 0 0 1em; text-wrap: pretty; }
+.page-id-992 .lp-root p { margin: 0 0 1em; text-wrap: pretty; text-align: justify; hyphens: auto; }
 .page-id-992 .lp-root p.lead { font-size: var(--fs-lead); line-height: var(--lh-relaxed); color: var(--text-body); }
 
 .page-id-992 .lp-root a { color: var(--text-link); text-decoration: none; }
