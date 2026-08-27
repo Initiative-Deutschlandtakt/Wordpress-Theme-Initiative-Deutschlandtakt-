@@ -14,6 +14,9 @@ get_header(); ?>
 		<?php elseif ( is_tag() ) : /* Schlagwort-Archiv: gefilterte Beitragsansicht */ ?>
 			<span class="idt-eyebrow">Schlagwort</span>
 			<h1><?php echo esc_html( single_tag_title( '', false ) ); ?></h1>
+		<?php elseif ( is_category() ) : /* Kategorie-Archiv: gefilterte Beitragsansicht */ ?>
+			<span class="idt-eyebrow">Kategorie</span>
+			<h1><?php echo esc_html( single_cat_title( '', false ) ); ?></h1>
 		<?php else : ?>
 			<span class="idt-eyebrow">Aktuelles</span>
 			<h1><?php is_home() ? esc_html_e( 'Aus der Initiative', 'idt' ) : the_archive_title(); ?></h1>
@@ -25,6 +28,10 @@ get_header(); ?>
 	 * verlinkte Schlagwort-Chips, das aktive Schlagwort ist hervorgehoben. */
 	if ( is_home() || is_tag() ) {
 		echo idt_render_tag_filter(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+	/* Auf Kategorie-Archiven zusätzlich die Kategorie-Filterleiste. */
+	if ( is_category() ) {
+		echo idt_render_category_filter(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 	?>
 

@@ -236,20 +236,29 @@ function idt_post_tags_html( $post_id = 0, $limit = 0, $link = true ) {
 }
 
 /**
- * Filterleiste aus allen tatsächlich vergebenen Schlagwörtern. Jeder Chip
- * verlinkt auf die Schlagwort-Archivseite; auf einer Tag-Archivseite wird das
- * aktive Schlagwort hervorgehoben, ein „Alle"-Chip setzt den Filter zurück.
- * Liefert einen leeren String, wenn noch keine Schlagwörter vergeben sind.
+ * Filterleiste aus allen tatsächlich vergebenen Begriffen einer Taxonomie
+ * (Schlagwörter oder Kategorien). Jeder Chip verlinkt auf die passende
+ * Archivseite; auf der zugehörigen Archivseite wird der aktive Begriff
+ * hervorgehoben, ein „Alle"-Chip setzt den Filter zurück. Liefert einen
+ * leeren String, wenn noch keine Begriffe vergeben sind.
  *
+ * @param string $taxonomy  'post_tag' oder 'category'.
  * @param string $reset_url Ziel des „Alle"-Chips (Standard: Beitragsseite/Start).
  */
-function idt_render_tag_filter( $reset_url = '' ) {
-	$tags = get_terms( array(
-		'taxonomy'   => 'post_tag',
+function idt_render_taxonomy_filter( $taxonomy = 'post_tag', $reset_url = '' ) {
+	$terms = get_terms( array(
+		'taxonomy'   => $taxonomy,
 		'hide_empty' => true,
 		'orderby'    => 'name',
 	) );
-	if ( empty( $tags ) || is_wp_error( $tags ) ) {
+	/* Standardkategorie ("Allgemein"/"Uncategorized") aus der Filterleiste ausblenden — sie ist kein bewusst vergebenes Filterkriterium. */
+	if ( 'category' === $taxonomy && ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+		$default_cat = (int) get_option( 'default_category' );
+		$terms       = array_filter( $terms, function ( $t ) use ( $default_cat ) {
+			return (int) $t->term_id !== $default_cat;
+		} );
+	}
+	if ( empty( $terms ) || is_wp_error( $terms ) ) {
 		return '';
 	}
 
@@ -257,14 +266,16 @@ function idt_render_tag_filter( $reset_url = '' ) {
 		$blog      = (int) get_option( 'page_for_posts' );
 		$reset_url = $blog ? get_permalink( $blog ) : home_url( '/' );
 	}
-	$active_id = is_tag() ? (int) get_queried_object_id() : 0;
+	$is_archive = ( 'category' === $taxonomy ) ? is_category() : is_tag();
+	$active_id  = $is_archive ? (int) get_queried_object_id() : 0;
+	$label      = ( 'category' === $taxonomy ) ? __( 'Beiträge nach Kategorie filtern', 'idt' ) : __( 'Beiträge nach Schlagwort filtern', 'idt' );
 
 	ob_start();
 	?>
-	<nav class="idt-tagfilter" aria-label="<?php esc_attr_e( 'Beiträge nach Schlagwort filtern', 'idt' ); ?>">
+	<nav class="idt-tagfilter" aria-label="<?php echo esc_attr( $label ); ?>">
 		<a class="idt-tag idt-tag--link idt-tagfilter__all<?php echo $active_id ? '' : ' is-active'; ?>" href="<?php echo esc_url( $reset_url ); ?>"<?php echo $active_id ? '' : ' aria-current="page"'; ?>><?php esc_html_e( 'Alle', 'idt' ); ?></a>
 		<?php
-		foreach ( $tags as $t ) :
+		foreach ( $terms as $t ) :
 			$a     = idt_tag_accent( $t );
 			$style = 'color:' . $a['text'] . ';background:' . $a['soft'] . ';border-color:' . $a['border'];
 			$is    = ( (int) $t->term_id === $active_id );
@@ -278,6 +289,16 @@ function idt_render_tag_filter( $reset_url = '' ) {
 	</nav>
 	<?php
 	return ob_get_clean();
+}
+
+/** Rückwärtskompatibler Alias: Filterleiste für Schlagwörter. */
+function idt_render_tag_filter( $reset_url = '' ) {
+	return idt_render_taxonomy_filter( 'post_tag', $reset_url );
+}
+
+/** Filterleiste für Kategorien. */
+function idt_render_category_filter( $reset_url = '' ) {
+	return idt_render_taxonomy_filter( 'category', $reset_url );
 }
 
 /**
@@ -369,16 +390,19 @@ add_shortcode( 'social', 'idt_sc_social' );
  * Dynamische Beitragsübersicht als News-Karten-Reihe („Aus der Initiative").
  * Zeigt automatisch die neuesten Beiträge — dieselbe Darstellung wie auf der
  * Startseite, aber als wiederverwendbares Element für jede Seite. Mit tag=""
- * lässt sich die Auswahl auf ein oder mehrere Schlagwörter (Slugs, kommagetrennt)
- * eingrenzen; die Chips auf den Karten zeigen die echten Schlagwörter des Beitrags.
- * [neuigkeiten count="3" tag="klimaschutz" eyebrow="Aktuelles" title="Aus der Initiative"]
+ * bzw. category="" lässt sich die Auswahl auf ein oder mehrere Schlagwörter
+ * bzw. Kategorien (Slugs, kommagetrennt) eingrenzen; sind beide gesetzt,
+ * müssen Beiträge zu beiden passen (UND-Verknüpfung). Die Chips auf den
+ * Karten zeigen die echten Schlagwörter des Beitrags.
+ * [neuigkeiten count="3" tag="klimaschutz" category="pressemitteilungen" eyebrow="Aktuelles" title="Aus der Initiative"]
  */
 function idt_sc_neuigkeiten( $atts ) {
 	$atts = shortcode_atts( array(
-		'count'   => 3,
-		'tag'     => '',
-		'eyebrow' => 'Aktuelles',
-		'title'   => 'Aus der Initiative',
+		'count'    => 3,
+		'tag'      => '',
+		'category' => '',
+		'eyebrow'  => 'Aktuelles',
+		'title'    => 'Aus der Initiative',
 	), $atts, 'neuigkeiten' );
 
 	$query = array(
@@ -390,6 +414,20 @@ function idt_sc_neuigkeiten( $atts ) {
 		$slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $atts['tag'] ) ) ) );
 		if ( $slugs ) {
 			$query['tag'] = implode( ',', $slugs );
+		}
+	}
+	/* Optionaler Kategorie-Filter: kommagetrennte Slugs, in Term-IDs aufgelöst. */
+	if ( '' !== trim( (string) $atts['category'] ) ) {
+		$cat_slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $atts['category'] ) ) ) );
+		$cat_ids   = array();
+		foreach ( $cat_slugs as $slug ) {
+			$term = get_term_by( 'slug', $slug, 'category' );
+			if ( $term && ! is_wp_error( $term ) ) {
+				$cat_ids[] = (int) $term->term_id;
+			}
+		}
+		if ( $cat_ids ) {
+			$query['category__in'] = $cat_ids;
 		}
 	}
 	$posts = get_posts( $query );
