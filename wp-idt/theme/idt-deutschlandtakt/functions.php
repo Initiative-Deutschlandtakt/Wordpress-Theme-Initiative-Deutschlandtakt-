@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.0.16' );
+define( 'IDT_VERSION', '2.0.17' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -88,10 +88,42 @@ function idt_footer_slogan_default() {
 	return __( 'Mehr Verkehr auf die Schiene. Bürgerinitiative für einen integralen Taktfahrplan in Deutschland.', 'idt' );
 }
 
+/** Vorgabehöhe des Kopfmenü-Logos in px (Fallback = Token --header-logo-h). */
+function idt_header_logo_height_default() {
+	return 38;
+}
+
+/** Höhe auf einen sinnvollen Bereich begrenzen (Kopfmenü bleibt ein Menüband). */
+function idt_sanitize_header_logo_height( $value ) {
+	$value = absint( $value );
+	if ( $value < 20 ) { $value = 20; }
+	if ( $value > 120 ) { $value = 120; }
+	return $value;
+}
+
 /* Slogan neben dem Footer-Logo über „Design → Customizer → Footer" pflegbar,
  * statt fest im Template zu stehen — analog zur Footer-Spalte „Mitmachen“,
- * die ebenfalls ohne Code-Änderung im Backend anpassbar ist. */
+ * die ebenfalls ohne Code-Änderung im Backend anpassbar ist. Dazu die
+ * Darstellung des Kopfmenü-Logos: Das Bild selbst kommt aus dem WordPress-
+ * Standard „Website-Identität → Logo"; hier kommt nur die Höhe dazu, damit
+ * ein neu hochgeladenes Logo ohne CSS-Änderung passend sitzt. */
 function idt_customize_register( $wp_customize ) {
+	/* ---- Website-Identität: Höhe des Kopfmenü-Logos ---------------------- */
+	$wp_customize->add_setting( 'idt_header_logo_height', array(
+		'default'           => idt_header_logo_height_default(),
+		'sanitize_callback' => 'idt_sanitize_header_logo_height',
+		'transport'         => 'postMessage', /* Live-Vorschau, s. assets/customize-preview.js */
+	) );
+
+	$wp_customize->add_control( 'idt_header_logo_height', array(
+		'type'        => 'number',
+		'section'     => 'title_tagline', /* WP-Standardbereich „Website-Identität", direkt unter dem Logo. */
+		'priority'    => 9,
+		'label'       => __( 'Logo-Höhe im Kopfmenü (px)', 'idt' ),
+		'description' => __( 'Wie hoch das Logo oben im Menüband dargestellt wird. Die Breite ergibt sich aus dem Seitenverhältnis. Vorgabe: 38.', 'idt' ),
+		'input_attrs' => array( 'min' => 20, 'max' => 120, 'step' => 1 ),
+	) );
+
 	$wp_customize->add_section( 'idt_footer', array(
 		'title'    => __( 'Footer', 'idt' ),
 		'priority' => 160,
@@ -111,6 +143,30 @@ function idt_customize_register( $wp_customize ) {
 	) );
 }
 add_action( 'customize_register', 'idt_customize_register' );
+
+/* Die eingestellte Logo-Höhe als Inline-Override des Tokens --header-logo-h
+ * (siehe style.css). Nur ausgeben, wenn sie von der Vorgabe abweicht — sonst
+ * bleibt das Stylesheet allein zuständig. */
+function idt_header_logo_css() {
+	$height = idt_sanitize_header_logo_height( get_theme_mod( 'idt_header_logo_height', idt_header_logo_height_default() ) );
+	if ( idt_header_logo_height_default() === $height ) {
+		return;
+	}
+	wp_add_inline_style( 'idt-style', sprintf( ':root { --header-logo-h: %dpx; }', $height ) );
+}
+add_action( 'wp_enqueue_scripts', 'idt_header_logo_css', 20 );
+
+/* Live-Vorschau im Customizer: Höhe ohne Neuladen anwenden. */
+function idt_customize_preview_assets() {
+	wp_enqueue_script(
+		'idt-customize-preview',
+		get_template_directory_uri() . '/assets/customize-preview.js',
+		array( 'customize-preview' ),
+		IDT_VERSION,
+		true
+	);
+}
+add_action( 'customize_preview_init', 'idt_customize_preview_assets' );
 
 /* -------------------------------------------------------------------------
  * Assets

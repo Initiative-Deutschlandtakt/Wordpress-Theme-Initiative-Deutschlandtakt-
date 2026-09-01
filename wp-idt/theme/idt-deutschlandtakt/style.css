@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.16
+Version: 2.0.17
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -151,6 +151,10 @@ Tags: custom-colors, custom-menu, featured-images
   --content-measure: 68ch;
   --gutter: var(--space-5);
   --section-y: var(--space-9);
+  /* Logo-Höhe im Kopfmenü — Vorgabe; über „Design → Customizer →
+     Website-Identität → Logo-Höhe im Kopfmenü" überschreibbar
+     (idt_header_logo_css() in functions.php setzt die Variable inline neu). */
+  --header-logo-h: 38px;
 
   /* ---- Radii ---------------------------------------------------------- */
   --radius-xs: 2px;
@@ -294,7 +298,7 @@ blockquote {
    an den rechten Rand. */
 .site-header--no-logo .site-header__inner { justify-content: flex-end; }
 .site-header__brand { display: flex; align-items: center; gap: var(--space-3); font-weight: var(--fw-bold); }
-.site-header__brand img { height: 38px; width: auto; }
+.site-header__brand img { height: var(--header-logo-h); width: auto; max-width: 100%; object-fit: contain; }
 .main-nav ul { list-style: none; display: flex; flex-wrap: nowrap; align-items: center; gap: var(--space-5); margin: 0; padding: 0; }
 .main-nav a { white-space: nowrap; }
 .main-nav a { display: inline-block; color: var(--text-strong); font-weight: var(--fw-medium); font-size: var(--fs-sm); letter-spacing: var(--ls-wide); text-transform: uppercase; padding: 6px 2px; border-bottom: 2px solid transparent; transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
