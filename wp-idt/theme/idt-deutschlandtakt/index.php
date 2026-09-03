@@ -35,23 +35,13 @@ get_header(); ?>
 	?>
 
 	<?php if ( have_posts() ) : ?>
-		<ul class="post-list">
-			<?php while ( have_posts() ) : the_post(); ?>
-				<li class="post-list__item">
-					<?php if ( has_post_thumbnail() ) : ?>
-						<a class="post-list__thumb" href="<?php the_permalink(); ?>" tabindex="-1" aria-hidden="true"><?php the_post_thumbnail( 'medium_large' ); ?></a>
-					<?php endif; ?>
-					<div class="post-meta"><?php echo esc_html( get_the_date() ); ?></div>
-					<h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-					<p style="color:var(--text-muted)"><?php echo esc_html( get_the_excerpt() ); ?></p>
-					<?php $post_tags = idt_post_tags_html( get_the_ID(), 0, true ); ?>
-					<?php if ( $post_tags ) : ?>
-						<div class="post-list__tags"><?php echo $post_tags; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
-					<?php endif; ?>
-					<a href="<?php the_permalink(); ?>">Weiterlesen →</a>
-				</li>
-			<?php endwhile; ?>
-		</ul>
+		<?php
+		/* Zeilen-Layout der Beitragsliste (links Datum + Chips, rechts Titel und
+		 * Anriss) — dieselbe Darstellung wie der Abschnitt [beitragsliste] auf
+		 * Seiten, hier ohne eigene Kopfzeile, weil der Seiten-Hero darüber steht. */
+		global $wp_query;
+		echo idt_render_postlist( $wp_query->posts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>
 		<div style="margin-top:var(--space-7)"><?php the_posts_pagination(); ?></div>
 	<?php else : ?>
 		<p>Keine Beiträge vorhanden.</p>
