@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.18
+Version: 2.0.19
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -304,9 +304,33 @@ blockquote {
 .main-nav a { display: inline-block; color: var(--text-strong); font-weight: var(--fw-medium); font-size: var(--fs-sm); letter-spacing: var(--ls-wide); text-transform: uppercase; padding: 6px 2px; border-bottom: 2px solid transparent; transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
 .main-nav a:hover { text-decoration: none; border-bottom-color: var(--accent-primary); color: var(--accent-primary); }
 .main-nav .current-menu-item > a { border-bottom-color: var(--accent-secondary); }
-.main-nav { display: flex; align-items: center; gap: var(--space-5); }
+/* margin-left:auto schluckt den freien Raum: Marke bleibt links, Menü und
+   Aktionsleiste (Lupe/Hamburger) rücken gemeinsam an den rechten Rand. */
+.main-nav { display: flex; align-items: center; gap: var(--space-5); margin-left: auto; }
 
-/* ---- Suche (Header-Menü + get_search_form) ---- */
+/* ---- Aktionsleiste rechts: Lupe + Hamburger ---- */
+.site-header__actions { display: flex; align-items: center; gap: var(--space-3); flex: 0 0 auto; }
+
+/* Suche in der Kopfleiste = nur die Lupe. Das Suchfeld selbst öffnet sich
+   als Overlay über der ganzen Seite (siehe .idt-searchbox weiter unten). */
+.idt-searchtoggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  /* Maße und Radius wie beim Hamburger daneben — die beiden Schaltflächen
+     lesen sich so als ein Paar. */
+  width: 46px; height: 42px; padding: 0; margin: 0;
+  color: var(--idt-ink); background: transparent;
+  border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-sm);
+  cursor: pointer; text-decoration: none; -webkit-appearance: none; appearance: none;
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.idt-searchtoggle:hover { color: var(--idt-paper); background: var(--accent-primary); border-color: var(--accent-primary); text-decoration: none; }
+.idt-searchtoggle[aria-expanded="true"] { color: var(--idt-paper); background: var(--idt-ink); }
+.idt-searchtoggle svg { width: 20px; height: 20px; }
+
+/* ---- Kompaktes Suchformular (searchform.php / get_search_form) ----
+   Nicht mehr im Menüband — dort steht nur noch die Lupe —, aber weiterhin
+   überall dort im Einsatz, wo WordPress selbst ein Suchformular ausgibt
+   (Widgets, Blöcke, Plugins). */
 .idt-search { display: flex; align-items: stretch; width: 200px; }
 .idt-search__label { display: flex; flex: 1 1 auto; min-width: 0; margin: 0; }
 .idt-search__field { width: 100%; min-width: 0; font: inherit; font-size: var(--fs-sm); color: var(--text-strong); background: var(--surface); border: var(--bw-hair) solid var(--border); border-right: none; border-radius: var(--radius-pill) 0 0 var(--radius-pill); padding: 7px 6px 7px 15px; -webkit-appearance: none; appearance: none; }
@@ -389,7 +413,6 @@ blockquote {
   .main-nav a { display: block; padding: 14px 2px; font-size: var(--fs-sm); border-bottom: none; }
   .main-nav a:hover { border-bottom: none; }
   .main-nav { flex-direction: column; align-items: stretch; gap: 0; }
-  .main-nav .idt-search { width: auto; margin: 0 var(--gutter) var(--space-4); }
 
   /* Untermenüs mobil: kein Flyout, sondern eingerückt dauerhaft sichtbar,
      sobald das Menüband aufgeklappt ist — kein Hover auf Touch nötig. */
@@ -401,6 +424,135 @@ blockquote {
     transition: none;
   }
   .main-nav .sub-menu a { padding: 12px 2px; }
+}
+
+/* =============================================================================
+   5b) SUCH-OVERLAY (Lupe → seitenfüllende Suche) + TREFFERLISTE
+   =============================================================================
+   Markup: idt_render_search_overlay() / idt_search_result_item() in
+   inc/search.php, Verhalten: assets/search.js. Die Trefferkarten (.idt-result)
+   nutzen Overlay-Vorschau und Ergebnisseite (search.php) gemeinsam. */
+
+.idt-searchbox {
+  position: fixed; inset: 0; z-index: calc(var(--z-overlay) + 10);
+  overflow-y: auto; overscroll-behavior: contain;
+  background: color-mix(in srgb, var(--idt-ink) 55%, transparent);
+  opacity: 0; transition: opacity 260ms var(--ease-out);
+}
+.idt-searchbox.is-open { opacity: 1; }
+/* Ohne JavaScript: Die Lupe verlinkt auf #idt-searchbox, die :target-Regel
+   blendet das Overlay ein (überschreibt das [hidden] des Markups). */
+.idt-searchbox:target { display: block; opacity: 1; }
+.idt-searchbox:target .idt-searchbox__sheet { transform: none; }
+/* Hintergrund der Seite steht still, solange die Suche offen ist. */
+html.idt-searchbox-open { overflow: hidden; }
+
+.idt-searchbox__sheet {
+  position: relative; min-height: 100%;
+  background: var(--surface);
+  transform: translateY(-12px); transition: transform 260ms var(--ease-out);
+}
+.idt-searchbox.is-open .idt-searchbox__sheet { transform: translateY(0); }
+/* Markenkante oben: Violett → Cyan, wie die Verlaufselemente im Auftritt. */
+.idt-searchbox__sheet::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px;
+  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+}
+
+.idt-searchbox__inner {
+  max-width: 860px; margin: 0 auto;
+  padding: clamp(56px, 9vh, 104px) var(--gutter) var(--space-9);
+}
+.idt-searchbox__hint { margin: var(--space-3) 0 0; font-size: var(--fs-sm); color: var(--text-muted); }
+.idt-searchbox__results { margin-top: var(--space-6); }
+.idt-searchbox__all { margin-top: var(--space-5); }
+
+.idt-searchbox__close {
+  position: absolute; top: var(--space-5); right: var(--gutter);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; padding: 0; font-size: 26px; line-height: 1;
+  color: var(--idt-ink); background: transparent;
+  border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-pill);
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.idt-searchbox__close:hover { color: var(--idt-paper); background: var(--idt-ink); }
+
+/* ---- Großes Suchfeld (Overlay + Ergebnisseite) ---- */
+.idt-searchfield {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) 0; margin: 0;
+  border-bottom: var(--bw-frame-bold) solid var(--idt-ink);
+}
+.idt-searchfield__icon { display: inline-flex; flex: 0 0 auto; color: var(--accent-primary); }
+.idt-searchfield__input {
+  flex: 1 1 auto; min-width: 0; width: 100%;
+  font: inherit; font-family: var(--font-display); font-weight: var(--fw-medium);
+  font-size: clamp(1.25rem, 3.4vw, 2rem); line-height: var(--lh-snug); letter-spacing: var(--ls-tight);
+  color: var(--text-strong); background: transparent;
+  border: none; padding: 6px 0; -webkit-appearance: none; appearance: none;
+}
+.idt-searchfield__input::placeholder { color: var(--text-faint); }
+/* Das browsereigene „×" im type=search-Feld ausblenden: Das Overlay hat
+   bereits eine eigene Schließen-Schaltfläche, zwei Kreuze verwirren. */
+.idt-searchfield__input::-webkit-search-cancel-button,
+.idt-searchfield__input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+.idt-searchfield__input:focus { outline: none; }
+.idt-searchfield:focus-within { border-bottom-color: var(--accent-primary); }
+.idt-searchfield__submit { flex: 0 0 auto; }
+
+/* ---- Trefferkarten ---- */
+.idt-results { display: grid; gap: var(--space-4); max-width: 860px; margin: 0 auto; }
+.idt-result {
+  display: block; padding: var(--space-5);
+  color: var(--text-body); text-decoration: none;
+  background: var(--surface-card);
+  border: var(--bw-hair) solid var(--border);
+  border-left: var(--bw-frame-bold) solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.idt-result:hover {
+  text-decoration: none; transform: translateY(-2px);
+  border-color: var(--idt-ink); border-left-color: var(--accent-primary);
+  box-shadow: var(--shadow-block-sm);
+}
+.idt-result:focus-visible { outline: var(--bw-frame) solid var(--focus-ring); outline-offset: 3px; }
+.idt-result__meta {
+  display: flex; flex-wrap: wrap; gap: var(--space-3);
+  font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase;
+  letter-spacing: var(--ls-label); color: var(--text-muted); margin-bottom: var(--space-2);
+}
+.idt-result__type { color: var(--accent-primary); }
+.idt-result__title {
+  display: block; font-family: var(--font-display); font-weight: var(--fw-bold);
+  font-size: var(--fs-h3); line-height: var(--lh-snug); color: var(--text-strong);
+}
+.idt-result:hover .idt-result__title { color: var(--accent-primary); }
+.idt-result__text { display: block; margin-top: var(--space-2); font-size: var(--fs-sm); line-height: var(--lh-normal); color: var(--text-muted); }
+.idt-result__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-3); }
+.idt-result__more { display: inline-block; margin-top: var(--space-3); font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--accent-primary); }
+
+/* Suchbegriff im Treffer hervorgehoben. */
+.idt-searchhit { background: var(--idt-yellow); color: inherit; padding: 0 .12em; border-radius: var(--radius-xs); }
+
+/* ---- Statuszeilen der Suche (Vorschau wie Ergebnisseite) ---- */
+.idt-search-status, .idt-search-empty { margin: 0; color: var(--text-muted); font-size: var(--fs-sm); }
+.idt-search-status.is-error { color: var(--idt-danger); }
+.idt-search-empty { max-width: 860px; margin: 0 auto; padding: var(--space-6); text-align: center; background: var(--surface-alt); border-radius: var(--radius-md); }
+
+/* ---- Ergebnisseite (search.php) ---- */
+.page-hero--search { padding-bottom: var(--space-6); }
+.page-hero__search { max-width: 720px; margin: var(--space-6) auto 0; text-align: left; }
+.idt-search-count { margin: var(--space-4) 0 0; font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-muted); }
+.idt-search-pagination { margin-top: var(--space-7); }
+.idt-search-fallback { margin-top: var(--space-5); text-align: center; }
+
+@media (max-width: 640px) {
+  .idt-searchbox__inner { padding-top: clamp(72px, 12vh, 104px); }
+  .idt-searchbox__close { top: var(--space-3); right: var(--space-3); width: 40px; height: 40px; }
+  .idt-searchfield__submit { padding: 10px 16px; font-size: var(--fs-xs); }
+  .idt-result { padding: var(--space-4); }
 }
 
 /* =============================================================================

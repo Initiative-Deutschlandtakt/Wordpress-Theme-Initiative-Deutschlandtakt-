@@ -187,3 +187,23 @@ rendert den Editor-Inhalt der Seite **„Startseite"** (`the_content()`), die mi
 Design als Blöcke/Shortcodes befüllt ist (siehe `idt_content_startseite()` in
 `inc/demo-content.php`). Dadurch ist die Startseite vollständig im Block-Editor
 bearbeitbar. Die Beiträge-Reihe unten ist das dynamische `[neuigkeiten]`-Element.
+
+## Suche
+
+In der Kopfleiste steht rechts nur eine **Lupe**. Ein Klick öffnet die Suche als
+Ebene **über der ganzen Seite** (Markup: `idt_render_search_overlay()` in
+`theme/idt-deutschlandtakt/inc/search.php`, Verhalten: `assets/search.js`).
+Schon während des Tippens erscheinen die Treffer als Karten; Schließen per ×,
+`Esc` oder Klick daneben.
+
+Die Vorschau holt ihre Treffer vom REST-Endpunkt **`/wp-json/idt/v1/suche?q=…`**
+(öffentlich lesbar, nur veröffentlichte Beiträge und Seiten). Er liefert bereits
+gerendertes Markup — dieselben Treffer-Karten (`.idt-result`), die auch die
+Ergebnisseite `search.php` nutzt, sodass Vorschau und Ergebnisseite nicht
+auseinanderlaufen können. Die Eingabetaste führt jederzeit auf die vollständige
+Ergebnisseite mit Trefferzahl, Suchfeld zum Nachschärfen und Blätterfunktion.
+
+Ohne JavaScript verlinkt die Lupe auf `#idt-searchbox`; eine `:target`-Regel in
+`style.css` klappt das Overlay auch dann auf, das Formular darin führt regulär
+zur Ergebnisseite. Das kompakte `searchform.php` bleibt für alles erhalten, was
+WordPress selbst ausgibt (Widgets, Suchblock).

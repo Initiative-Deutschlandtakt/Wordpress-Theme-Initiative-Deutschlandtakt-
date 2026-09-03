@@ -8,10 +8,9 @@
 get_header(); ?>
 <div class="container">
 	<header class="page-hero">
-		<?php if ( is_search() ) : /* Suchergebnisse: eigener Eyebrow + Suchbegriff in der Überschrift */ ?>
-			<span class="idt-eyebrow">Suche</span>
-			<h1>Suchergebnisse für „<?php echo esc_html( get_search_query() ); ?>“</h1>
-		<?php elseif ( is_tag() ) : /* Schlagwort-Archiv: gefilterte Beitragsansicht */ ?>
+		<?php /* Suchergebnisse rendert die eigene Vorlage search.php (Treffer-Karten
+		         wie in der Live-Vorschau des Such-Overlays) — hier nicht mehr nötig. */ ?>
+		<?php if ( is_tag() ) : /* Schlagwort-Archiv: gefilterte Beitragsansicht */ ?>
 			<span class="idt-eyebrow">Schlagwort</span>
 			<h1><?php echo esc_html( single_tag_title( '', false ) ); ?></h1>
 		<?php elseif ( is_category() ) : /* Kategorie-Archiv: gefilterte Beitragsansicht */ ?>

@@ -37,11 +37,6 @@ if ( ! $idt_no_nav ) : ?>
 				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-transparent.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
 			</a>
 		<?php endif; ?>
-		<button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="<?php esc_attr_e( 'Menü öffnen', 'idt' ); ?>">
-			<span class="nav-toggle__bar"></span>
-			<span class="nav-toggle__bar"></span>
-			<span class="nav-toggle__bar"></span>
-		</button>
 		<nav class="main-nav" id="main-nav" aria-label="<?php esc_attr_e( 'Hauptmenü', 'idt' ); ?>">
 			<?php
 			wp_nav_menu( array(
@@ -55,10 +50,29 @@ if ( ! $idt_no_nav ) : ?>
 				'depth'          => 2,
 			) );
 			?>
-			<?php get_search_form(); ?>
 		</nav>
+
+		<?php /* Rechte Aktionsleiste: die Suche ist auf eine reine Lupe
+		         reduziert (das Feld selbst öffnet sich als Overlay über der
+		         ganzen Seite, s. idt_render_search_overlay()), daneben der
+		         Hamburger für das Menüband auf schmalen Viewports. */ ?>
+		<div class="site-header__actions">
+			<?php /* Bewusst ein Link statt eines Buttons: Ohne JavaScript klappt das
+			         Overlay per :target-Regel auf (siehe style.css), das Formular
+			         darin führt ganz normal zur Ergebnisseite. Mit JavaScript
+			         fängt search.js den Klick ab und blendet es ein. */ ?>
+			<a class="idt-searchtoggle" href="#idt-searchbox" aria-expanded="false" aria-controls="idt-searchbox" aria-label="<?php esc_attr_e( 'Suche öffnen', 'idt' ); ?>">
+				<?php echo idt_icon( 'search', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</a>
+			<button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="<?php esc_attr_e( 'Menü öffnen', 'idt' ); ?>">
+				<span class="nav-toggle__bar"></span>
+				<span class="nav-toggle__bar"></span>
+				<span class="nav-toggle__bar"></span>
+			</button>
+		</div>
 	</div>
 </header>
+<?php idt_render_search_overlay(); ?>
 <?php endif; ?>
 
 <main id="content">
