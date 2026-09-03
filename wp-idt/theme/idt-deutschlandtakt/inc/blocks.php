@@ -299,6 +299,25 @@ function idt_blocks_config() {
 			),
 			'render'   => function ( $a ) { return idt_sc_neuigkeiten( array( 'count' => $a['count'], 'tag' => $a['tag'], 'category' => $a['category'], 'eyebrow' => $a['eyebrow'], 'title' => $a['title'] ) ); },
 		),
+		'beitragsliste' => array(
+			'title'    => __( 'Beitragsliste (Zeilen)', 'idt' ),
+			'icon'     => 'list-view',
+			'keywords' => array( 'beitragsliste', 'aktuelles', 'beiträge', 'liste', 'dt' ),
+			'fields'   => array(
+				array( 'key' => 'count', 'label' => __( 'Anzahl Beiträge', 'idt' ), 'type' => 'range', 'default' => 3, 'min' => 1, 'max' => 12 ),
+				array( 'key' => 'tag', 'label' => __( 'Schlagwort-Filter (Slug, optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
+				array( 'key' => 'category', 'label' => __( 'Kategorie-Filter (Slug, optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
+				array( 'key' => 'title', 'label' => __( 'Überschrift', 'idt' ), 'type' => 'text', 'default' => 'Aktuelles' ),
+				array( 'key' => 'more', 'label' => __( 'Link rechts (leer = keiner)', 'idt' ), 'type' => 'text', 'default' => 'Alle Beiträge' ),
+				array( 'key' => 'chips', 'label' => __( 'Chips', 'idt' ), 'type' => 'select', 'default' => 'auto', 'options' => array(
+					array( 'label' => __( 'Automatisch (Kategorie, sonst Schlagwort)', 'idt' ), 'value' => 'auto' ),
+					array( 'label' => __( 'Kategorien', 'idt' ), 'value' => 'category' ),
+					array( 'label' => __( 'Schlagwörter', 'idt' ), 'value' => 'tag' ),
+					array( 'label' => __( 'Keine', 'idt' ), 'value' => 'none' ),
+				) ),
+			),
+			'render'   => function ( $a ) { return idt_sc_beitragsliste( array( 'count' => $a['count'], 'tag' => $a['tag'], 'category' => $a['category'], 'title' => $a['title'], 'more' => $a['more'], 'chips' => $a['chips'] ) ); },
+		),
 	);
 }
 

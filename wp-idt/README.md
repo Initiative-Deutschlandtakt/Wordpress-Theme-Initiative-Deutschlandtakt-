@@ -93,6 +93,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
+| `[beitragsliste count="3"]` | dynamische Beitragsliste im Zeilen-Layout (Datum + Chip links, Titel und Anriss rechts) |
 
 ### Im Editor bearbeiten statt tippen
 
@@ -102,7 +103,7 @@ Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 
 **Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
 Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
-News-Karte, Social-Leiste, Beiträge-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
+News-Karte, Social-Leiste, Beiträge-Übersicht, Beitragsliste): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
 in der Seitenleiste (Text, Auswahl, Schalter, Schieberegler) mit **Live-Vorschau**.
@@ -136,6 +137,29 @@ ohne Icon).
 Damit im klassischen Editor kein leerer Absatz um das Raster entsteht, sollte
 der Shortcode allein in seinem Shortcode-Block stehen. Im Block-Editor stellt
 sich die Frage nicht — dort wird der Inhalt nicht durch `wpautop` geschickt.
+
+### Beitragsliste („Aktuelles")
+
+Die Beitragsübersicht (Menüpunkt **Aktuelles**, in WordPress die unter
+*Einstellungen → Lesen* gesetzte Beitragsseite) zeigt die Beiträge als ruhige
+Liste statt als Karten: pro Beitrag eine Zeile mit **Datum und Chip links**,
+**Titel und Anriss rechts**, dazwischen Haarlinien; über der Liste eine kräftige
+Linie. Dieselbe Darstellung tragen die Schlagwort- und Kategorie-Archive.
+
+Welche Chips erscheinen, richtet sich nach der Pflegepraxis: Hat ein Beitrag
+**Kategorien** (z. B. „Position", „Pressemitteilung", „Verein"), stehen diese im
+Chip — sonst die **Schlagwörter**. Die Farbe eines Chips hängt am Begriff, ein
+Begriff sieht also überall im Auftritt gleich aus. Ein gesetztes **Beitragsbild**
+erscheint klein in der linken Spalte unter Datum und Chip; ohne Bild bleibt die
+Zeile rein textlich.
+
+Als Abschnitt für beliebige Seiten (z. B. die Startseite) gibt es dieselbe Liste
+als Block **Beitragsliste (Zeilen)** bzw. Shortcode
+`[beitragsliste count="3" title="Aktuelles" more="Alle Beiträge"]` — dann mit
+Kopfzeile links und dem Link **Alle Beiträge →** rechts, der auf die
+Beitragsseite führt. Eingrenzen lässt sich die Auswahl wie bei `[neuigkeiten]`
+über `tag=""`/`category=""` (Slugs, kommagetrennt); `chips="category|tag|none"`
+bestimmt die Chips, `more=""` blendet den Link aus.
 
 ### Buttons
 

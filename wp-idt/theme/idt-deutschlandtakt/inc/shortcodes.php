@@ -227,18 +227,28 @@ function idt_tag_accent( $term ) {
 }
 
 /**
- * Rendert die echten WordPress-Schlagwörter (Taxonomie post_tag) eines Beitrags
- * als farbige Chips. Anders als der dekorative [tag]-Shortcode spiegeln diese
- * Chips die tatsächlich vergebenen Schlagwörter wider und sind (optional) mit
- * der jeweiligen Schlagwort-Archivseite verlinkt — die Grundlage fürs Filtern.
+ * Rendert die echten WordPress-Begriffe einer Taxonomie (Schlagwörter oder
+ * Kategorien) eines Beitrags als farbige Chips. Anders als der dekorative
+ * [tag]-Shortcode spiegeln diese Chips die tatsächlich vergebenen Begriffe
+ * wider und sind (optional) mit der jeweiligen Archivseite verlinkt — die
+ * Grundlage fürs Filtern.
  *
- * @param int  $post_id Beitrag (0 = aktueller im Loop).
- * @param int  $limit   Maximale Anzahl Chips (0 = alle).
- * @param bool $link    true = Chips verlinken auf die Schlagwort-Archivseite.
+ * @param int    $post_id  Beitrag (0 = aktueller im Loop).
+ * @param string $taxonomy 'post_tag' oder 'category'.
+ * @param int    $limit    Maximale Anzahl Chips (0 = alle).
+ * @param bool   $link     true = Chips verlinken auf die Archivseite.
  */
-function idt_post_tags_html( $post_id = 0, $limit = 0, $link = true ) {
+function idt_post_terms_html( $post_id = 0, $taxonomy = 'post_tag', $limit = 0, $link = true ) {
 	$post_id = $post_id ? $post_id : get_the_ID();
-	$tags    = get_the_tags( $post_id );
+	$tags    = get_the_terms( $post_id, $taxonomy );
+	/* Die Standardkategorie („Allgemein"/„Uncategorized") ist kein bewusst
+	 * vergebenes Merkmal — sie bekommt deshalb auch keinen Chip. */
+	if ( 'category' === $taxonomy && ! empty( $tags ) && ! is_wp_error( $tags ) ) {
+		$default_cat = (int) get_option( 'default_category' );
+		$tags        = array_values( array_filter( $tags, function ( $t ) use ( $default_cat ) {
+			return (int) $t->term_id !== $default_cat;
+		} ) );
+	}
 	if ( empty( $tags ) || is_wp_error( $tags ) ) {
 		return '';
 	}
@@ -262,6 +272,11 @@ function idt_post_tags_html( $post_id = 0, $limit = 0, $link = true ) {
 		}
 	}
 	return $out;
+}
+
+/** Rückwärtskompatibler Alias: Chips der Schlagwörter eines Beitrags. */
+function idt_post_tags_html( $post_id = 0, $limit = 0, $link = true ) {
+	return idt_post_terms_html( $post_id, 'post_tag', $limit, $link );
 }
 
 /**
@@ -590,6 +605,45 @@ function idt_sc_socialrow( $atts, $content = '' ) {
 add_shortcode( 'socialrow', 'idt_sc_socialrow' );
 
 /**
+ * Neueste Beiträge, optional auf Schlagwörter und/oder Kategorien eingegrenzt
+ * (Slugs, kommagetrennt). Sind beide gesetzt, müssen Beiträge zu beiden passen
+ * (UND-Verknüpfung). Gemeinsame Grundlage von [neuigkeiten] und [beitragsliste].
+ *
+ * @param int    $count    Anzahl Beiträge (1–12).
+ * @param string $tag      Schlagwort-Slugs, kommagetrennt.
+ * @param string $category Kategorie-Slugs, kommagetrennt.
+ * @return WP_Post[]
+ */
+function idt_query_posts_by_terms( $count = 3, $tag = '', $category = '' ) {
+	$query = array(
+		'numberposts'      => max( 1, min( 12, (int) $count ) ),
+		'suppress_filters' => false,
+	);
+	/* Optionaler Schlagwort-Filter: kommagetrennte Slugs (oder Namen). */
+	if ( '' !== trim( (string) $tag ) ) {
+		$slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $tag ) ) ) );
+		if ( $slugs ) {
+			$query['tag'] = implode( ',', $slugs );
+		}
+	}
+	/* Optionaler Kategorie-Filter: kommagetrennte Slugs, in Term-IDs aufgelöst. */
+	if ( '' !== trim( (string) $category ) ) {
+		$cat_slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $category ) ) ) );
+		$cat_ids   = array();
+		foreach ( $cat_slugs as $slug ) {
+			$term = get_term_by( 'slug', $slug, 'category' );
+			if ( $term && ! is_wp_error( $term ) ) {
+				$cat_ids[] = (int) $term->term_id;
+			}
+		}
+		if ( $cat_ids ) {
+			$query['category__in'] = $cat_ids;
+		}
+	}
+	return get_posts( $query );
+}
+
+/**
  * Dynamische Beitragsübersicht als News-Karten-Reihe („Aus der Initiative").
  * Zeigt automatisch die neuesten Beiträge — dieselbe Darstellung wie auf der
  * Startseite, aber als wiederverwendbares Element für jede Seite. Mit tag=""
@@ -608,32 +662,7 @@ function idt_sc_neuigkeiten( $atts ) {
 		'title'    => 'Aus der Initiative',
 	), $atts, 'neuigkeiten' );
 
-	$query = array(
-		'numberposts'      => max( 1, min( 12, (int) $atts['count'] ) ),
-		'suppress_filters' => false,
-	);
-	/* Optionaler Schlagwort-Filter: kommagetrennte Slugs (oder Namen). */
-	if ( '' !== trim( (string) $atts['tag'] ) ) {
-		$slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $atts['tag'] ) ) ) );
-		if ( $slugs ) {
-			$query['tag'] = implode( ',', $slugs );
-		}
-	}
-	/* Optionaler Kategorie-Filter: kommagetrennte Slugs, in Term-IDs aufgelöst. */
-	if ( '' !== trim( (string) $atts['category'] ) ) {
-		$cat_slugs = array_filter( array_map( 'sanitize_title', array_map( 'trim', explode( ',', $atts['category'] ) ) ) );
-		$cat_ids   = array();
-		foreach ( $cat_slugs as $slug ) {
-			$term = get_term_by( 'slug', $slug, 'category' );
-			if ( $term && ! is_wp_error( $term ) ) {
-				$cat_ids[] = (int) $term->term_id;
-			}
-		}
-		if ( $cat_ids ) {
-			$query['category__in'] = $cat_ids;
-		}
-	}
-	$posts = get_posts( $query );
+	$posts = idt_query_posts_by_terms( (int) $atts['count'], $atts['tag'], $atts['category'] );
 	if ( ! $posts ) { return ''; }
 
 	ob_start();
@@ -675,3 +704,131 @@ function idt_sc_neuigkeiten( $atts ) {
 	return ob_get_clean();
 }
 add_shortcode( 'neuigkeiten', 'idt_sc_neuigkeiten' );
+
+/**
+ * Chips eines Beitrags für die Beitragsliste — je nach Pflegepraxis der
+ * Redaktion Kategorien oder Schlagwörter.
+ *
+ * @param int    $post_id  Beitrag.
+ * @param string $terms    'auto' (Kategorien, sonst Schlagwörter) | 'category' | 'tag' | 'none'.
+ * @param int    $limit    Maximale Anzahl Chips.
+ * @param bool   $link     Chips verlinken.
+ */
+function idt_postlist_chips( $post_id, $terms = 'auto', $limit = 2, $link = true ) {
+	if ( 'none' === $terms ) {
+		return '';
+	}
+	if ( 'tag' === $terms ) {
+		return idt_post_terms_html( $post_id, 'post_tag', $limit, $link );
+	}
+	$cats = idt_post_terms_html( $post_id, 'category', $limit, $link );
+	if ( 'category' === $terms || '' !== $cats ) {
+		return $cats;
+	}
+	/* 'auto': Kategorien haben Vorrang, weil sie die Beitragsart benennen
+	 * („Position", „Pressemitteilung", „Verein"); ohne vergebene Kategorie
+	 * fällt die Liste auf die Schlagwörter zurück. */
+	return idt_post_terms_html( $post_id, 'post_tag', $limit, $link );
+}
+
+/**
+ * Beitragsliste im Zeilen-Layout („Aktuelles").
+ *
+ * Eine ruhige, textbetonte Übersicht: links Datum und Chip(s), rechts Titel und
+ * Anriss, dazwischen Haarlinien. Anders als die News-Karten ([neuigkeiten])
+ * verträgt sie beliebig viele Beiträge, ohne unruhig zu wirken — deshalb ist
+ * sie die Darstellung der Beitragsübersicht (index.php) und über den Shortcode
+ * [beitragsliste] zugleich als Abschnitt für beliebige Seiten einsetzbar.
+ *
+ * @param WP_Post[] $posts Beiträge (z. B. $wp_query->posts).
+ * @param array     $args  title, more_url, more_label, terms, excerpt_words, level.
+ */
+function idt_render_postlist( $posts, $args = array() ) {
+	if ( empty( $posts ) ) {
+		return '';
+	}
+	$args = wp_parse_args( $args, array(
+		'title'         => '',        /* Kopfzeile links (leer = kein Kopf) */
+		'more_url'      => '',        /* Ziel des Links rechts im Kopf */
+		'more_label'    => __( 'Alle Beiträge', 'idt' ),
+		'terms'         => 'auto',    /* auto | category | tag | none */
+		'excerpt_words' => 26,
+		/* Überschriftenebene der Beitragstitel: mit Kopfzeile (h2) eine Stufe
+		 * tiefer, ohne Kopfzeile direkt unter der Seitenüberschrift (h1). */
+		'level'         => '',
+	) );
+	$level = $args['level'] ? $args['level'] : ( $args['title'] ? 'h3' : 'h2' );
+	$level = in_array( $level, array( 'h2', 'h3', 'h4' ), true ) ? $level : 'h3';
+
+	ob_start();
+	?>
+	<section class="idt-postlist">
+		<?php if ( $args['title'] || $args['more_url'] ) : ?>
+			<div class="idt-postlist__head">
+				<?php if ( $args['title'] ) : ?>
+					<h2 class="idt-postlist__title"><?php echo esc_html( $args['title'] ); ?></h2>
+				<?php endif; ?>
+				<?php if ( $args['more_url'] ) : ?>
+					<a class="idt-postlist__more" href="<?php echo esc_url( $args['more_url'] ); ?>"><?php echo esc_html( $args['more_label'] ); ?> <?php echo idt_icon( 'arrow', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
+				<?php endif; ?>
+			</div>
+		<?php endif; ?>
+		<ul class="idt-postlist__items">
+			<?php foreach ( $posts as $p ) :
+				$chips   = idt_postlist_chips( $p->ID, $args['terms'] );
+				$excerpt = wp_trim_words( get_the_excerpt( $p ), (int) $args['excerpt_words'], '…' );
+				?>
+				<li class="idt-postlist__item">
+					<div class="idt-postlist__aside">
+						<time class="idt-postlist__date" datetime="<?php echo esc_attr( get_the_date( 'c', $p ) ); ?>"><?php echo esc_html( get_the_date( '', $p ) ); ?></time>
+						<?php if ( $chips ) : ?>
+							<div class="idt-postlist__chips"><?php echo $chips; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+						<?php endif; ?>
+						<?php if ( has_post_thumbnail( $p ) ) : ?>
+							<a class="idt-postlist__thumb" href="<?php echo esc_url( get_permalink( $p ) ); ?>" tabindex="-1" aria-hidden="true"><?php echo get_the_post_thumbnail( $p, 'medium' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
+						<?php endif; ?>
+					</div>
+					<div class="idt-postlist__body">
+						<<?php echo $level; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> class="idt-postlist__headline"><a href="<?php echo esc_url( get_permalink( $p ) ); ?>"><?php echo esc_html( get_the_title( $p ) ); ?></a></<?php echo $level; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php if ( $excerpt ) : ?>
+							<p class="idt-postlist__excerpt"><?php echo esc_html( $excerpt ); ?></p>
+						<?php endif; ?>
+					</div>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</section>
+	<?php
+	return ob_get_clean();
+}
+
+/**
+ * Beitragsliste als Abschnitt für beliebige Seiten — dieselbe Darstellung wie
+ * die Beitragsübersicht, mit Kopfzeile („Aktuelles") und Link auf alle Beiträge.
+ * Auswahl wie bei [neuigkeiten] über tag=""/category="" (Slugs, kommagetrennt).
+ * [beitragsliste count="3" title="Aktuelles" more="Alle Beiträge" tag="" category="" chips="auto"]
+ */
+function idt_sc_beitragsliste( $atts ) {
+	$atts = shortcode_atts( array(
+		'count'    => 3,
+		'tag'      => '',
+		'category' => '',
+		'title'    => 'Aktuelles',
+		'more'     => 'Alle Beiträge',
+		'more_url' => '',
+		'chips'    => 'auto',
+	), $atts, 'beitragsliste' );
+
+	$posts = idt_query_posts_by_terms( (int) $atts['count'], $atts['tag'], $atts['category'] );
+	if ( ! $posts ) {
+		return '';
+	}
+
+	return idt_render_postlist( $posts, array(
+		'title'      => $atts['title'],
+		'more_label' => $atts['more'],
+		'more_url'   => '' !== $atts['more'] ? ( $atts['more_url'] ? $atts['more_url'] : idt_blog_url() ) : '',
+		'terms'      => $atts['chips'],
+	) );
+}
+add_shortcode( 'beitragsliste', 'idt_sc_beitragsliste' );

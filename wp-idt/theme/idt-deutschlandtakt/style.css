@@ -914,9 +914,8 @@ html.idt-searchbox-open { overflow: hidden; }
 /* Filterleiste über der Beitragsansicht */
 .idt-tagfilter { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 var(--space-7); }
 
-/* Schlagwörter innerhalb der Beitragsliste / des Einzelbeitrags */
-.post-list__tags, .post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: var(--space-3) 0; }
-.post-tags { margin-top: var(--space-7); }
+/* Schlagwörter unter dem Einzelbeitrag */
+.post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: var(--space-7) 0 var(--space-3); }
 
 /* Konzept-Karte mit farbiger Oberkante */
 .idt-concept {
@@ -1187,15 +1186,42 @@ main#content:has(.entry > :is(.stage, .stage2):last-child) { padding-bottom: 0; 
 
 .post-meta { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-muted); margin-bottom: var(--space-4); }
 
-.post-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-5); }
-.post-list__item { padding-bottom: var(--space-5); border-bottom: var(--bw-hair) solid var(--border); }
-.post-list__item h2 { font-size: var(--fs-h1); margin-bottom: var(--space-2); }
-.post-list__item h2 a { color: var(--text-strong); }
-.post-list__item h2 a:hover { color: var(--accent-primary); text-decoration: none; }
+/* -----------------------------------------------------------------------------
+   Beitragsliste im Zeilen-Layout („Aktuelles")
+   Links Datum und Chips, rechts Titel und Anriss; kräftige Linie unter der
+   Kopfzeile, Haarlinien zwischen den Beiträgen. Genutzt von der
+   Beitragsübersicht (index.php) und vom Abschnitt [beitragsliste].
+   -------------------------------------------------------------------------- */
+.idt-postlist { max-width: 960px; margin: 0 auto; }
+.idt-postlist__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-5); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.idt-postlist__title { margin: 0; font-size: var(--fs-display-md); }
+.idt-postlist__more { display: inline-flex; align-items: center; gap: 8px; font-weight: var(--fw-medium); color: var(--text-link); white-space: nowrap; }
+.idt-postlist__more:hover { text-decoration: none; color: var(--accent-primary-hover); }
+.idt-postlist__more svg { flex: none; }
 
-/* Beitragsbild in der Beitragsliste. */
-.post-list__thumb { display: block; margin-bottom: var(--space-4); border-radius: var(--radius-md); overflow: hidden; }
-.post-list__thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin: 0; border-radius: 0; }
+.idt-postlist__items { list-style: none; padding: 0; margin: 0; border-top: var(--bw-frame) solid var(--idt-ink); }
+.idt-postlist__item {
+  display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: var(--space-6);
+  padding: var(--space-5) 0; border-bottom: var(--bw-hair) solid var(--border);
+}
+.idt-postlist__aside { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+.idt-postlist__date { color: var(--text-muted); font-size: var(--fs-sm); }
+.idt-postlist__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.idt-postlist__headline { margin: 0 0 var(--space-2); font-size: var(--fs-h2); }
+.idt-postlist__headline a { color: var(--text-strong); }
+.idt-postlist__headline a:hover { color: var(--accent-primary); text-decoration: none; }
+.idt-postlist__excerpt { margin: 0; color: var(--text-muted); }
+
+/* Beitragsbild (optional) — steht in der linken Spalte unter Datum und Chips. */
+.idt-postlist__thumb { display: block; width: 100%; border-radius: var(--radius-md); overflow: hidden; }
+.idt-postlist__thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin: 0; border-radius: 0; }
+
+/* Schmale Bildschirme: eine Spalte, Datum und Chips nebeneinander über dem Titel. */
+@media (max-width: 720px) {
+  .idt-postlist__item { grid-template-columns: 1fr; gap: var(--space-3); }
+  .idt-postlist__aside { flex-direction: row; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+  .idt-postlist__thumb { flex-basis: 100%; }
+}
 
 /* Beitragsbild im Einzelbeitrag — im Textmaß über dem Fließtext. */
 .post-hero-img { max-width: var(--content-measure); margin: 0 auto var(--space-6); border-radius: var(--radius-md); overflow: hidden; }
