@@ -296,6 +296,38 @@ function idt_register_blocks() {
 	}
 
 	wp_localize_script( 'idt-blocks', 'IDT_BLOCKS', $js );
+
+	idt_register_cards_block();
+}
+
+/**
+ * Karten-Raster — Container-Block mit InnerBlocks.
+ *
+ * Anders als die übrigen Elemente ist das kein server-gerenderter Block: Der
+ * Block speichert nur seinen Rahmen (<div class="idt-cards …">), die Karten
+ * darin bleiben eigenständige Blöcke und werden weiterhin serverseitig
+ * gerendert. So lassen sich die Karten im Editor einzeln bearbeiten, liegen
+ * aber in einem gemeinsamen Raster (gleiche Breite, gleiche Höhe, Umbruch).
+ */
+function idt_register_cards_block() {
+	wp_localize_script( 'idt-blocks', 'IDT_CARDS', array(
+		'title'   => __( 'Karten-Raster', 'idt' ),
+		'label'   => __( 'Spalten (ab Desktop)', 'idt' ),
+		'hint'    => __( 'Karten mit „+“ einfügen — z. B. Konzept-Karten. Auf schmalen Bildschirmen bricht das Raster automatisch um.', 'idt' ),
+		'options' => array(
+			array( 'label' => __( '2 Spalten', 'idt' ), 'value' => '2' ),
+			array( 'label' => __( '3 Spalten', 'idt' ), 'value' => '3' ),
+			array( 'label' => __( '4 Spalten', 'idt' ), 'value' => '4' ),
+			array( 'label' => __( 'Automatisch', 'idt' ), 'value' => 'auto' ),
+		),
+	) );
+
+	register_block_type( 'idt/kartenraster', array(
+		'api_version'   => 2,
+		'attributes'    => array( 'cols' => array( 'type' => 'string', 'default' => '3' ) ),
+		'editor_script' => 'idt-blocks',
+		'category'      => 'idt',
+	) );
 }
 add_action( 'init', 'idt_register_blocks' );
 

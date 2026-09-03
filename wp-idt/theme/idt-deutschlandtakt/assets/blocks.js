@@ -73,4 +73,63 @@
 			save: function () { return null; }
 		} );
 	} );
+
+	/* ------------------------------------------------------------------
+	 * Karten-Raster — Container-Block mit InnerBlocks.
+	 *
+	 * Statischer Block: gespeichert wird nur der Raster-Rahmen, die Karten
+	 * darin bleiben eigenständige (dynamische) Blöcke. Bearbeitet wird also
+	 * jede Karte einzeln, dargestellt werden sie gemeinsam im Raster.
+	 * ---------------------------------------------------------------- */
+	var cards = window.IDT_CARDS;
+	if ( ! cards ) { return; }
+
+	var InnerBlocks         = wp.blockEditor.InnerBlocks;
+	var useInnerBlocksProps = wp.blockEditor.useInnerBlocksProps || wp.blockEditor.__experimentalUseInnerBlocksProps;
+	var ALLOWED             = [ 'idt/concept', 'idt/newscard', 'idt/card' ];
+	var TEMPLATE            = [ [ 'idt/concept', {} ], [ 'idt/concept', {} ], [ 'idt/concept', {} ] ];
+
+	/** Rahmenklassen aus der gewählten Spaltenzahl — in edit und save identisch. */
+	function cardsClass( attrs ) {
+		return 'idt-cards idt-cards--' + ( attrs.cols || '3' );
+	}
+
+	registerBlockType( 'idt/kartenraster', {
+		apiVersion: 2,
+		title:      cards.title,
+		icon:       'grid-view',
+		category:   'idt',
+		keywords:   [ 'raster', 'grid', 'karten', 'cards', 'spalten', 'dt' ],
+		attributes: { cols: { type: 'string', default: '3' } },
+		edit: function ( props ) {
+			var inspector = el( InspectorControls, {},
+				el( C.PanelBody, { title: cards.title, initialOpen: true },
+					el( C.SelectControl, {
+						label:    cards.label,
+						value:    props.attributes.cols,
+						options:  cards.options,
+						onChange: function ( value ) { props.setAttributes( { cols: value } ); }
+					} ),
+					el( 'p', { style: { fontSize: '12px', color: '#757575' } }, cards.hint )
+				)
+			);
+
+			var blockProps = useBlockProps( { className: cardsClass( props.attributes ) } );
+			var inner      = { allowedBlocks: ALLOWED, template: TEMPLATE };
+
+			/* useInnerBlocksProps legt die Raster-Klassen direkt auf die Liste der
+			 * Kinder — nur so sieht der Editor aus wie das Frontend. */
+			if ( useInnerBlocksProps ) {
+				return el( Fragment, {}, inspector, el( 'div', useInnerBlocksProps( blockProps, inner ) ) );
+			}
+			return el( Fragment, {}, inspector, el( 'div', blockProps, el( InnerBlocks, inner ) ) );
+		},
+		save: function ( props ) {
+			var blockProps = useBlockProps.save( { className: cardsClass( props.attributes ) } );
+			if ( useInnerBlocksProps && useInnerBlocksProps.save ) {
+				return el( 'div', useInnerBlocksProps.save( blockProps ) );
+			}
+			return el( 'div', blockProps, el( InnerBlocks.Content ) );
+		}
+	} );
 } )( window.wp );
