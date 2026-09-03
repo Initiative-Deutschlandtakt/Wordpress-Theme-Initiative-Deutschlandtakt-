@@ -143,6 +143,24 @@ Standard-Button-Block ist im Editor ausgeblendet (`editor-formats.js`,
 reversibel). Die Varianten `ghost`/`inverse` existieren weiter per CSS für
 Sonderfälle (z. B. dunkle Flächen), werden aber nicht als Auswahl angeboten.
 
+### Trenner (Trennelement)
+
+Der WordPress-Block **Trenner** ist im Markenlook gestaltet und hat zwei eigene
+Stile (Block markieren → Seitenleiste **Stile**):
+
+| Stil | Wirkung |
+|---|---|
+| *(ohne)* | feine Linie im Rahmenton |
+| **Verlauf (Violett → Cyan)** | 4 px starker Strich im Markenverlauf über die volle Textbreite |
+| **Kurzer Strich** | kurze Akzentmarke (56 px) am linken Textrand — der Zwischenstrich zwischen zwei Abschnitten |
+
+Wird im Farbbereich des Blocks stattdessen von Hand eine Farbe oder ein Verlauf
+gewählt, gewinnt diese Wahl. Wichtig dabei: WordPress legt Farbe und Verlauf
+beim Trenner als *Hintergrund* ab, zeichnet den Strich selbst aber als Rahmen —
+ohne die Regeln in `style.css` (Abschnitt 7d) bleibt ein gewählter Verlauf
+deshalb unsichtbar und der Trenner grau. Registriert sind die Stile in
+`inc/blocks.php` (`idt_register_core_block_styles()`).
+
 ## Logo im Kopfmenü
 
 Das Bild links oben im Menüband ist ohne Code-Änderung austauschbar und einstellbar —

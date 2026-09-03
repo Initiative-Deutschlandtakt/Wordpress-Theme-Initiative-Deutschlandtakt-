@@ -341,3 +341,32 @@ function idt_block_category( $cats ) {
 	return $cats;
 }
 add_filter( 'block_categories_all', 'idt_block_category' );
+
+/* -------------------------------------------------------------------------
+ * Blockstile für WordPress-Standardblöcke
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Trenner (core/separator) im Markenlook.
+ *
+ * Zwei Stile stehen unter „Trenner → Stile" zur Auswahl:
+ *  - „Verlauf": Strich im Markenverlauf Violett→Cyan über die volle Textbreite,
+ *    ohne dass im Farbbereich erst ein Verlauf gewählt werden muss.
+ *  - „Kurzer Strich": kurze Akzentmarke (56 px) am linken Textrand — der
+ *    Zwischenstrich zwischen zwei Abschnitten.
+ *
+ * Gestaltet werden beide in style.css, Abschnitt 7d; dort steht auch, warum
+ * ein im Editor gewählter Verlauf ohne diese Regeln grau bleibt.
+ */
+function idt_register_core_block_styles() {
+	register_block_style( 'core/separator', array(
+		'name'  => 'idt-verlauf',
+		'label' => __( 'Verlauf (Violett → Cyan)', 'idt' ),
+	) );
+
+	register_block_style( 'core/separator', array(
+		'name'  => 'idt-kurz',
+		'label' => __( 'Kurzer Strich', 'idt' ),
+	) );
+}
+add_action( 'init', 'idt_register_core_block_styles' );
