@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.0.16' );
+define( 'IDT_VERSION', '2.0.17' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -118,6 +118,22 @@ add_action( 'customize_register', 'idt_customize_register' );
 function idt_assets() {
 	wp_enqueue_style( 'idt-style', get_stylesheet_uri(), array(), IDT_VERSION );
 	wp_enqueue_script( 'idt-scale', get_template_directory_uri() . '/assets/scale.js', array(), IDT_VERSION, true );
+
+	/* Such-Overlay (Lupe im Menüband) inkl. Live-Vorschau der Treffer. */
+	wp_enqueue_script( 'idt-search', get_template_directory_uri() . '/assets/search.js', array(), IDT_VERSION, true );
+	wp_localize_script( 'idt-search', 'idtSearch', array(
+		'endpoint' => esc_url_raw( rest_url( 'idt/v1/suche' ) ),
+		'minChars' => 2,
+		'i18n'     => array(
+			'open'    => __( 'Suche öffnen', 'idt' ),
+			'close'   => __( 'Suche schließen', 'idt' ),
+			'loading' => __( 'Suche läuft …', 'idt' ),
+			'error'   => __( 'Die Vorschau ist gerade nicht erreichbar — mit Eingabe geht es zur vollständigen Ergebnisseite.', 'idt' ),
+			/* translators: %s = Anzahl der Treffer */
+			'more'    => __( 'Alle %s Treffer anzeigen', 'idt' ),
+			'hits'    => __( 'Treffer', 'idt' ),
+		),
+	) );
 }
 add_action( 'wp_enqueue_scripts', 'idt_assets' );
 
@@ -139,6 +155,7 @@ add_action( 'enqueue_block_editor_assets', 'idt_editor_assets' );
 require get_template_directory() . '/inc/shortcodes.php';
 require get_template_directory() . '/inc/blocks.php';
 require get_template_directory() . '/inc/patterns.php';
+require get_template_directory() . '/inc/search.php';
 
 /* Demo-/Erstinhalte: nur im Dev-Stack vorhanden — das Production-Zip enthält
  * diese Datei bewusst nicht, damit eine Aktivierung auf einer bestehenden

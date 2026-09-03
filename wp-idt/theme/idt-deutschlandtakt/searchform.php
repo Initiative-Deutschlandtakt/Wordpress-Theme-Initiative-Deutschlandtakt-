@@ -1,7 +1,11 @@
 <?php
 /**
  * Suchformular im Markenstil (kompaktes Feld + Icon-Button).
- * Wird u. a. im Site-Header und über get_search_form() genutzt.
+ *
+ * Im Menüband steht seit v2.0.17 nur noch die Lupe, die das seitenfüllende
+ * Such-Overlay öffnet (inc/search.php). Dieses kompakte Formular bleibt für
+ * alles, was WordPress selbst über get_search_form() ausgibt — Widgets,
+ * Suchblock, Plugins.
  *
  * @package idt
  */
