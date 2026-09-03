@@ -415,6 +415,24 @@ function idt_sc_social( $atts ) {
 add_shortcode( 'social', 'idt_sc_social' );
 
 /**
+ * Social-Leiste — eine Reihe runder Social-Icons.
+ * Inhalt: eine Zeile je Icon, „Plattform | Link" (dieselbe Schreibweise wie
+ * bei [pillstack]):
+ *   [socialrow]
+ *   x | https://x.com/…
+ *   mastodon | https://…
+ *   [/socialrow]
+ */
+function idt_sc_socialrow( $atts, $content = '' ) {
+	$icons = '';
+	foreach ( (array) idt_parse_button_lines( $content ) as $line ) {
+		$icons .= idt_sc_social( array( 'platform' => $line[0], 'href' => $line[1] ) );
+	}
+	return '<div class="idt-socialrow">' . $icons . '</div>';
+}
+add_shortcode( 'socialrow', 'idt_sc_socialrow' );
+
+/**
  * Dynamische Beitragsübersicht als News-Karten-Reihe („Aus der Initiative").
  * Zeigt automatisch die neuesten Beiträge — dieselbe Darstellung wie auf der
  * Startseite, aber als wiederverwendbares Element für jede Seite. Mit tag=""

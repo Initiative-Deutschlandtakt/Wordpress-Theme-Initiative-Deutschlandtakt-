@@ -202,6 +202,10 @@ function idt_content_startseite() {
 	$klima = idt_page_url( 'deutschlandtakt-und-klimaschutz' );
 	$etapp = idt_page_url( 'in-etappen-zum-deutschlandtakt' );
 
+	/* Rahmen des Karten-Rasters aus einer Hand — s. idt_kartenraster_open(). */
+	$raster     = idt_kartenraster_open( '3' );
+	$rasterEnde = idt_kartenraster_close();
+
 	return <<<HTML
 <!-- wp:shortcode -->[splash]<!-- /wp:shortcode -->
 
@@ -223,13 +227,10 @@ function idt_content_startseite() {
 <!-- wp:shortcode -->[eyebrow]Schwerpunkte[/eyebrow]<!-- /wp:shortcode -->
 <!-- wp:heading {"level":2} --><h2>Worum es uns geht</h2><!-- /wp:heading -->
 
-<!-- wp:idt/kartenraster {"cols":"3"} -->
-<div class="idt-cards idt-cards--3">
-<!-- wp:idt/concept {"title":"Revolution der Planung","color":"violet","icon":"clock","href":"$rev","text":"Nicht die Politik gibt das Ziel vor — der Fahrplan wird zur Grundlage aller Infrastrukturentscheidungen."} /-->
+{$raster}<!-- wp:idt/concept {"title":"Revolution der Planung","color":"violet","icon":"clock","href":"$rev","text":"Nicht die Politik gibt das Ziel vor — der Fahrplan wird zur Grundlage aller Infrastrukturentscheidungen."} /-->
 <!-- wp:idt/concept {"title":"Klimaschutz","color":"cyan","icon":"netz","href":"$klima","text":"Der Deutschlandtakt verlagert Verkehr von der Straße auf die Schiene und spart so Energie, Rohstoffe und Fläche."} /-->
 <!-- wp:idt/concept {"title":"In Etappen","color":"yellow","icon":"rail","href":"$etapp","text":"Der Takt entsteht nicht über Nacht: ein realistischer Stufenplan führt Schritt für Schritt zum Ziel."} /-->
-</div>
-<!-- /wp:idt/kartenraster -->
+{$rasterEnde}
 
 <!-- wp:shortcode -->[einschub eyebrow="Das Vorbild" title="Die Schweiz fährt seit Jahrzehnten im Takt."]Wo es einen landesweiten Taktfahrplan gibt, legen die Menschen einen weit größeren Teil ihrer Wege mit öffentlichen Verkehrsmitteln zurück. Abgestimmte Angebote führen zu nachhaltig steigenden Fahrgastzahlen.
 
@@ -264,6 +265,10 @@ HTML;
 }
 
 function idt_content_revolution() {
+	/* Rahmen des Karten-Rasters aus einer Hand — s. idt_kartenraster_open(). */
+	$raster     = idt_kartenraster_open( '3' );
+	$rasterEnde = idt_kartenraster_close();
+
 	return <<<HTML
 <!-- wp:shortcode -->[lead]Der Deutschlandtakt ist mehr als ein Fahrplan — er ist eine Revolution der Planung. Statt von politischen Zielen auszugehen, wird der Fahrplan zur Grundlage aller Entscheidungen.[/lead]<!-- /wp:shortcode -->
 
@@ -279,13 +284,10 @@ function idt_content_revolution() {
 <!-- wp:shortcode -->[callout type="violet"]<strong>Kurz gesagt:</strong> Wir fragen zuerst, wann welche Züge fahren sollen — und leiten daraus ab, welche Strecken ausgebaut werden müssen, damit die Anschlüsse passen.[/callout]<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":2} --><h2>In drei Schritten gedacht</h2><!-- /wp:heading -->
-<!-- wp:idt/kartenraster {"cols":"3"} -->
-<div class="idt-cards idt-cards--3">
-<!-- wp:idt/concept {"title":"Erst der Fahrplan","color":"violet","icon":"clock","text":"Züge fahren jede Stunde – auf wichtigen Strecken halbstündlich – immer zur selben Minute. Leicht zu merken und verlässlich."} /-->
+{$raster}<!-- wp:idt/concept {"title":"Erst der Fahrplan","color":"violet","icon":"clock","text":"Züge fahren jede Stunde – auf wichtigen Strecken halbstündlich – immer zur selben Minute. Leicht zu merken und verlässlich."} /-->
 <!-- wp:idt/concept {"title":"Dann die Infrastruktur","color":"cyan","icon":"rail","text":"Aus dem Zielfahrplan wird abgeleitet, was gebaut werden muss. Engpässe werden gezielt aufgelöst statt teurer Einzelprojekte."} /-->
 <!-- wp:idt/concept {"title":"Anschluss im ganzen Land","color":"yellow","icon":"netz","text":"In Knotenbahnhöfen treffen sich die Linien und ermöglichen kurze, sichere Umstiege – bis zur entferntesten Regionalbuslinie."} /-->
-</div>
-<!-- /wp:idt/kartenraster -->
+{$rasterEnde}
 HTML;
 }
 
@@ -333,6 +335,10 @@ HTML;
 }
 
 function idt_content_stilelemente() {
+	/* Rahmen des Karten-Rasters aus einer Hand — s. idt_kartenraster_open(). */
+	$raster     = idt_kartenraster_open( '3' );
+	$rasterEnde = idt_kartenraster_close();
+
 	return <<<HTML
 <!-- wp:shortcode -->[lead]Diese Seite zeigt die spielerischen Stilelemente des Themes, mit denen sich Texte gestalten lassen. Alle Elemente stehen als Shortcodes zur Verfügung und folgen dem IDT-Design.[/lead]<!-- /wp:shortcode -->
 
@@ -371,13 +377,10 @@ function idt_content_stilelemente() {
 <!-- wp:paragraph --><p>Die folgenden Elemente sind aus dem Design-System übernommen und stehen jetzt im Editor bereit — auch als Block-Patterns unter der Kategorie <strong>Deutschlandtakt</strong>.</p><!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":2} --><h2>Konzept-Karten mit farbiger Oberkante</h2><!-- /wp:heading -->
-<!-- wp:idt/kartenraster {"cols":"3"} -->
-<div class="idt-cards idt-cards--3">
-<!-- wp:idt/concept {"title":"Erst der Fahrplan","color":"violet","icon":"clock","text":"Züge fahren jede Stunde, immer zur selben Minute – leicht zu merken und verlässlich."} /-->
+{$raster}<!-- wp:idt/concept {"title":"Erst der Fahrplan","color":"violet","icon":"clock","text":"Züge fahren jede Stunde, immer zur selben Minute – leicht zu merken und verlässlich."} /-->
 <!-- wp:idt/concept {"title":"Dann die Infrastruktur","color":"cyan","icon":"rail","text":"Aus dem Zielfahrplan wird abgeleitet, was gebaut werden muss."} /-->
 <!-- wp:idt/concept {"title":"Anschluss im ganzen Land","color":"yellow","icon":"netz","text":"In Knotenbahnhöfen treffen sich die Linien für kurze, sichere Umstiege."} /-->
-</div>
-<!-- /wp:idt/kartenraster -->
+{$rasterEnde}
 <!-- wp:paragraph --><p><code>[concept color="violet" icon="clock" title="…"]Text[/concept]</code> — Farben: violet/cyan/yellow, Icons: clock/rail/netz</p><!-- /wp:paragraph -->
 <!-- wp:paragraph --><p>Mehrere Karten gehören in ein <strong>Karten-Raster</strong> (Block „Karten-Raster“ bzw. <code>[cards cols="3"]…[/cards]</code>) — nur dort sind alle Karten gleich breit und gleich hoch.</p><!-- /wp:paragraph -->
 
