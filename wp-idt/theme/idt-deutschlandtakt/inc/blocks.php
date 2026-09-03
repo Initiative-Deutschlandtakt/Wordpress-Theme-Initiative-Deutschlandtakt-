@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /**
  * Block-Definitionen: Sidebar-Felder (für die UI) + Render (Shortcode-Reuse).
- * Feldtypen: text | textarea | select | toggle | range
+ * Feldtypen: text | textarea | select | toggle | range | color
  */
 function idt_blocks_config() {
 	return array(
@@ -197,6 +197,28 @@ function idt_blocks_config() {
 			),
 			'render'   => function ( $a ) { return idt_sc_einschub( array( 'eyebrow' => $a['eyebrow'], 'title' => $a['title'] ), $a['text'] ); },
 		),
+		'themenblock' => array(
+			'title'    => __( 'Themenblock mit Linkliste', 'idt' ),
+			'icon'     => 'excerpt-view',
+			'keywords' => array( 'themenblock', 'linkliste', 'links', 'bereich', 'farbe', 'dt' ),
+			'fields'   => array(
+				array( 'key' => 'bg', 'label' => __( 'Hintergrundfarbe', 'idt' ), 'type' => 'color', 'default' => '#00373C' ),
+				array( 'key' => 'eyebrow', 'label' => __( 'Eyebrow (Label, optional)', 'idt' ), 'type' => 'text', 'default' => 'Bereich 02 · Unsere Stimme' ),
+				array( 'key' => 'title', 'label' => __( 'Überschrift', 'idt' ), 'type' => 'text', 'default' => 'Unser Plan' ),
+				array( 'key' => 'lead', 'label' => __( 'Einleitung (optional)', 'idt' ), 'type' => 'textarea', 'default' => 'Wofür die Initiative eintritt, was im Weg steht, was jetzt ansteht.' ),
+				array( 'key' => 'text', 'label' => __( 'Fließtext (optional)', 'idt' ), 'type' => 'textarea', 'default' => '' ),
+				array( 'key' => 'links', 'label' => __( 'Links — eine Zeile je Eintrag: Beschriftung | Link | Beschreibung', 'idt' ), 'type' => 'textarea', 'default' => "Die Vision | # | Wie ein verlässliches Angebot 2035 aussieht\nWo es hakt | # | Engpässe, Fristen und offene Entscheidungen\nPositionen | # | Unsere Stellungnahmen zum Umsetzungsprozess" ),
+			),
+			'render'   => function ( $a ) {
+				return idt_sc_themenblock( array(
+					'bg'      => $a['bg'],
+					'eyebrow' => $a['eyebrow'],
+					'title'   => $a['title'],
+					'lead'    => $a['lead'],
+					'text'    => $a['text'],
+				), $a['links'] );
+			},
+		),
 		'newscard' => array(
 			'title'    => __( 'News-Karte', 'idt' ),
 			'icon'     => 'megaphone',
@@ -279,6 +301,13 @@ function idt_register_blocks() {
 	$js = array();
 	foreach ( $defs as $name => $def ) {
 		$attributes  = idt_block_attributes( $def['fields'] );
+		/* Farbfelder bekommen die Markenpalette als Vorschläge mit (freie
+		 * Farbwahl bleibt über den Farbwähler daneben möglich). */
+		foreach ( $def['fields'] as $i => $field ) {
+			if ( 'color' === $field['type'] ) {
+				$def['fields'][ $i ]['palette'] = idt_brand_palette();
+			}
+		}
 		$js[ $name ] = array(
 			'title'      => $def['title'],
 			'icon'       => $def['icon'],

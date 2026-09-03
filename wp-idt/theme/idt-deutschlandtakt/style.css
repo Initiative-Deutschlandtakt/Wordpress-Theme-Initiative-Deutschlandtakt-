@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.18
+Version: 2.0.19
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -966,6 +966,87 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-einschub .idt-stat__label { color: var(--idt-paper); }
 .idt-einschub .idt-stat__num { font-size: var(--fs-display-xl); }
 .idt-einschub > :last-child { margin-bottom: 0; }
+
+/* Themenblock — farbige Fläche mit Überschrift, Texten und Linkliste.
+   Die Hintergrundfarbe kommt als --tb-bg aus dem Shortcode (Markenfarbe oder
+   freier Hex-Wert). Schrift-, Linien- und Akzentfarben leiten sich aus dem
+   gewählten Schema ab (--dark = helle Schrift, --light = dunkle Schrift);
+   welches greift, entscheidet serverseitig der Kontrast der Fläche. */
+.idt-themenblock {
+  --tb-bg: var(--idt-ink);
+  --tb-pad: clamp(24px, 4vw, 48px);
+  --tb-text: var(--idt-paper);
+  /* Nebentexte, Linien und Akzente sind bewusst durchscheinende Abstufungen
+     der Schriftfarbe statt fester Töne: So bleibt der Kontrast auch bei einer
+     frei gewählten Hintergrundfarbe erhalten. */
+  --tb-muted: rgba(255, 246, 240, .74);
+  --tb-eyebrow: var(--idt-cyan);
+  --tb-line: rgba(255, 246, 240, .18);
+  --tb-rail: rgba(255, 246, 240, .38);
+  --tb-hover: rgba(255, 246, 240, .07);
+  background: var(--tb-bg); color: var(--tb-text);
+  border-radius: var(--radius-lg); padding: var(--tb-pad);
+  margin: var(--space-7) 0; overflow: hidden;
+}
+.idt-themenblock--light {
+  --tb-text: var(--idt-ink);
+  --tb-muted: rgba(0, 55, 60, .72);
+  --tb-eyebrow: var(--idt-violet);
+  --tb-line: rgba(0, 55, 60, .16);
+  --tb-rail: rgba(0, 55, 60, .30);
+  --tb-hover: rgba(0, 55, 60, .05);
+}
+.idt-themenblock__eyebrow {
+  display: block; font-family: var(--font-mono); font-size: var(--fs-xs);
+  text-transform: uppercase; letter-spacing: var(--ls-label);
+  color: var(--tb-eyebrow); margin-bottom: var(--space-4);
+}
+.idt-themenblock__title {
+  color: var(--tb-text); font-weight: var(--fw-extrabold);
+  font-size: clamp(28px, 3.4vw, 44px); letter-spacing: var(--ls-tight);
+  margin: 0 0 var(--space-4);
+}
+.idt-themenblock__lead {
+  color: var(--tb-text); font-size: var(--fs-lead); line-height: 1.45;
+  max-width: 30em; margin: 0 0 var(--space-4);
+}
+.idt-themenblock__text { color: var(--tb-muted); max-width: 34em; }
+.idt-themenblock__text p { color: inherit; margin: 0 0 var(--space-3); }
+.idt-themenblock__text > :last-child { margin-bottom: 0; }
+.idt-themenblock__head > :last-child { margin-bottom: 0; }
+
+/* Linkliste — beliebig lang, randlos bis an die Kanten der Fläche: die
+   negativen Ränder heben das Innenmaß (--tb-pad) wieder auf, die Zeilen
+   bringen es als eigenes Innenmaß zurück. Links begleitet eine senkrechte
+   Akzentleiste die ganze Liste. */
+.idt-themenblock__list {
+  position: relative; padding-left: 8px;
+  margin: clamp(32px, 6vw, 64px) calc(var(--tb-pad) * -1) calc(var(--tb-pad) * -1);
+}
+.idt-themenblock__list::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--tb-rail);
+}
+.idt-themenblock__row {
+  display: flex; align-items: center; gap: var(--space-5);
+  padding: clamp(16px, 2.2vw, 24px) var(--tb-pad);
+  border-top: var(--bw-hair) solid var(--tb-line);
+  color: var(--tb-text); text-decoration: none;
+  transition: background var(--dur-base) var(--ease-out);
+}
+.idt-themenblock__row:hover { background: var(--tb-hover); color: var(--tb-text); text-decoration: none; }
+.idt-themenblock__row:focus-visible { outline: var(--bw-frame) solid var(--tb-text); outline-offset: -4px; }
+.idt-themenblock__rowtext { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.idt-themenblock__rowtitle {
+  font-family: var(--font-display); font-weight: var(--fw-bold);
+  font-size: var(--fs-h3); line-height: var(--lh-snug); letter-spacing: var(--ls-tight);
+}
+.idt-themenblock__rowdesc { font-size: var(--fs-sm); color: var(--tb-muted); line-height: 1.4; }
+.idt-themenblock__arrow {
+  margin-left: auto; flex: 0 0 auto; display: inline-flex; color: var(--tb-text);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.idt-themenblock__row:hover .idt-themenblock__arrow { transform: translateX(4px); }
 
 /* News-Karte */
 .idt-newscard {

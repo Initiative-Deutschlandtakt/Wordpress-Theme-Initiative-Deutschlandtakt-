@@ -10,6 +10,7 @@
  *   [pill href="/mitmachen"]Mitglied werden[/pill]
  *   [callout type="cyan"]Wichtiger Hinweis …[/callout]
  *   [diagonal]Großer Aussage-Block auf dunklem Grund.[/diagonal]
+ *   [themenblock bg="ink" title="Unser Plan"]Die Vision | /vision/ | Kurzbeschreibung[/themenblock]
  *
  * @package idt
  */
@@ -384,6 +385,162 @@ function idt_sc_einschub( $atts, $content = '' ) {
 	return '<div class="idt-einschub">' . $eb . $h . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
 }
 add_shortcode( 'einschub', 'idt_sc_einschub' );
+
+/* =========================================================================
+ * Themenblock — farbige Fläche mit Überschrift und Linkliste
+ * ====================================================================== */
+
+/**
+ * Farbangabe normalisieren: Markenname („ink", „violet", …) oder Hex-Wert
+ * (#RGB / #RRGGBB) → #RRGGBB. Unbekannte Werte ergeben einen leeren String,
+ * damit der Aufrufer auf seine Vorgabefarbe zurückfallen kann.
+ */
+function idt_color_hex( $value ) {
+	$named = array(
+		'ink'         => '#00373C',
+		'paper'       => '#FFF6F0',
+		'paper-2'     => '#FBEDE6',
+		'paper-3'     => '#F3E2DA',
+		'violet'      => '#6E50FA',
+		'cyan'        => '#00DCFA',
+		'yellow'      => '#FFFF96',
+		'gray'        => '#585857',
+		'violet-soft' => '#E8E3FF',
+		'cyan-soft'   => '#D6F8FF',
+		'yellow-soft' => '#FFFDDB',
+	);
+	$value = strtolower( trim( (string) $value ) );
+	if ( isset( $named[ $value ] ) ) {
+		return $named[ $value ];
+	}
+	if ( preg_match( '/^#?([0-9a-f]{3}|[0-9a-f]{6})$/', $value, $m ) ) {
+		$hex = $m[1];
+		if ( 3 === strlen( $hex ) ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+		return '#' . $hex;
+	}
+	return '';
+}
+
+/** Relative Leuchtdichte (WCAG 2.1) einer #RRGGBB-Farbe. */
+function idt_color_luminance( $hex ) {
+	$lin = array();
+	foreach ( array( 1, 3, 5 ) as $offset ) {
+		$channel = hexdec( substr( $hex, $offset, 2 ) ) / 255;
+		$lin[]   = ( $channel <= 0.03928 ) ? $channel / 12.92 : pow( ( $channel + 0.055 ) / 1.055, 2.4 );
+	}
+	return 0.2126 * $lin[0] + 0.7152 * $lin[1] + 0.0722 * $lin[2];
+}
+
+/**
+ * Braucht diese Fläche helle Schrift? Verglichen wird der Kontrast der Farbe
+ * zu Papier (hell) und zu Tinte (dunkel); es gewinnt die Schriftfarbe mit dem
+ * besseren Kontrast. So stimmt die Lesbarkeit auch bei frei gewählten Farben.
+ */
+function idt_surface_is_dark( $hex ) {
+	$contrast = function ( $a, $b ) {
+		return ( max( $a, $b ) + 0.05 ) / ( min( $a, $b ) + 0.05 );
+	};
+	$surface = idt_color_luminance( $hex );
+	return $contrast( $surface, idt_color_luminance( '#FFF6F0' ) ) >= $contrast( $surface, idt_color_luminance( '#00373C' ) );
+}
+
+/**
+ * Zerlegt „Beschriftung | Link | Beschreibung"-Zeilen in Link-Datensätze.
+ * Link und Beschreibung sind optional; leere Zeilen werden übersprungen.
+ */
+function idt_parse_link_lines( $text ) {
+	$links = array();
+	foreach ( preg_split( '/\r\n|\r|\n/', (string) $text ) as $line ) {
+		$line = trim( $line );
+		if ( '' === $line ) { continue; }
+		$parts = array_map( 'trim', explode( '|', $line, 3 ) );
+		$links[] = array(
+			'label' => $parts[0],
+			'href'  => ( isset( $parts[1] ) && '' !== $parts[1] ) ? $parts[1] : '#',
+			'desc'  => isset( $parts[2] ) ? $parts[2] : '',
+		);
+	}
+	return $links;
+}
+
+/**
+ * Themenblock — farbige Fläche mit optionalem Eyebrow, Überschrift, Texten
+ * und einer beliebig langen Linkliste.
+ *
+ *   [themenblock bg="ink" eyebrow="Bereich 02 · Unsere Stimme" title="Unser Plan"
+ *                lead="Wofür die Initiative eintritt."]
+ *   Freier Fließtext (optional, mehrere Absätze möglich).
+ *   ---
+ *   Die Vision | /vision/ | Wie ein verlässliches Angebot 2035 aussieht
+ *   Wo es hakt | /engpaesse/ | Engpässe, Fristen und offene Entscheidungen
+ *   [/themenblock]
+ *
+ * Alles vor der Trennzeile („---") ist Fließtext, alles danach die Linkliste
+ * („Beschriftung | Link | Beschreibung", eine Zeile je Eintrag). Ohne
+ * Trennzeile gilt der ganze Inhalt als Linkliste.
+ *
+ * bg nimmt einen Markennamen (ink, paper, paper-2, violet, cyan, yellow,
+ * gray, violet-soft, cyan-soft, yellow-soft) oder einen freien Hex-Wert;
+ * die Schriftfarbe (hell/dunkel) ergibt sich automatisch aus dem Kontrast.
+ */
+function idt_sc_themenblock( $atts, $content = '' ) {
+	$atts = shortcode_atts( array(
+		'bg'      => 'ink',
+		'eyebrow' => '',
+		'title'   => '',
+		'lead'    => '',
+		'text'    => '',
+		'level'   => 2,
+	), $atts, 'themenblock' );
+
+	/* Inhalt in Fließtext und Linkliste trennen (wpautop-Reste zuvor entfernen,
+	 * sonst stecken <p>/<br> in den Zeilen der Liste). */
+	$content = idt_strip_autop( $content );
+	$parts   = preg_split( '/^\s*-{3,}\s*$/m', $content, 2 );
+	$body    = ( count( $parts ) > 1 ) ? $parts[0] : '';
+	$lines   = ( count( $parts ) > 1 ) ? $parts[1] : $parts[0];
+	$body    = trim( $atts['text'] . "\n\n" . $body );
+
+	$hex   = idt_color_hex( $atts['bg'] );
+	if ( '' === $hex ) { $hex = '#00373C'; }
+	$class = 'idt-themenblock idt-themenblock--' . ( idt_surface_is_dark( $hex ) ? 'dark' : 'light' );
+	$level = min( 4, max( 2, (int) $atts['level'] ) );
+
+	$out  = '<div class="' . esc_attr( $class ) . '" style="--tb-bg:' . esc_attr( $hex ) . '">';
+	$out .= '<div class="idt-themenblock__head">';
+	if ( '' !== $atts['eyebrow'] ) {
+		$out .= '<span class="idt-themenblock__eyebrow">' . esc_html( $atts['eyebrow'] ) . '</span>';
+	}
+	if ( '' !== $atts['title'] ) {
+		$out .= '<h' . $level . ' class="idt-themenblock__title">' . esc_html( $atts['title'] ) . '</h' . $level . '>';
+	}
+	if ( '' !== $atts['lead'] ) {
+		$out .= '<p class="idt-themenblock__lead">' . wp_kses_post( do_shortcode( $atts['lead'] ) ) . '</p>';
+	}
+	if ( '' !== $body ) {
+		$out .= '<div class="idt-themenblock__text">' . wp_kses_post( do_shortcode( wpautop( $body ) ) ) . '</div>';
+	}
+	$out .= '</div>';
+
+	$links = idt_parse_link_lines( $lines );
+	if ( $links ) {
+		$label = $atts['title'] ? $atts['title'] : __( 'Weiterführende Links', 'idt' );
+		$out  .= '<nav class="idt-themenblock__list" aria-label="' . esc_attr( $label ) . '">';
+		foreach ( $links as $link ) {
+			$desc = '' !== $link['desc'] ? '<span class="idt-themenblock__rowdesc">' . esc_html( $link['desc'] ) . '</span>' : '';
+			$out .= '<a class="idt-themenblock__row" href="' . esc_url( $link['href'] ) . '">' .
+				'<span class="idt-themenblock__rowtext">' .
+				'<span class="idt-themenblock__rowtitle">' . esc_html( $link['label'] ) . '</span>' . $desc .
+				'</span><span class="idt-themenblock__arrow">' . idt_icon( 'arrow', 20 ) . '</span></a>';
+		}
+		$out .= '</nav>';
+	}
+
+	return $out . '</div>';
+}
+add_shortcode( 'themenblock', 'idt_sc_themenblock' );
 
 /**
  * News-Karte („Aus der Initiative").

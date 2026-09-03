@@ -7,11 +7,31 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.0.18' );
+define( 'IDT_VERSION', '2.0.19' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
  * ---------------------------------------------------------------------- */
+/**
+ * Die IDT-Markenfarben als Editor-Palette (Name / Slug / Hex). Genutzt für die
+ * Farbvorschläge des Editors (add_theme_support) und für die Farbwähler der
+ * eigenen Blöcke (inc/blocks.php) — eine Quelle, überall dieselben Farben.
+ */
+function idt_brand_palette() {
+	return array(
+		array( 'name' => __( 'Papier', 'idt' ),        'slug' => 'idt-paper',       'color' => '#FFF6F0' ),
+		array( 'name' => __( 'Papier warm', 'idt' ),   'slug' => 'idt-paper-2',     'color' => '#FBEDE6' ),
+		array( 'name' => __( 'Tinte (Teal)', 'idt' ),  'slug' => 'idt-ink',         'color' => '#00373C' ),
+		array( 'name' => __( 'Grau', 'idt' ),          'slug' => 'idt-gray',        'color' => '#585857' ),
+		array( 'name' => __( 'Violett', 'idt' ),       'slug' => 'idt-violet',      'color' => '#6E50FA' ),
+		array( 'name' => __( 'Cyan', 'idt' ),          'slug' => 'idt-cyan',        'color' => '#00DCFA' ),
+		array( 'name' => __( 'Gelb', 'idt' ),          'slug' => 'idt-yellow',      'color' => '#FFFF96' ),
+		array( 'name' => __( 'Violett hell', 'idt' ),  'slug' => 'idt-violet-soft', 'color' => '#E8E3FF' ),
+		array( 'name' => __( 'Cyan hell', 'idt' ),     'slug' => 'idt-cyan-soft',   'color' => '#D6F8FF' ),
+		array( 'name' => __( 'Gelb hell', 'idt' ),     'slug' => 'idt-yellow-soft', 'color' => '#FFFDDB' ),
+	);
+}
+
 function idt_setup() {
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
@@ -38,18 +58,7 @@ function idt_setup() {
 
 	/* Farbvorschläge im Editor = IDT-Markenfarben (ersetzt die WP-Standard-
 	 * palette). Die zugehörigen .has-…-color-Klassen stehen in style.css. */
-	add_theme_support( 'editor-color-palette', array(
-		array( 'name' => __( 'Papier', 'idt' ),        'slug' => 'idt-paper',       'color' => '#FFF6F0' ),
-		array( 'name' => __( 'Papier warm', 'idt' ),   'slug' => 'idt-paper-2',     'color' => '#FBEDE6' ),
-		array( 'name' => __( 'Tinte (Teal)', 'idt' ),  'slug' => 'idt-ink',         'color' => '#00373C' ),
-		array( 'name' => __( 'Grau', 'idt' ),          'slug' => 'idt-gray',        'color' => '#585857' ),
-		array( 'name' => __( 'Violett', 'idt' ),       'slug' => 'idt-violet',      'color' => '#6E50FA' ),
-		array( 'name' => __( 'Cyan', 'idt' ),          'slug' => 'idt-cyan',        'color' => '#00DCFA' ),
-		array( 'name' => __( 'Gelb', 'idt' ),          'slug' => 'idt-yellow',      'color' => '#FFFF96' ),
-		array( 'name' => __( 'Violett hell', 'idt' ),  'slug' => 'idt-violet-soft', 'color' => '#E8E3FF' ),
-		array( 'name' => __( 'Cyan hell', 'idt' ),     'slug' => 'idt-cyan-soft',   'color' => '#D6F8FF' ),
-		array( 'name' => __( 'Gelb hell', 'idt' ),     'slug' => 'idt-yellow-soft', 'color' => '#FFFDDB' ),
-	) );
+	add_theme_support( 'editor-color-palette', idt_brand_palette() );
 
 	/* Verlaufs-Vorschläge ebenso markenkonform (ersetzt die WP-Standards). */
 	add_theme_support( 'editor-gradient-presets', array(

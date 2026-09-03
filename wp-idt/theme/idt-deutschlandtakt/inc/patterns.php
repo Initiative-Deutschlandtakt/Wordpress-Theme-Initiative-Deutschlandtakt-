@@ -77,6 +77,16 @@ function idt_register_patterns() {
 			. "[/einschub]<!-- /wp:shortcode -->",
 	) );
 
+	register_block_pattern( 'idt/themenblock', array(
+		'title'       => __( 'Themenblock mit Linkliste', 'idt' ),
+		'description' => __( 'Farbige Fläche mit Eyebrow, Überschrift, Einleitung und einer beliebig langen Linkliste — der Einstieg in einen Themenbereich. Hintergrundfarbe in der Seitenleiste frei wählbar; die Schriftfarbe stellt sich passend zum Kontrast ein.', 'idt' ),
+		'categories'  => array( 'idt' ),
+		'content'     => "<!-- wp:idt/themenblock {\"bg\":\"#00373C\",\"eyebrow\":\"Bereich 02 · Unsere Stimme\",\"title\":\"Unser Plan\","
+			. "\"lead\":\"Wofür die Initiative eintritt, was im Weg steht, was jetzt ansteht.\","
+			. "\"text\":\"Kein Konkurrenzkonzept, sondern Qualitätssicherung am laufenden Prozess: wir prüfen, benennen Lücken und schlagen vor, was die Etappe 2035 noch braucht.\","
+			. "\"links\":\"Die Vision | # | Wie ein verlässliches Angebot 2035 aussieht\\nWo es hakt | # | Engpässe, Fristen und offene Entscheidungen\\nPositionen | # | Unsere Stellungnahmen zum Umsetzungsprozess\\nAusblick | # | Was in dieser Legislaturperiode ansteht\"} /-->",
+	) );
+
 	register_block_pattern( 'idt/social-links', array(
 		'title'      => __( 'Social-Links (Icon-Reihe)', 'idt' ),
 		'description' => __( 'Reihe runder Social-Icon-Buttons. Platzhalter-Links (#) — nach Einfügen je Icon über die Seitenleiste die echte Profil-URL eintragen.', 'idt' ),

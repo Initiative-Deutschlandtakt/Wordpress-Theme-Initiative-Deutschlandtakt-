@@ -41,6 +41,18 @@
 		if ( 'range' === field.type ) {
 			return el( C.RangeControl, { key: key, label: field.label, value: attrs[ key ], min: field.min, max: field.max, onChange: onChange } );
 		}
+		/* Farbwähler: Markenfarben als Vorschläge, freie Farbwahl bleibt möglich.
+		 * Leert der Editor das Feld, greift wieder die Vorgabefarbe des Feldes. */
+		if ( 'color' === field.type ) {
+			return el( C.BaseControl, { key: key, label: field.label },
+				el( C.ColorPalette, {
+					colors:    field.palette || [],
+					value:     attrs[ key ],
+					clearable: false,
+					onChange:  function ( value ) { onChange( value || field.default ); }
+				} )
+			);
+		}
 		return el( C.TextControl, { key: key, label: field.label, value: attrs[ key ], onChange: onChange } );
 	}
 
