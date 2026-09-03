@@ -90,6 +90,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[card]…[/card]` | Karte mit Rahmen und Schatten |
 | `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Violett→Cyan-Rahmen), `arrow="true"` |
 | `[concept color="…" icon="…" title="…" href="…"]…[/concept]` | Konzept-Karte; mit `href` klickbar |
+| `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
 
 ### Im Editor bearbeiten statt tippen
@@ -99,21 +100,40 @@ Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 **Block** oder eine **Inline-Auszeichnung** ist:
 
 **Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
-Callout, Diagonal, Karte, Konzept-Karte, Einschub, News-Karte, Beiträge-
-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
+Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, News-Karte,
+Beiträge-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
 in der Seitenleiste (Text, Auswahl, Schalter, Schieberegler) mit **Live-Vorschau**.
 Technisch sind das dynamische Blöcke (`inc/blocks.php` + `assets/blocks.js`), die
 serverseitig die bestehenden Shortcode-Funktionen rendern. Fertige **Kompositionen**
-(Kennzahlen-Reihe, Konzept-Karten, News-Karten, dunkler Einschub …) liegen im
-Inserter unter Tab **Patterns** → **Deutschlandtakt**.
+(Kennzahlen-Reihe, Konzept-Karten, Themen-Karten, News-Karten, dunkler Einschub …)
+liegen im Inserter unter Tab **Patterns** → **Deutschlandtakt**.
 
 **Inline-Auszeichnungen** (Marker, Eyebrow-Label, Tag): Text markieren und in
 der Formatierungsleiste über das **„▾ Weitere"-Menü** anwenden — wie Fett oder
 Kursiv. Marker gibt es in Gelb, Cyan und Violett. Diese Formate erzeugen direkt
 das fertige HTML (kein Shortcode) und sind dank `add_editor_style` schon im
 Editor sichtbar. Registriert in `assets/editor-formats.js`.
+
+### Mehrere Karten nebeneinander: das Karten-Raster
+
+Einzeln eingefügte Karten behalten jede ihre eigene Breite und Höhe — nebeneinander
+gestellt wirken sie dadurch ungleich. Für Karten-Reihen gibt es deshalb den Block
+**Karten-Raster** (Inserter → **Deutschlandtakt**, oder `/Raster`): ein Container,
+in den die Karten mit `+` eingesetzt werden. Alle Karten darin sind gleich breit
+und gleich hoch, das Raster bricht auf schmalen Bildschirmen automatisch um
+(Desktop 2/3/4 Spalten wählbar, Tablet zwei, Handy eine). Der frühere Weg über
+den **Spalten**-Block ist dafür nicht mehr nötig.
+
+Als Shortcode entspricht das `[cards cols="3"] … [/cards]` um die Karten herum.
+Fertig bestückt gibt es das Raster als Patterns **Konzept-Karten** (drei Karten
+mit Icon und farbiger Oberkante) und **Themen-Karten** (vier Einstiegskarten
+ohne Icon).
+
+Damit im klassischen Editor kein leerer Absatz um das Raster entsteht, sollte
+der Shortcode allein in seinem Shortcode-Block stehen. Im Block-Editor stellt
+sich die Frage nicht — dort wird der Inhalt nicht durch `wpautop` geschickt.
 
 ### Buttons
 

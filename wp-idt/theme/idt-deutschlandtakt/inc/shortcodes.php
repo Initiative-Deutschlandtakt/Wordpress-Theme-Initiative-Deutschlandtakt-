@@ -98,6 +98,34 @@ function idt_sc_diagonal( $atts, $content = '' ) {
 }
 add_shortcode( 'diagonal', 'idt_sc_diagonal' );
 
+/**
+ * Entfernt die Absatz-/Umbruch-Reste, die wpautop vor dem Shortcode-Lauf
+ * zwischen die Karten eines Container-Shortcodes gesetzt hat. Ohne das
+ * entstünden im Raster leere Zellen aus <p></p>.
+ */
+function idt_strip_autop( $content ) {
+	$content = preg_replace( '#<br\s*/?>#', '', (string) $content );
+	$content = preg_replace( '#</?p>#', "\n", $content );
+	return $content;
+}
+
+/**
+ * Karten-Raster — Container, der mehrere Karten in ein gleichmäßiges Raster
+ * legt (gleiche Breiten, gleiche Höhen, automatischer Umbruch). Ohne ihn
+ * behält jede Karte ihre eigene Größe.
+ *   [cards cols="3"]
+ *   [concept color="ink" title="Die Idee"]Jede Stunde zur selben Minute.[/concept]
+ *   [concept color="ink" title="Akteure"]Wer entscheidet was.[/concept]
+ *   [/cards]
+ * cols: 2 | 3 | 4 | auto (so viele je Zeile, wie bei 280px Breite passen)
+ */
+function idt_sc_cards( $atts, $content = '' ) {
+	$atts = shortcode_atts( array( 'cols' => '3' ), $atts, 'cards' );
+	$cols = in_array( (string) $atts['cols'], array( '2', '3', '4', 'auto' ), true ) ? (string) $atts['cols'] : '3';
+	return '<div class="idt-cards idt-cards--' . esc_attr( $cols ) . '">' . do_shortcode( idt_strip_autop( $content ) ) . '</div>';
+}
+add_shortcode( 'cards', 'idt_sc_cards' );
+
 /** Karte. */
 function idt_sc_card( $atts, $content = '' ) {
 	return '<div class="idt-card">' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';

@@ -46,13 +46,26 @@ function idt_register_patterns() {
 	/* --- Lieblingselemente aus der Example Landing Page --- */
 
 	register_block_pattern( 'idt/konzept-karten', array(
-		'title'      => __( 'Konzept-Karten (farbige Oberkante)', 'idt' ),
-		'categories' => array( 'idt' ),
-		'content'    => "<!-- wp:columns -->\n<div class=\"wp-block-columns\">"
-			. "<!-- wp:column --><div class=\"wp-block-column\"><!-- wp:shortcode -->[concept color=\"violet\" icon=\"clock\" title=\"Erst der Fahrplan\"]Züge fahren jede Stunde – auf wichtigen Strecken halbstündlich – immer zur selben Minute. Leicht zu merken und verlässlich.[/concept]<!-- /wp:shortcode --></div><!-- /wp:column -->"
-			. "<!-- wp:column --><div class=\"wp-block-column\"><!-- wp:shortcode -->[concept color=\"cyan\" icon=\"rail\" title=\"Dann die Infrastruktur\"]Aus dem Zielfahrplan wird abgeleitet, was gebaut werden muss. Engpässe werden gezielt aufgelöst statt teurer Einzelprojekte.[/concept]<!-- /wp:shortcode --></div><!-- /wp:column -->"
-			. "<!-- wp:column --><div class=\"wp-block-column\"><!-- wp:shortcode -->[concept color=\"yellow\" icon=\"netz\" title=\"Anschluss im ganzen Land\"]In Knotenbahnhöfen treffen sich die Linien und ermöglichen kurze, sichere Umstiege – bis zur entferntesten Regionalbuslinie.[/concept]<!-- /wp:shortcode --></div><!-- /wp:column -->"
-			. "</div>\n<!-- /wp:columns -->",
+		'title'       => __( 'Konzept-Karten (Raster, farbige Oberkante)', 'idt' ),
+		'description' => __( 'Drei Konzept-Karten in einem Karten-Raster: gleiche Breite, gleiche Höhe, automatischer Umbruch auf schmalen Bildschirmen.', 'idt' ),
+		'categories'  => array( 'idt' ),
+		'content'     => "<!-- wp:idt/kartenraster {\"cols\":\"3\"} -->\n<div class=\"idt-cards idt-cards--3\">"
+			. "<!-- wp:idt/concept {\"title\":\"Erst der Fahrplan\",\"color\":\"violet\",\"icon\":\"clock\",\"text\":\"Züge fahren jede Stunde – auf wichtigen Strecken halbstündlich – immer zur selben Minute. Leicht zu merken und verlässlich.\"} /-->\n"
+			. "<!-- wp:idt/concept {\"title\":\"Dann die Infrastruktur\",\"color\":\"cyan\",\"icon\":\"rail\",\"text\":\"Aus dem Zielfahrplan wird abgeleitet, was gebaut werden muss. Engpässe werden gezielt aufgelöst statt teurer Einzelprojekte.\"} /-->\n"
+			. "<!-- wp:idt/concept {\"title\":\"Anschluss im ganzen Land\",\"color\":\"yellow\",\"icon\":\"netz\",\"text\":\"In Knotenbahnhöfen treffen sich die Linien und ermöglichen kurze, sichere Umstiege – bis zur entferntesten Regionalbuslinie.\"} /-->\n"
+			. "</div>\n<!-- /wp:idt/kartenraster -->",
+	) );
+
+	register_block_pattern( 'idt/themen-karten', array(
+		'title'       => __( 'Themen-Karten (Einstiegs-Raster)', 'idt' ),
+		'description' => __( 'Vier gleich große Einstiegskarten ohne Icon (Oberkante in Tinte) — der Einstieg in ein Thema, z. B. Idee, Geschichte, Akteure, Fragen. Karten mit Link werden ganzflächig klickbar.', 'idt' ),
+		'categories'  => array( 'idt' ),
+		'content'     => "<!-- wp:idt/kartenraster {\"cols\":\"3\"} -->\n<div class=\"idt-cards idt-cards--3\">"
+			. "<!-- wp:idt/concept {\"title\":\"Die Idee\",\"color\":\"ink\",\"icon\":\"\",\"href\":\"\",\"text\":\"Jede Stunde zur selben Minute — das Prinzip in fünf Minuten Lesezeit.\"} /-->\n"
+			. "<!-- wp:idt/concept {\"title\":\"Geschichte des Deutschlandtakts\",\"color\":\"ink\",\"icon\":\"\",\"href\":\"\",\"text\":\"Von der Schweizer Vorlage zum Koalitionsvertrag und zum Zielfahrplan.\"} /-->\n"
+			. "<!-- wp:idt/concept {\"title\":\"Akteure\",\"color\":\"ink\",\"icon\":\"\",\"href\":\"\",\"text\":\"Ministerium, Bundestag, Länder, DB InfraGO, Aufgabenträger — wer entscheidet was.\"} /-->\n"
+			. "<!-- wp:idt/concept {\"title\":\"Häufige Fragen\",\"color\":\"ink\",\"icon\":\"\",\"href\":\"\",\"text\":\"Kostet das mehr? Kommt es pünktlich? Was heißt das für meine Region?\"} /-->\n"
+			. "</div>\n<!-- /wp:idt/kartenraster -->",
 	) );
 
 	register_block_pattern( 'idt/dunkler-einschub', array(
@@ -79,11 +92,11 @@ function idt_register_patterns() {
 		'categories' => array( 'idt' ),
 		'content'    => "<!-- wp:shortcode -->[eyebrow]Aktuell[/eyebrow]<!-- /wp:shortcode -->\n"
 			. "<!-- wp:heading {\"level\":2} --><h2>Aus der Initiative</h2><!-- /wp:heading -->\n"
-			. "<!-- wp:columns -->\n<div class=\"wp-block-columns\">"
-			. "<!-- wp:column --><div class=\"wp-block-column\"><!-- wp:shortcode -->[newscard tag=\"Stellungnahme\" color=\"violet\" date=\"12.02.2026\" href=\"#\"]Neuberechnung des Deutschlandtakts? Die Initiative widerspricht[/newscard]<!-- /wp:shortcode --></div><!-- /wp:column -->"
-			. "<!-- wp:column --><div class=\"wp-block-column\"><!-- wp:shortcode -->[newscard tag=\"Gesetzgebung\" color=\"cyan\" date=\"24.11.2025\" href=\"#\"]Agenda für zufriedene Kunden auf der Schiene[/newscard]<!-- /wp:shortcode --></div><!-- /wp:column -->"
-			. "<!-- wp:column --><div class=\"wp-block-column\"><!-- wp:shortcode -->[newscard tag=\"Prognose\" color=\"yellow\" date=\"24.10.2025\" href=\"#\"]Verkehrsprognose 2040 bestätigt Wirkung des Deutschlandtakts[/newscard]<!-- /wp:shortcode --></div><!-- /wp:column -->"
-			. "</div>\n<!-- /wp:columns -->",
+			. "<!-- wp:idt/kartenraster {\"cols\":\"3\"} -->\n<div class=\"idt-cards idt-cards--3\">"
+			. "<!-- wp:idt/newscard {\"text\":\"Neuberechnung des Deutschlandtakts? Die Initiative widerspricht\",\"tag\":\"Stellungnahme\",\"color\":\"violet\",\"date\":\"12.02.2026\",\"href\":\"#\"} /-->\n"
+			. "<!-- wp:idt/newscard {\"text\":\"Agenda für zufriedene Kunden auf der Schiene\",\"tag\":\"Gesetzgebung\",\"color\":\"cyan\",\"date\":\"24.11.2025\",\"href\":\"#\"} /-->\n"
+			. "<!-- wp:idt/newscard {\"text\":\"Verkehrsprognose 2040 bestätigt Wirkung des Deutschlandtakts\",\"tag\":\"Prognose\",\"color\":\"yellow\",\"date\":\"24.10.2025\",\"href\":\"#\"} /-->\n"
+			. "</div>\n<!-- /wp:idt/kartenraster -->",
 	) );
 
 }

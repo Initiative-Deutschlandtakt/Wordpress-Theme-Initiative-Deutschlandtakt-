@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.16
+Version: 2.0.17
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -767,10 +767,36 @@ blockquote {
 .idt-concept h3 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); margin: 0 0 10px; }
 .idt-concept__body > :last-child { margin-bottom: 0; }
 .idt-concept__body p { margin: 0 0 .6em; font-size: var(--fs-body); line-height: var(--lh-normal); }
+/* Im Karten-Raster füllt die Karte die Zelle, der Text schiebt den Fuß nach unten. */
+.idt-concept { display: flex; flex-direction: column; }
+.idt-concept__body { flex: 1 1 auto; }
 /* Verlinkte Konzept-Karte (mit href) — klickbar wie auf der Startseite. */
 .idt-concept--link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
 .idt-concept--link:hover { text-decoration: none; transform: translateY(-3px); box-shadow: var(--shadow-block-sm); }
 .idt-concept--link .idt-newscard__more { margin-top: auto; padding-top: var(--space-4); }
+
+/* Karten-Raster — legt Karten ([concept], [newscard], [card] …) in ein
+   gleichmäßiges Raster: gleiche Spaltenbreiten, gleiche Kartenhöhen,
+   automatischer Umbruch. Ersetzt das frühere Spalten-Layout, bei dem jede
+   Karte ihre eigene Breite und Höhe behielt. */
+.idt-cards {
+  display: grid; gap: var(--space-6); align-items: stretch;
+  grid-template-columns: 1fr; margin: var(--space-6) 0;
+}
+/* Ab Tablet zwei Spalten, ab Desktop die gewählte Spaltenzahl. */
+@media (min-width: 720px) {
+  .idt-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 960px) {
+  .idt-cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .idt-cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+/* „auto“: so viele Karten je Zeile, wie bei 280px Mindestbreite passen. */
+.idt-cards--auto { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+/* Rasterzellen füllen — auch die Block-Wrapper, die der Editor um die
+   einzelnen Karten legt (Editor-Vorschau = Frontend-Bild). */
+.idt-cards > * { height: 100%; margin: 0; }
+.idt-cards > .wp-block > * { height: 100%; }
 
 /* Dunkler Einschub (Inverse-Band) */
 .idt-einschub {
