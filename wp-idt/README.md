@@ -143,6 +143,25 @@ Standard-Button-Block ist im Editor ausgeblendet (`editor-formats.js`,
 reversibel). Die Varianten `ghost`/`inverse` existieren weiter per CSS für
 Sonderfälle (z. B. dunkle Flächen), werden aber nicht als Auswahl angeboten.
 
+## Logo im Kopfmenü
+
+Das Bild links oben im Menüband ist ohne Code-Änderung austauschbar und einstellbar —
+beides unter **Design → Customizer → Website-Identität**:
+
+| Einstellung | Wirkung |
+|---|---|
+| **Logo** | Bild aus der Mediathek (WordPress-Standard „Custom Logo"). Ohne eigenes Logo zeigt das Theme das mitgelieferte `assets/logo-idt-transparent.png`. |
+| **Logo-Höhe im Kopfmenü (px)** | Darstellungshöhe im Menüband, 20–120 px, Vorgabe 38. Die Breite ergibt sich aus dem Seitenverhältnis. |
+
+Die Höhe wird als CSS-Token `--header-logo-h` gesetzt (Vorgabe in `style.css`, abweichende
+Werte als Inline-CSS über `idt_header_logo_css()` in `functions.php`) und im Customizer
+dank `assets/customize-preview.js` sofort in der Vorschau sichtbar.
+
+Zwei Sonderfälle bleiben davon unberührt: Der dunkle Footer nutzt weiterhin fest die
+Inverse-Variante (`assets/logo-idt-inverse.png`), und die Splash-Bühne bringt ihr Logo
+selbst mit — Seiten mit der Vorlage **„Menü ohne Logo"** blenden den Marken-Block im
+Kopfmenü deshalb ganz aus (das Menü bleibt).
+
 ## Startseite
 
 Die Homepage wird **nicht** mehr fest in `front-page.php` verdrahtet: Die Vorlage
