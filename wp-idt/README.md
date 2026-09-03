@@ -102,7 +102,7 @@ Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 
 **Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
 Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
-News-Karte, Beiträge-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
+News-Karte, Social-Leiste, Beiträge-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
 in der Seitenleiste (Text, Auswahl, Schalter, Schieberegler) mit **Live-Vorschau**.

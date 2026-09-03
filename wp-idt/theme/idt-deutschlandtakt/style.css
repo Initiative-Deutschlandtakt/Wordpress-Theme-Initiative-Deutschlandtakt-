@@ -752,6 +752,10 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-social__icon:hover { border-color: transparent; }
 .idt-social__icon:hover::before { opacity: 1; }
 .section--ink .idt-social__icon, .idt-einschub .idt-social__icon { color: var(--idt-paper); border-color: var(--idt-paper); }
+/* Social-Leiste — Reihe aus Social-Icons ([socialrow] / Block „Social-Leiste"),
+   bricht auf schmalen Bildschirmen um. Das margin der Icons bleibt ihr eigener
+   Abstand, wenn sie einzeln im Fließtext stehen. */
+.idt-socialrow { display: flex; flex-wrap: wrap; align-items: center; margin: var(--space-4) 0; }
 
 /* Eyebrow — Mono-Label über Überschriften */
 .eyebrow, .idt-eyebrow {

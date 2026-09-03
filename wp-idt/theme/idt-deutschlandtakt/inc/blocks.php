@@ -194,8 +194,25 @@ function idt_blocks_config() {
 				array( 'key' => 'eyebrow', 'label' => __( 'Eyebrow (Label)', 'idt' ), 'type' => 'text', 'default' => 'Das Vorbild' ),
 				array( 'key' => 'title', 'label' => __( 'Überschrift', 'idt' ), 'type' => 'text', 'default' => 'Überschrift des Einschubs' ),
 				array( 'key' => 'text', 'label' => __( 'Text', 'idt' ), 'type' => 'textarea', 'default' => 'Text des dunklen Einschubs.' ),
+				array( 'key' => 'stats', 'label' => __( 'Kennzahlen — eine Zeile je Kennzahl: Zahl | Label (leer = keine)', 'idt' ), 'type' => 'textarea', 'default' => '' ),
 			),
-			'render'   => function ( $a ) { return idt_sc_einschub( array( 'eyebrow' => $a['eyebrow'], 'title' => $a['title'] ), $a['text'] ); },
+			'render'   => function ( $a ) {
+				$body = $a['text'];
+				/* Kennzahlen hängen als eigener Absatz unter dem Text — dieselbe
+				   Struktur, die wpautop im Shortcode-Pendant erzeugt. */
+				$stats = '';
+				/* Gleicher Zeilen-Parser wie bei den Button-Feldern („A | B"); ohne
+				   zweiten Teil liefert er das Link-Standardzeichen „#", was hier
+				   schlicht „kein Label" bedeutet. */
+				foreach ( (array) idt_parse_button_lines( $a['stats'] ) as $stat ) {
+					$label  = '#' === $stat[1] ? '' : $stat[1];
+					$stats .= idt_sc_stat( array( 'number' => $stat[0], 'label' => $label ) );
+				}
+				if ( '' !== $stats ) {
+					$body .= "\n\n" . $stats;
+				}
+				return idt_sc_einschub( array( 'eyebrow' => $a['eyebrow'], 'title' => $a['title'] ), $body );
+			},
 		),
 		'themenblock' => array(
 			'title'    => __( 'Themenblock mit Linkliste', 'idt' ),
@@ -254,6 +271,20 @@ function idt_blocks_config() {
 				array( 'key' => 'href', 'label' => __( 'Link (URL)', 'idt' ), 'type' => 'text', 'default' => '#' ),
 			),
 			'render'   => function ( $a ) { return idt_sc_social( array( 'platform' => $a['platform'], 'href' => $a['href'] ) ); },
+		),
+		'sociallinks' => array(
+			'title'    => __( 'Social-Leiste', 'idt' ),
+			'icon'     => 'share',
+			'keywords' => array( 'social', 'leiste', 'icons', 'profile', 'dt' ),
+			'fields'   => array(
+				array(
+					'key'     => 'links',
+					'label'   => __( 'Icons — eine Zeile je Icon: Plattform | Link', 'idt' ),
+					'type'    => 'textarea',
+					'default' => "x | #\nfacebook | #\ninstagram | #\nlinkedin | #\nyoutube | #\nmastodon | #\nbluesky | #\nrss | #",
+				),
+			),
+			'render'   => function ( $a ) { return idt_sc_socialrow( array(), $a['links'] ); },
 		),
 		'neuigkeiten' => array(
 			'title'    => __( 'Beiträge-Übersicht (dynamisch)', 'idt' ),
@@ -359,6 +390,27 @@ function idt_register_cards_block() {
 	) );
 }
 add_action( 'init', 'idt_register_blocks' );
+
+/**
+ * Öffnendes bzw. schließendes Markup des Karten-Rasters für Vorlagen und
+ * Demo-Inhalte (inc/patterns.php, inc/demo-content.php).
+ *
+ * useBlockProps.save() im Editor-Script schreibt neben den Rasterklassen auch
+ * die von WordPress generierte Blockklasse `wp-block-idt-kartenraster` in das
+ * gespeicherte Markup. Vorlagen müssen sie deshalb mitliefern: fehlt sie, weicht
+ * die Vorlage von dem ab, was save() erzeugt — der Editor hält den Block dann
+ * für ungültig und zeigt statt des Rasters die Meldung „Block-Wiederherstellung
+ * versuchen". Damit das nicht auseinanderläuft, kommt der Rahmen aus dieser
+ * einen Funktion.
+ */
+function idt_kartenraster_open( $cols = '3' ) {
+	return '<!-- wp:idt/kartenraster {"cols":"' . $cols . '"} -->' . "\n"
+		. '<div class="wp-block-idt-kartenraster idt-cards idt-cards--' . $cols . '">' . "\n";
+}
+
+function idt_kartenraster_close() {
+	return "</div>\n" . '<!-- /wp:idt/kartenraster -->';
+}
 
 /** Eigene Block-Kategorie „Deutschlandtakt" im Inserter. */
 function idt_block_category( $cats ) {

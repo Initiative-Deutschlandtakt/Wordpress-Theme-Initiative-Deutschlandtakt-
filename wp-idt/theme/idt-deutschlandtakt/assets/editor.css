@@ -1,0 +1,55 @@
+/*
+ * Editor-Korrekturen — wird nur im Block-Editor geladen (add_editor_style in
+ * functions.php, nach style.css). Das Frontend bleibt unberührt.
+ *
+ * Hintergrund: Im Editor und erst recht in den kleinen Vorschau-Rahmen der
+ * „Vorlagen"-Seitenleiste fehlen zwei Dinge, auf die das Frontend baut —
+ *   1. assets/scale.js (setzt die Skalierung --s und die Höhe der Splash-Bühne)
+ *      läuft nur im Frontend; im Editor bliebe die 1280×800-Bühne unskaliert,
+ *   2. eine verlässliche Viewport-Höhe: Vorschau-Rahmen sind so hoch wie ihr
+ *      Inhalt, `height: 86vh` ergibt darin keinen sinnvollen Wert.
+ * Beides wird hier rein per CSS ersetzt.
+ */
+
+/* =============================================================================
+   Horizont-Splash — Bühne ohne Skalierungs-Script
+   ============================================================================= */
+
+/* Unterhalb von 820px greift das gestapelte Mobil-Layout aus style.css; das
+   darf hier nicht überschrieben werden. */
+@media (min-width: 821px) {
+  /* Feste Höhe der Bühne statt vh — 800px × Skalierung, wie es scale.js rechnet. */
+  .stage { height: 800px; min-height: 0; max-height: none; }
+
+  /* Wie in scale.js: Ist die Bühne breiter als die Referenz, wächst die Canvas
+     mit (Band und Balken sind mittig positioniert und dehnen sich mit) — sonst
+     bliebe links und rechts ein cremefarbener Rand stehen. */
+  .canvas { width: 100%; min-width: 1280px; }
+}
+
+/* Ist die Bühne schmaler als die 1280px-Referenz, verkleinert scale.js die
+   Canvas stufenlos. Ohne Script bleibt nur eine Treppe. Je Stufe ist die
+   Skalierung so gewählt, dass die Canvas die Bühne noch vollständig deckt
+   (Wert = obere Bandgrenze ÷ 1280); der Überstand wird von der Bühne
+   beschnitten — genau wie im Frontend auf sehr breiten Viewports. Die Höhe
+   der Bühne folgt mit 800px × Skalierung, damit ober- und unterhalb kein
+   leerer Streifen entsteht. */
+@media (min-width: 821px) and (max-width: 1199px) { .canvas { --s: .94; } .stage { height: 752px; } }
+@media (min-width: 821px) and (max-width: 1119px) { .canvas { --s: .88; } .stage { height: 704px; } }
+@media (min-width: 821px) and (max-width: 1039px) { .canvas { --s: .82; } .stage { height: 656px; } }
+@media (min-width: 821px) and (max-width:  959px) { .canvas { --s: .75; } .stage { height: 600px; } }
+@media (min-width: 821px) and (max-width:  879px) { .canvas { --s: .69; } .stage { height: 552px; } }
+
+/* Splash v2 ist fluide, braucht aber ebenfalls eine Höhe ohne vh-Bezug. */
+.stage2 { min-height: 560px; }
+
+/* =============================================================================
+   Karten-Raster — gleiche Kartenhöhen auch im Editor
+   ============================================================================= */
+
+/* Im Frontend ist die Karte selbst das Rasterkind; im Editor sitzt dazwischen
+   der Block-Rahmen (useBlockProps). Ohne diese Regel enden die Karten einer
+   Reihe auf unterschiedlichen Höhen, obwohl sie im Frontend gleich hoch sind. */
+.idt-cards > * > .idt-concept,
+.idt-cards > * > .idt-newscard,
+.idt-cards > * > .idt-card { height: 100%; }

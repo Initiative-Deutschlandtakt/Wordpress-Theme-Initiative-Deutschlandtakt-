@@ -38,7 +38,9 @@ function idt_setup() {
 	add_theme_support( 'automatic-feed-links' );
 	add_theme_support( 'html5', array( 'search-form', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
 	add_theme_support( 'editor-styles' );
-	add_editor_style( 'style.css' );
+	/* Das Frontend-Stylesheet auch im Editor (und in den Vorlagen-Vorschauen)
+	   laden, danach die Editor-Korrekturen — s. assets/editor.css. */
+	add_editor_style( array( 'style.css', 'assets/editor.css' ) );
 
 	/* Website-Logo über „Design → Website-Identität" pflegbar (Fallback bleibt
 	   das mitgelieferte Marken-PNG, s. header.php). Der dunkle Footer nutzt
