@@ -366,6 +366,11 @@ function idt_content_stilelemente() {
 <!-- wp:heading {"level":2} --><h2>Karte</h2><!-- /wp:heading -->
 <!-- wp:shortcode -->[card]<strong>Karte</strong> mit Schatten und Rahmen. <code>[card]…[/card]</code>[/card]<!-- /wp:shortcode -->
 
+<!-- wp:heading {"level":2} --><h2>Trenner</h2><!-- /wp:heading -->
+<!-- wp:paragraph --><p>Der WordPress-Block <strong>Trenner</strong> bringt zwei Marken-Stile mit (Block markieren → Seitenleiste <em>Stile</em>): <strong>Verlauf</strong> über die volle Textbreite und <strong>Kurzer Strich</strong> als Zwischenmarke am linken Textrand. Ohne Stil bleibt der Trenner eine feine Linie.</p><!-- /wp:paragraph -->
+<!-- wp:separator {"className":"is-style-idt-verlauf"} --><hr class="wp-block-separator is-style-idt-verlauf"/><!-- /wp:separator -->
+<!-- wp:separator {"className":"is-style-idt-kurz"} --><hr class="wp-block-separator is-style-idt-kurz"/><!-- /wp:separator -->
+
 <!-- wp:separator --><hr class="wp-block-separator"/><!-- /wp:separator -->
 <!-- wp:heading --><h2>Aus der „Example Landing Page"</h2><!-- /wp:heading -->
 <!-- wp:paragraph --><p>Die folgenden Elemente sind aus dem Design-System übernommen und stehen jetzt im Editor bereit — auch als Block-Patterns unter der Kategorie <strong>Deutschlandtakt</strong>.</p><!-- /wp:paragraph -->

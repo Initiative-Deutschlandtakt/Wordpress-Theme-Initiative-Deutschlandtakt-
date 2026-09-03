@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.18
+Version: 2.0.19
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1019,6 +1019,61 @@ html.idt-searchbox-open { overflow: hidden; }
 .has-idt-yellow-soft-background-color { background-color: var(--idt-yellow-soft); }
 .has-idt-verlauf-gradient-background { background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan)); }
 .has-idt-verlauf-dunkel-gradient-background { background: linear-gradient(131deg, var(--idt-ink), var(--idt-violet)); }
+
+/* -----------------------------------------------------------------------------
+   7d) TRENNELEMENT — der WordPress-Block „Trenner" (core/separator)
+   -----------------------------------------------------------------------------
+   Core zeichnet den Trenner als Rahmenlinie in der Textfarbe. Eine im Editor
+   gewählte Farbe oder ein Verlauf kommt dagegen als Hintergrund (.has-…-
+   background-color bzw. .has-…-gradient-background aus 7c) — und der liegt auf
+   einem Element ganz ohne Höhe. Sichtbar bleibt darum nur die graue Rahmen-
+   linie, der Verlauf verschwindet. Die Core-Regeln, die das geradebiegen,
+   stehen in „wp-block-library-theme"; das lädt WordPress nur für Themes mit
+   `wp-block-styles`. Statt den WP-Standardlook mitzuladen, bringt das Theme
+   sie hier markenkonform selbst mit: kein Rahmen, echte Höhe, Hintergrund
+   sichtbar. */
+hr.wp-block-separator {
+  border: 0;
+  height: var(--bw-hair);
+  margin: var(--space-6) auto;
+}
+/* Ohne Farbwahl: feine Linie im Rahmenton — wie das <hr> im Fließtext (3). */
+hr.wp-block-separator:not(.has-background):not(.has-text-color) { background-color: var(--border); }
+/* Einfarbig gewählt: Core legt die Farbe als Textfarbe ab (.has-…-color). */
+hr.wp-block-separator.has-text-color { background-color: currentColor; }
+/* Farbe oder Verlauf gewählt: kräftigerer Strich mit runden Enden. Die Füllung
+   selbst liefern die .has-…-Klassen aus 7c bzw. der Inline-Stil des Editors
+   (freie Farbwahl) — hier steht nur die Geometrie. */
+hr.wp-block-separator.has-background,
+hr.wp-block-separator[class*="-gradient-background"],
+hr.wp-block-separator[class*="-background-color"] {
+  height: 4px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---- Blockstile (register_block_style, s. inc/blocks.php) ----
+   „Verlauf": Markenverlauf Violett→Cyan über die volle Textbreite.
+   „Kurzer Strich": kurzer Akzentstrich als Zwischenmarke, linksbündig. */
+.wp-block-separator.is-style-idt-verlauf,
+.wp-block-separator.is-style-idt-kurz {
+  border: 0; height: 4px; border-radius: var(--radius-pill); opacity: 1;
+}
+/* Der Verlauf nur als Vorgabe: Wird im Editor doch eine Farbe oder ein anderer
+   Verlauf gewählt, gewinnt deren .has-…-Klasse (daher :not(.has-background)). */
+hr.wp-block-separator.is-style-idt-verlauf:not(.has-background),
+hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
+  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+}
+/* Breite: Lädt WordPress zusätzlich die Standard-Blockstile, begrenzt Core dort
+   jeden Trenner ohne „Breit"-Stil auf 100px — die gleiche :not()-Kette plus
+   Stilklasse hebt genau das auf. */
+.wp-block-separator.is-style-idt-verlauf:not(.is-style-wide):not(.is-style-dots) { width: 100%; }
+.wp-block-separator.is-style-idt-kurz:not(.is-style-wide):not(.is-style-dots) { width: 56px; }
+/* Kurzer Strich sitzt am linken Textrand (wie ein Auftakt über dem Absatz),
+   folgt aber der Ausrichtung, wenn im Editor eine gewählt wurde. */
+.wp-block-separator.is-style-idt-kurz { margin: var(--space-5) 0; }
+.wp-block-separator.is-style-idt-kurz.aligncenter { margin-left: auto; margin-right: auto; }
+.wp-block-separator.is-style-idt-kurz.alignright { margin-left: auto; margin-right: 0; }
 
 /* =============================================================================
    8) CONTENT (Seiten / Beiträge)
