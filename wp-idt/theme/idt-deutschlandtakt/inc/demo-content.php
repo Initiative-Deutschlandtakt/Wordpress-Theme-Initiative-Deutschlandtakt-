@@ -392,6 +392,12 @@ function idt_content_stilelemente() {
 [stat number="28 %" label="Wegeanteil ÖV · Schweiz"]  [stat number="19 %" label="Wegeanteil ÖV · Deutschland"][/einschub]<!-- /wp:shortcode -->
 <!-- wp:paragraph --><p><code>[einschub eyebrow="…" title="…"]Text[/einschub]</code></p><!-- /wp:paragraph -->
 
+<!-- wp:heading {"level":2} --><h2>Themenblock mit Linkliste</h2><!-- /wp:heading -->
+<!-- wp:idt/themenblock {"bg":"#00373C","eyebrow":"Bereich 02 · Unsere Stimme","title":"Unser Plan","lead":"Wofür die Initiative eintritt, was im Weg steht, was jetzt ansteht.","text":"Kein Konkurrenzkonzept, sondern Qualitätssicherung am laufenden Prozess: wir prüfen, benennen Lücken und schlagen vor, was die Etappe 2035 noch braucht.","links":"Die Vision | # | Wie ein verlässliches Angebot 2035 aussieht\\nWo es hakt | # | Engpässe, Fristen und offene Entscheidungen\\nPositionen | # | Unsere Stellungnahmen zum Umsetzungsprozess\\nAusblick | # | Was in dieser Legislaturperiode ansteht"} /-->
+<!-- wp:paragraph --><p>Die Hintergrundfarbe ist frei wählbar — hier dieselbe Liste auf Papier warm:</p><!-- /wp:paragraph -->
+<!-- wp:idt/themenblock {"bg":"#FBEDE6","eyebrow":"","title":"Themen im Überblick","lead":"Dieselbe Fläche in einer hellen Farbe — Schrift, Linien und Akzent stellen sich automatisch um.","text":"","links":"Die Idee | # | Jede Stunde zur selben Minute\\nDie Etappen | # | Vom Zielfahrplan zur Umsetzung\\nHäufige Fragen | # | Was der Takt für meine Region heißt"} /-->
+<!-- wp:paragraph --><p><code>[themenblock bg="ink" eyebrow="…" title="…" lead="…"]Fließtext --- Beschriftung | Link | Beschreibung[/themenblock]</code> — <code>bg</code> nimmt Markennamen (ink, paper, paper-2, violet, cyan, yellow, gray) oder einen Hex-Wert; die Linkliste darf beliebig lang sein.</p><!-- /wp:paragraph -->
+
 <!-- wp:heading {"level":2} --><h2>News-Karten – „Aus der Initiative"</h2><!-- /wp:heading -->
 <!-- wp:columns --><div class="wp-block-columns">
 <!-- wp:column --><div class="wp-block-column"><!-- wp:shortcode -->[newscard tag="Stellungnahme" color="violet" date="12.02.2026" href="#"]Neuberechnung des Deutschlandtakts? Die Initiative widerspricht[/newscard]<!-- /wp:shortcode --></div><!-- /wp:column -->

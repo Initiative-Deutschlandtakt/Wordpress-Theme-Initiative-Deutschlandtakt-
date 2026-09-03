@@ -92,6 +92,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[concept color="…" icon="…" title="…" href="…"]…[/concept]` | Konzept-Karte; mit `href` klickbar |
 | `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
+| `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
 
 ### Im Editor bearbeiten statt tippen
 
@@ -100,14 +101,15 @@ Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 **Block** oder eine **Inline-Auszeichnung** ist:
 
 **Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
-Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, News-Karte,
-Beiträge-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
+Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
+News-Karte, Beiträge-Übersicht): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
 in der Seitenleiste (Text, Auswahl, Schalter, Schieberegler) mit **Live-Vorschau**.
 Technisch sind das dynamische Blöcke (`inc/blocks.php` + `assets/blocks.js`), die
 serverseitig die bestehenden Shortcode-Funktionen rendern. Fertige **Kompositionen**
-(Kennzahlen-Reihe, Konzept-Karten, Themen-Karten, News-Karten, dunkler Einschub …)
+(Kennzahlen-Reihe, Konzept-Karten, Themen-Karten, News-Karten, dunkler Einschub,
+Themenblock mit Linkliste …)
 liegen im Inserter unter Tab **Patterns** → **Deutschlandtakt**.
 
 **Inline-Auszeichnungen** (Marker, Eyebrow-Label, Tag): Text markieren und in
