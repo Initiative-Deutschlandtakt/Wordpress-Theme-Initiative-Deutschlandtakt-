@@ -93,6 +93,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
+| `[buttonstack bg="ink"]…[/buttonstack]` | Button-Stack: derselbe Baustein nur mit den Linkzeilen — ohne Eyebrow, Überschrift und Vortext; `bg` wie beim Themenblock |
 | `[beitragsliste count="3"]` | dynamische Beitragsliste im Zeilen-Layout (Datum + Chip links, Titel und Anriss rechts) |
 
 ### Im Editor bearbeiten statt tippen
@@ -103,7 +104,7 @@ Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 
 **Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
 Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
-News-Karte, Social-Leiste, Beiträge-Übersicht, Beitragsliste): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
+Button-Stack, News-Karte, Social-Leiste, Beiträge-Übersicht, Beitragsliste): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
 in der Seitenleiste (Text, Auswahl, Schalter, Schieberegler) mit **Live-Vorschau**.

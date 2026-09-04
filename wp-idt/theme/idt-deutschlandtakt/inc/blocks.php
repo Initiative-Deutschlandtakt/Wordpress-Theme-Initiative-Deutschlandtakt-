@@ -236,6 +236,18 @@ function idt_blocks_config() {
 				), $a['links'] );
 			},
 		),
+		'buttonstack' => array(
+			'title'    => __( 'Button-Stack (Linkliste)', 'idt' ),
+			'icon'     => 'menu-alt',
+			'keywords' => array( 'buttonstack', 'button', 'stack', 'linkliste', 'links', 'farbe', 'dt' ),
+			'fields'   => array(
+				array( 'key' => 'bg', 'label' => __( 'Hintergrundfarbe', 'idt' ), 'type' => 'color', 'default' => '#00373C' ),
+				array( 'key' => 'links', 'label' => __( 'Links — eine Zeile je Eintrag: Beschriftung | Link | Beschreibung', 'idt' ), 'type' => 'textarea', 'default' => "Die Vision | # | Wie ein verlässliches Angebot 2035 aussieht\nWo es hakt | # | Engpässe, Fristen und offene Entscheidungen\nPositionen | # | Unsere Stellungnahmen zum Umsetzungsprozess" ),
+			),
+			'render'   => function ( $a ) {
+				return idt_sc_buttonstack( array( 'bg' => $a['bg'] ), $a['links'] );
+			},
+		),
 		'newscard' => array(
 			'title'    => __( 'News-Karte', 'idt' ),
 			'icon'     => 'megaphone',
