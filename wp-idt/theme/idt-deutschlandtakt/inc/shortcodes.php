@@ -486,8 +486,8 @@ function idt_parse_link_lines( $text ) {
  * klickbar, getrennt durch Haarlinien.
  *
  * Gemeinsames Markup von [themenblock] und [buttonstack]: beide setzen die
- * Liste in eine Fläche, deren Farbschema (--tb-*) sie erben, damit Schrift,
- * Linien und Akzentleiste zum Untergrund passen.
+ * Liste in eine Fläche, deren Farbschema (--tb-*) sie erben, damit Schrift
+ * und Linien zum Untergrund passen.
  */
 function idt_link_list_html( $links, $label = '' ) {
 	if ( ! $links ) { return ''; }
@@ -580,7 +580,7 @@ add_shortcode( 'themenblock', 'idt_sc_themenblock' );
  *   [/buttonstack]
  *
  * Gleiche Reihen wie im Themenblock (Titel, Kurzbeschreibung, Pfeil,
- * Haarlinien, Akzentleiste), nur ohne Eyebrow, Überschrift und Vortext: eine
+ * Haarlinien), nur ohne Eyebrow, Überschrift und Vortext: eine
  * farbige Fläche, die nur aus den Links besteht. Die Kurzbeschreibung (drittes
  * Feld) ist wie dort optional.
  *
