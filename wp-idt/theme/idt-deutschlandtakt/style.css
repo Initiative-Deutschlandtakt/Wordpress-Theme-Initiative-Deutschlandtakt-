@@ -985,7 +985,6 @@ html.idt-searchbox-open { overflow: hidden; }
   --tb-muted: rgba(255, 246, 240, .74);
   --tb-eyebrow: var(--idt-cyan);
   --tb-line: rgba(255, 246, 240, .18);
-  --tb-rail: rgba(255, 246, 240, .38);
   --tb-hover: rgba(255, 246, 240, .07);
   background: var(--tb-bg); color: var(--tb-text);
   border-radius: var(--radius-lg); padding: var(--tb-pad);
@@ -996,7 +995,6 @@ html.idt-searchbox-open { overflow: hidden; }
   --tb-muted: rgba(0, 55, 60, .72);
   --tb-eyebrow: var(--idt-violet);
   --tb-line: rgba(0, 55, 60, .16);
-  --tb-rail: rgba(0, 55, 60, .30);
   --tb-hover: rgba(0, 55, 60, .05);
 }
 .idt-themenblock__eyebrow {
@@ -1020,15 +1018,9 @@ html.idt-searchbox-open { overflow: hidden; }
 
 /* Linkliste — beliebig lang, randlos bis an die Kanten der Fläche: die
    negativen Ränder heben das Innenmaß (--tb-pad) wieder auf, die Zeilen
-   bringen es als eigenes Innenmaß zurück. Links begleitet eine senkrechte
-   Akzentleiste die ganze Liste. */
+   bringen es als eigenes Innenmaß zurück. */
 .idt-themenblock__list {
-  position: relative; padding-left: 8px;
   margin: clamp(32px, 6vw, 64px) calc(var(--tb-pad) * -1) calc(var(--tb-pad) * -1);
-}
-.idt-themenblock__list::before {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: var(--tb-rail);
 }
 .idt-themenblock__row {
   display: flex; align-items: center; gap: var(--space-5);
