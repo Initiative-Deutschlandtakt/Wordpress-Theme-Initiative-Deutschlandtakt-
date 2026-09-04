@@ -11,6 +11,7 @@
  *   [callout type="cyan"]Wichtiger Hinweis …[/callout]
  *   [diagonal]Großer Aussage-Block auf dunklem Grund.[/diagonal]
  *   [themenblock bg="ink" title="Unser Plan"]Die Vision | /vision/ | Kurzbeschreibung[/themenblock]
+ *   [buttonstack bg="ink"]Die Vision | /vision/ | Kurzbeschreibung[/buttonstack]
  *
  * @package idt
  */
@@ -481,6 +482,28 @@ function idt_parse_link_lines( $text ) {
 }
 
 /**
+ * Linkliste als Reihen — Titel, Kurzbeschreibung und Pfeil, ganzflächig
+ * klickbar, getrennt durch Haarlinien.
+ *
+ * Gemeinsames Markup von [themenblock] und [buttonstack]: beide setzen die
+ * Liste in eine Fläche, deren Farbschema (--tb-*) sie erben, damit Schrift,
+ * Linien und Akzentleiste zum Untergrund passen.
+ */
+function idt_link_list_html( $links, $label = '' ) {
+	if ( ! $links ) { return ''; }
+	$label = '' !== $label ? $label : __( 'Weiterführende Links', 'idt' );
+	$out   = '<nav class="idt-themenblock__list" aria-label="' . esc_attr( $label ) . '">';
+	foreach ( $links as $link ) {
+		$desc = '' !== $link['desc'] ? '<span class="idt-themenblock__rowdesc">' . esc_html( $link['desc'] ) . '</span>' : '';
+		$out .= '<a class="idt-themenblock__row" href="' . esc_url( $link['href'] ) . '">' .
+			'<span class="idt-themenblock__rowtext">' .
+			'<span class="idt-themenblock__rowtitle">' . esc_html( $link['label'] ) . '</span>' . $desc .
+			'</span><span class="idt-themenblock__arrow">' . idt_icon( 'arrow', 20 ) . '</span></a>';
+	}
+	return $out . '</nav>';
+}
+
+/**
  * Themenblock — farbige Fläche mit optionalem Eyebrow, Überschrift, Texten
  * und einer beliebig langen Linkliste.
  *
@@ -541,21 +564,47 @@ function idt_sc_themenblock( $atts, $content = '' ) {
 
 	$links = idt_parse_link_lines( $lines );
 	if ( $links ) {
-		$label = $atts['title'] ? $atts['title'] : __( 'Weiterführende Links', 'idt' );
-		$out  .= '<nav class="idt-themenblock__list" aria-label="' . esc_attr( $label ) . '">';
-		foreach ( $links as $link ) {
-			$desc = '' !== $link['desc'] ? '<span class="idt-themenblock__rowdesc">' . esc_html( $link['desc'] ) . '</span>' : '';
-			$out .= '<a class="idt-themenblock__row" href="' . esc_url( $link['href'] ) . '">' .
-				'<span class="idt-themenblock__rowtext">' .
-				'<span class="idt-themenblock__rowtitle">' . esc_html( $link['label'] ) . '</span>' . $desc .
-				'</span><span class="idt-themenblock__arrow">' . idt_icon( 'arrow', 20 ) . '</span></a>';
-		}
-		$out .= '</nav>';
+		$out .= idt_link_list_html( $links, $atts['title'] );
 	}
 
 	return $out . '</div>';
 }
 add_shortcode( 'themenblock', 'idt_sc_themenblock' );
+
+/**
+ * Button-Stack — der Themenblock, reduziert auf seine Linkliste.
+ *
+ *   [buttonstack bg="ink"]
+ *   Die Vision | /vision/ | Wie ein verlässliches Angebot 2035 aussieht
+ *   Wo es hakt | /engpaesse/ | Engpässe, Fristen und offene Entscheidungen
+ *   [/buttonstack]
+ *
+ * Gleiche Reihen wie im Themenblock (Titel, Kurzbeschreibung, Pfeil,
+ * Haarlinien, Akzentleiste), nur ohne Eyebrow, Überschrift und Vortext: eine
+ * farbige Fläche, die nur aus den Links besteht. Die Kurzbeschreibung (drittes
+ * Feld) ist wie dort optional.
+ *
+ * bg und Schriftfarbe verhalten sich identisch zum Themenblock: Markenname
+ * oder Hex-Wert, das Farbschema (hell/dunkel) ergibt sich aus dem Kontrast.
+ * label setzt die Vorlesebeschriftung der Liste (aria-label).
+ */
+function idt_sc_buttonstack( $atts, $content = '' ) {
+	$atts = shortcode_atts( array(
+		'bg'    => 'ink',
+		'label' => '',
+	), $atts, 'buttonstack' );
+
+	$links = idt_parse_link_lines( idt_strip_autop( $content ) );
+	if ( ! $links ) { return ''; }
+
+	$hex   = idt_color_hex( $atts['bg'] );
+	if ( '' === $hex ) { $hex = '#00373C'; }
+	$class = 'idt-themenblock idt-buttonstack idt-themenblock--' . ( idt_surface_is_dark( $hex ) ? 'dark' : 'light' );
+
+	return '<div class="' . esc_attr( $class ) . '" style="--tb-bg:' . esc_attr( $hex ) . '">' .
+		idt_link_list_html( $links, $atts['label'] ) . '</div>';
+}
+add_shortcode( 'buttonstack', 'idt_sc_buttonstack' );
 
 /**
  * News-Karte („Aus der Initiative").

@@ -120,6 +120,15 @@ function idt_register_patterns() {
 			. "\"links\":\"Die Vision | # | Wie ein verlässliches Angebot 2035 aussieht\\nWo es hakt | # | Engpässe, Fristen und offene Entscheidungen\\nPositionen | # | Unsere Stellungnahmen zum Umsetzungsprozess\\nAusblick | # | Was in dieser Legislaturperiode ansteht\"} /-->",
 	) );
 
+	register_block_pattern( 'idt/buttonstack', array(
+		'title'         => __( 'Button-Stack (Linkliste ohne Kopf)', 'idt' ),
+		'description'   => __( 'Farbige Fläche, die nur aus klickbaren Zeilen besteht — Titel, Kurzbeschreibung und Pfeil, ohne Eyebrow, Überschrift und Vortext. Hintergrundfarbe in der Seitenleiste frei wählbar; die Schriftfarbe stellt sich passend zum Kontrast ein.', 'idt' ),
+		'categories'    => array( 'idt' ),
+		'viewportWidth' => 1000,
+		'content'       => "<!-- wp:idt/buttonstack {\"bg\":\"#00373C\","
+			. "\"links\":\"Die Vision | # | Wie ein verlässliches Angebot 2035 aussieht\\nWo es hakt | # | Engpässe, Fristen und offene Entscheidungen\\nPositionen | # | Unsere Stellungnahmen zum Umsetzungsprozess\"} /-->",
+	) );
+
 	register_block_pattern( 'idt/social-links', array(
 		'title'         => __( 'Social-Links (Icon-Reihe)', 'idt' ),
 		'description'   => __( 'Reihe runder Social-Icon-Buttons. Platzhalter-Links (#) — nach dem Einfügen in der Seitenleiste je Zeile die echte Profil-URL eintragen.', 'idt' ),
