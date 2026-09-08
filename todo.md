@@ -4,6 +4,38 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Repo auf das Theme zusammengezogen.** Das Repository war noch nach seinem
+  Ursprung sortiert — der Splash als eingebettetes HTML-Fragment für die fremde
+  Seite `page-id-992` — und trug den ganzen Vorlauf mit: `landing.html`/`landing.css`
+  („Splash 3 – Horizont") und `landing-2.html`/`landing-2.css` („Splash 4 – Zentriert")
+  samt eigener `assets/`-Kopie der Logos, dazu drei Word-Vereinsvorlagen (`*.dotx`)
+  und ein loses Logo-PNG. Beide Splash-Varianten leben seit v2.0.10 als Theme-Bausteine
+  weiter (`idt_render_splash()`/`[splash]` und `idt_render_splash2()`/`[splash2]`), die
+  Fragmente waren also nur noch eine zweite, driftende Fassung derselben Gestaltung.
+  Sie sind gelöscht; über die Git-Historie bleiben sie auffindbar.
+  - **`wp-idt/` ist die Wurzel geworden.** Theme, Docker-Stack, Caddy, wp-cli und
+    `deploy/` lagen eine Ebene tief unter einem Ordner, der nur noch existierte, um
+    sie von den Alt-Dateien zu trennen. Der Start-Befehl braucht dadurch kein
+    `cd wp-idt` mehr.
+  - **Build-Artefakte raus, Build-Skript rein.** `idt-deutschlandtakt-2.0.20.zip`,
+    `new_t-deploy-paket.tar.gz` und `uploads.tar.gz` (~1,3 MB Binärdaten) waren
+    eingecheckt und mussten bei jedem Release von Hand neu gepackt werden. Neu ist
+    `bin/theme-zip.sh`: liest die Version aus dem Theme-Header, packt
+    `dist/idt-deutschlandtakt-<version>.zip` mit dem Themeordner an der Archivwurzel.
+    `dist/`, `*.zip` und `*.tar.gz` stehen jetzt in der `.gitignore`.
+  - **`deploy/startseite-vorlage.html` gelöscht.** Eine unverlinkte Kopie des
+    Startseiten-Markups, noch aus `[shortcode]`-Blöcken gebaut. Die gültige Fassung
+    ist `idt_content_startseite()` in `inc/demo-content.php`; die Kopie hätte beim
+    nächsten Startseiten-Umbau still veraltet. `deploy/DEPLOY.md` beschreibt jetzt,
+    wie Theme-Zip und Datenbank-Dump erzeugt werden, statt sie als mitgelieferte
+    Dateien aufzulisten.
+  - **`CLAUDE.md` neu geschrieben.** Sie beschrieb noch das Fragment-Projekt samt
+    `.page-id-992 .lp-root`-Scoping und dem `__ASSET__`-Deploy-Platzhalter — beides
+    im Theme gegenstandslos. Jetzt: Repo-Aufbau, der lokale Stack und die vier
+    Konventionen, die beim Ändern zählen (Version an zwei Stellen synchron,
+    ein Baustein/eine Render-Funktion für Shortcode und Block, `idt`-Präfix,
+    Design-Tokens statt Literalwerte).
+
 - **Button-Stack (v2.0.20).** Der Themenblock, reduziert auf seine Linkliste: eine farbige Fläche, die nur aus den ganzflächig klickbaren Zeilen besteht (Titel, optionale Kurzbeschreibung, Pfeil, Haarlinien) — **ohne Eyebrow, Überschrift und Vortext**. Farbwahl und Verhalten bleiben identisch: `bg` nimmt Markennamen oder Hex-Wert, `idt_surface_is_dark()` wählt weiterhin das kontrastreichere Schema (`--dark`/`--light`), Nebentexte und Linien bleiben durchscheinende Abstufungen der Schriftfarbe. Block „Button-Stack (Linkliste)" (`idt/buttonstack`, Farbwähler + Link-Zeilen in der Seitenleiste), Shortcode `[buttonstack bg="ink"]Beschriftung | Link | Beschreibung[/buttonstack]`, Vorlage „Button-Stack (Linkliste ohne Kopf)" und ein Abschnitt auf der Seite **Stilelemente** (dunkle und helle Variante).
   - Das Zeilen-Markup teilen sich beide Bausteine jetzt über den neuen Helfer `idt_link_list_html()` (`inc/shortcodes.php`), damit Themenblock und Button-Stack nicht auseinanderlaufen. CSS: `.idt-buttonstack` erbt das komplette Farbschema von `.idt-themenblock` und hebt nur auf, was der fehlende Kopf betrifft — kein Innenmaß an der Fläche, Liste bündig statt mit negativen Rändern, keine Trennlinie über der ersten Zeile.
   - **Senkrechte Akzentleiste entfernt.** Die Linkliste des Themenblocks (v2.0.19) wurde links von einer 3 px breiten Leiste (`--tb-rail`, `.idt-themenblock__list::before`) begleitet; die Haarlinien zwischen den Zeilen tragen die Gliederung bereits, die Leiste war ein Element zu viel. Sie ist samt Farbtoken ersatzlos gestrichen — der Eintrag zu v2.0.19 weiter unten beschreibt sie noch, dort gilt seit v2.0.20 diese Zeile.

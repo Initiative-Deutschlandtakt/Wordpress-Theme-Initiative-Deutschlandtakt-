@@ -1,6 +1,13 @@
 .DS_Store
 *.log
 
+# Build-Ergebnisse: das Release-Zip des Themes wird mit bin/theme-zip.sh
+# aus theme/idt-deutschlandtakt/ erzeugt, nicht versioniert.
+dist/
+*.zip
+*.tar.gz
+
 # Enthält echte Credential-Hashes (Live-Testseite) — nicht versionieren.
-wp-idt/deploy/new_t-datenbank.sql
-wp-idt/deploy/htaccess-schutz/.htpasswd
+deploy/new-t-datenbank.sql
+deploy/new_t-datenbank.sql
+deploy/htaccess-schutz/.htpasswd
