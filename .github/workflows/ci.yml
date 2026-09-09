@@ -1,0 +1,118 @@
+# Prüfungen, die jeder Pull Request bestehen muss.
+#
+# Aufgeteilt in vier Jobs, damit im Fehlerfall sofort sichtbar ist, woran es
+# liegt — Konvention, Skript, Paket oder laufendes WordPress. Die eigentlichen
+# Prüfungen stehen in bin/*.sh und laufen dort genauso lokal; die CI ruft nur
+# auf, was auch auf dem Rechner aufrufbar ist.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Der Release-Workflow ruft dieselben Prüfungen auf, bevor er ein Zip baut.
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Ein neuer Push auf denselben Branch macht den vorigen Lauf überflüssig.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  statische-pruefung:
+    name: Konventionen & Syntax (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 8.0 ist das „Requires PHP“ aus dem Theme-Header, 8.2/8.3 laufen auf
+        # dem Hoster bzw. im Docker-Stack. Was hier nicht parst, parst dort auch nicht.
+        php: ['8.0', '8.2', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: none
+
+      - name: Theme prüfen
+        run: ./bin/check-theme.sh
+
+  skripte:
+    name: Shell-Skripte & Compose-Datei
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck
+        run: shellcheck bin/*.sh wp-cli/init.sh
+
+      - name: docker-compose.yml validieren
+        run: docker compose config --quiet
+
+  zip:
+    name: Release-Zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Archivstruktur prüfen
+        run: ./bin/check-zip.sh
+
+      - name: Zip bauen
+        run: ./bin/theme-zip.sh
+
+      # Damit das Theme aus jedem Pull Request heruntergeladen und in eine
+      # WordPress-Instanz hochgeladen werden kann, ohne etwas lokal zu bauen.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: idt-deutschlandtakt-zip
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  smoke:
+    name: WordPress-Smoke-Test (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3']
+
+    services:
+      db:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: idt_smoke
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli, zip, gd, mbstring
+          coverage: none
+
+      - name: WordPress installieren, Theme aktivieren, Seiten abrufen
+        env:
+          IDT_DB_HOST: 127.0.0.1
+          IDT_DB_NAME: idt_smoke
+          IDT_DB_USER: root
+          IDT_DB_PASS: root
+          IDT_PORT: '8099'
+        run: ./bin/smoke-test.sh

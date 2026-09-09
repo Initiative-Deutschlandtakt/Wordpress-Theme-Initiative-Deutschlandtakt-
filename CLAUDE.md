@@ -15,14 +15,33 @@ docker-compose.yml           lokaler Stack: MariaDB + WordPress + Caddy + wp-cli
 wp-cli/init.sh               One-shot-Bootstrap (Core installieren, Theme aktivieren)
 caddy/Caddyfile              Reverse-Proxy/TLS für die öffentliche Testseite
 bin/theme-zip.sh             baut dist/idt-deutschlandtakt-<version>.zip
+bin/check-theme.sh           statische Prüfungen (Konventionen, Syntax, Palette)
+bin/check-zip.sh             prüft das gebaute Zip auf Upload-Tauglichkeit
+bin/smoke-test.sh            frisches WordPress + Theme + Seitenaufrufe
+bin/php-symbols.php          Tokenizer-Helfer für bin/check-theme.sh
+.github/workflows/           CI je Pull Request, Release beim Tag v<version>
 deploy/                      Anleitung + Konfigurationsschnipsel fürs Deployment
 README.md                    Benutzerdoku: starten, Bausteine, Redaktionswege
 todo.md                      Änderungsjournal (neuester Eintrag oben unter „Done")
 ```
 
-There is no build step, no package manager and no test suite. „Bauen" heißt hier
-nur: das Theme als Zip packen (`./bin/theme-zip.sh`). Geprüft wird im Browser gegen
-den lokalen Stack.
+There is no build step and no package manager. „Bauen" heißt hier nur: das Theme
+als Zip packen (`./bin/theme-zip.sh`) — im Alltag übernimmt das GitHub Actions,
+lokal ist es der Fallback.
+
+Geprüft wird zweifach: im Browser gegen den lokalen Stack und über die Skripte,
+die auch die CI ausführt. Vor einem Commit lohnt sich
+
+```bash
+./bin/check-theme.sh    # Konventionen, PHP-/JS-Syntax, Theme-Header, Palette
+./bin/check-zip.sh      # Archivstruktur des Release-Zips
+./bin/smoke-test.sh     # frisches WordPress, Theme aktivieren, Seiten abrufen
+```
+
+Die ersten beiden brauchen nur `php`, der Smoke-Test zusätzlich eine erreichbare
+Datenbank. Jeder Pull Request fährt dieselben Prüfungen (`.github/workflows/ci.yml`)
+und legt das gebaute Zip als Artefakt ab. Wer eine der vier Konventionen unten
+ändert, ändert `bin/check-theme.sh` mit — dort sind sie festgeschrieben.
 
 ## Entwickeln
 

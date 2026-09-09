@@ -4,6 +4,39 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Zip-Erzeugung und Prüfungen in GitHub Actions.** Das Release-Zip entstand bisher
+  nur, wenn jemand `bin/theme-zip.sh` auf seinem Rechner ausführte — mit Checkout,
+  Shell und `zip` als Voraussetzung, und ohne dass das Ergebnis irgendwo ankam.
+  Neu baut die CI es mit: Jeder Pull Request legt das Zip als Artefakt
+  „idt-deutschlandtakt-zip" ab, ein Tag `v<version>` erzeugt über
+  `.github/workflows/release.yml` ein GitHub-Release mit dem Zip als Asset. Der
+  Release-Workflow bricht ab, wenn der Tag nicht zur Version im Theme-Header passt.
+  Das lokale Skript bleibt unverändert der Fallback — die CI ruft dasselbe auf.
+  - **Prüfungen, die jeder Pull Request bestehen muss** (`.github/workflows/ci.yml`),
+    in vier Jobs: *Konventionen & Syntax* auf PHP 8.0/8.2/8.3, *Shell-Skripte &
+    Compose-Datei* (ShellCheck, `docker compose config`), *Release-Zip*
+    (Archivstruktur) und *WordPress-Smoke-Test* auf PHP 8.2/8.3.
+  - **Die vier Konventionen aus `CLAUDE.md` sind jetzt maschinell geprüft**
+    (`bin/check-theme.sh`): Version in `style.css` gegen `IDT_VERSION`, jeder
+    `idt_sc_*()`/`idt_render_*()`-Aufruf gegen die tatsächlich deklarierten
+    Funktionen, `idt`-Präfix auf Funktionen, Blöcken und Textdomain, und jede Farbe
+    aus `idt_brand_palette()` gegen Token und `.has-…`-Klassen in `style.css` 7c.
+    Ausgewertet wird über den PHP-Tokenizer (`bin/php-symbols.php`), damit
+    Kommentare und Variablen keine Fehlalarme auslösen. Dazu Theme-Header,
+    ABSPATH-Guards, `console.log`-/`var_dump`-Reste und JS-Syntax.
+  - **Der Smoke-Test** (`bin/smoke-test.sh`) installiert ein frisches WordPress
+    gegen MariaDB, aktiviert das Theme, seedet die Demo-Inhalte, rendert über
+    `bin/smoke-render.php` jeden Block, jeden Shortcode und jedes Pattern und ruft
+    Startseite, Unterseite, Beitrag, Suche, 404 und Login über HTTP ab. Warnungen,
+    Notices und Deprecated-Meldungen aus dem Theme gelten als Fehler, `debug.log`
+    muss leer bleiben — das fängt genau die Fälle, die sonst erst als weiße Seite
+    auffallen.
+  - Alle Prüfungen laufen unverändert lokal (`./bin/check-theme.sh`,
+    `./bin/check-zip.sh`, `./bin/smoke-test.sh`) — eine Fassung für CI und Rechner.
+  - Damit ein roter Lauf das Mergen wirklich verhindert, müssen die Jobs einmalig
+    unter *Settings → Branches* als *Required status checks* für `main` eingetragen
+    werden; das ist eine Repo-Einstellung, keine Datei.
+
 - **Button-Stack: eckig und mobil randlos (v2.0.21).** Der Baustein ist eine Reihe gestapelter Schaltflächen, keine Karte — die gerundeten Ecken (`--radius-lg`, vom Themenblock geerbt) haben die durchlaufenden Haarlinien an den Rändern angeschnitten. Die Fläche rendert jetzt **eckig** (`border-radius: 0`).
   - **Bis 640px zieht die Fläche bis an die Viewportkanten** (Full-Bleed-Breakout `width: 100vw; margin-inline: calc(50% - 50vw)`, dieselbe Technik wie bei `.stage`/`.stage2`), auch wenn der Baustein im Seiteninhalt (`.container`/`.entry` mit max-width und Gutter) sitzt. Das Innenmaß der Zeilen fällt dabei von `--tb-pad` auf den Seiten-Gutter zurück, damit die Beschriftungen weiter mit dem übrigen Seitentext fluchten. Der Themenblock bleibt unverändert gerundet und im Textmaß.
 

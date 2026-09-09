@@ -15,6 +15,8 @@ lassen und auszuliefern.
 | `docker-compose.yml`, `wp-cli/init.sh` | lokaler Stack (MariaDB, WordPress, wp-cli) |
 | `caddy/Caddyfile` | Reverse-Proxy und TLS für die öffentliche Testseite |
 | `bin/theme-zip.sh` | baut das Release-Zip aus dem Theme |
+| `bin/check-theme.sh`, `bin/check-zip.sh`, `bin/smoke-test.sh` | die Prüfungen, die auch in der CI laufen |
+| `.github/workflows/` | CI für jeden Pull Request, Release beim Setzen eines Tags |
 | `deploy/` | Anleitung und Konfigurationsschnipsel fürs Deployment |
 | `todo.md` | Änderungsjournal (neuester Eintrag oben) |
 
@@ -69,9 +71,27 @@ docker compose down -v         # alles zurücksetzen (DB + WP-Core löschen)
 
 Nach `down -v` wird beim nächsten `up` alles frisch installiert und neu befüllt.
 
-## Theme-Zip bauen
+## Theme-Zip beziehen
 
-Für den Upload unter *Design → Themes → Hinzufügen → Theme hochladen*:
+Das Zip für den Upload unter *Design → Themes → Hinzufügen → Theme hochladen*
+entsteht in GitHub Actions — es muss niemand lokal bauen.
+
+**Für eine Veröffentlichung** die Version in `style.css` und `functions.php`
+hochzählen, mergen, dann einen Tag setzen:
+
+```bash
+git tag v2.0.22 && git push origin v2.0.22
+```
+
+Der Release-Workflow prüft, ob der Tag zur Theme-Version passt, baut das Zip und
+hängt es an ein GitHub-Release — Download unter *Releases* im Repository.
+
+**Für einen Zwischenstand** genügt der Pull Request: Jeder CI-Lauf legt das Zip
+als Artefakt „idt-deutschlandtakt-zip" ab (30 Tage abrufbar, unten auf der Seite
+des Workflow-Laufs). Ohne offenen Pull Request tut es *Actions → Release → Run
+workflow*.
+
+**Lokal**, wenn es schnell gehen muss:
 
 ```bash
 ./bin/theme-zip.sh
@@ -81,6 +101,32 @@ Das Skript liest die Versionsnummer aus dem Theme-Header (`style.css`) und legt
 `dist/idt-deutschlandtakt-<version>.zip` an — mit dem Ordner `idt-deutschlandtakt/`
 an der Wurzel des Archivs, genau so, wie WordPress es erwartet. `dist/` ist nicht
 versioniert: Das Zip ist ein Erzeugnis und wird bei Bedarf neu gebaut.
+
+## Prüfungen
+
+Jeder Pull Request durchläuft `.github/workflows/ci.yml`. Dieselben Prüfungen
+laufen lokal, ohne Installation:
+
+```bash
+./bin/check-theme.sh    # Konventionen, PHP-/JS-Syntax, Theme-Header, Palette
+./bin/check-zip.sh      # baut das Zip und prüft die Archivstruktur
+./bin/smoke-test.sh     # frisches WordPress, Theme aktivieren, Seiten abrufen
+```
+
+| Job | Was er prüft |
+|---|---|
+| Konventionen & Syntax | die vier Konventionen aus `CLAUDE.md` (Version an zwei Stellen synchron, jeder Block zeigt auf eine existierende Render-Funktion, `idt`-Präfix, Editor-Palette mit Token und Frontend-Klasse) sowie PHP-Syntax auf 8.0/8.2/8.3, JS-Syntax, Direktzugriffsschutz, Debug-Reste |
+| Shell-Skripte & Compose-Datei | ShellCheck über `bin/*.sh` und `wp-cli/init.sh`, `docker compose config` |
+| Release-Zip | Archivwurzel, Pflichtdateien, keine `.git`/`.DS_Store`, Version im Archiv — und legt das Zip als Artefakt ab |
+| WordPress-Smoke-Test | installiert WordPress gegen MariaDB, aktiviert das Theme, seedet die Demo-Inhalte, rendert alle Blöcke, Shortcodes und Patterns und ruft Startseite, Seite, Beitrag, Suche, 404 und Login ab — nichts darf eine PHP-Meldung erzeugen |
+
+`bin/smoke-test.sh` braucht eine erreichbare Datenbank; die Zugänge kommen aus
+`IDT_DB_HOST`, `IDT_DB_NAME`, `IDT_DB_USER` und `IDT_DB_PASS` (Standard passt zum
+lokalen Docker-Stack).
+
+Damit ein Pull Request ohne grüne Prüfungen nicht gemergt werden kann, müssen die
+Jobs einmalig unter *Settings → Branches → Branch protection rules* für `main` als
+*Required status checks* eingetragen werden.
 
 ## Theme bearbeiten
 

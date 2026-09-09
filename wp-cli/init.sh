@@ -7,7 +7,7 @@ set -euo pipefail
 cd /var/www/html
 
 echo "==> Waiting for WordPress core files (wp-config.php)…"
-for i in $(seq 1 60); do
+for _ in $(seq 1 60); do
   [ -f wp-config.php ] && break
   sleep 2
 done
