@@ -1,0 +1,74 @@
+# Baut das Release-Zip und hängt es an ein GitHub-Release — damit niemand das
+# Theme lokal packen muss, um es hochzuladen.
+#
+# Auslöser:
+#   - ein Tag „v<version>“ (z. B. v2.0.21) → Release mit Zip als Asset
+#   - manuell über „Run workflow“        → Zip nur als Artefakt zum Herunterladen
+#
+# Vorher laufen die vollständigen CI-Prüfungen; ein Release entsteht nur aus
+# einem Stand, der grün ist.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruefungen:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: Zip bauen und veröffentlichen
+    needs: pruefungen
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version gegen den Tag prüfen
+        # Der Tag ist die Ansage nach außen, der Theme-Header die Wahrheit im
+        # Zip. Laufen die auseinander, lädt jemand später v2.0.22 hoch und
+        # bekommt 2.0.21 — deshalb hier hart abbrechen.
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          header_version="$(sed -n 's/^[[:space:]]*Version:[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$/\1/p' \
+            theme/idt-deutschlandtakt/style.css | head -n 1)"
+          if [ "$tag_version" != "$header_version" ]; then
+            echo "Tag $GITHUB_REF_NAME passt nicht zur Theme-Version $header_version." >&2
+            exit 1
+          fi
+          echo "Version $header_version bestätigt."
+
+      - name: Zip bauen
+        run: ./bin/theme-zip.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: idt-deutschlandtakt-zip
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Release anlegen
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          notes="$(mktemp)"
+          {
+            echo "Theme **IDT Deutschlandtakt $version** als Zip zum Hochladen unter"
+            echo "*Design → Themes → Hinzufügen → Theme hochladen*."
+            echo
+            echo "Änderungen: siehe \`todo.md\` im Repository."
+          } > "$notes"
+          gh release create "$GITHUB_REF_NAME" \
+            --title "IDT Deutschlandtakt $version" \
+            --notes-file "$notes" \
+            "dist/idt-deutschlandtakt-$version.zip"
