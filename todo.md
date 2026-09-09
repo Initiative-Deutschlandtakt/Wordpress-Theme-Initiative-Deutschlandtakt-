@@ -4,6 +4,9 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Button-Stack: eckig und mobil randlos (v2.0.21).** Der Baustein ist eine Reihe gestapelter Schaltflächen, keine Karte — die gerundeten Ecken (`--radius-lg`, vom Themenblock geerbt) haben die durchlaufenden Haarlinien an den Rändern angeschnitten. Die Fläche rendert jetzt **eckig** (`border-radius: 0`).
+  - **Bis 640px zieht die Fläche bis an die Viewportkanten** (Full-Bleed-Breakout `width: 100vw; margin-inline: calc(50% - 50vw)`, dieselbe Technik wie bei `.stage`/`.stage2`), auch wenn der Baustein im Seiteninhalt (`.container`/`.entry` mit max-width und Gutter) sitzt. Das Innenmaß der Zeilen fällt dabei von `--tb-pad` auf den Seiten-Gutter zurück, damit die Beschriftungen weiter mit dem übrigen Seitentext fluchten. Der Themenblock bleibt unverändert gerundet und im Textmaß.
+
 - **Repo auf das Theme zusammengezogen.** Das Repository war noch nach seinem
   Ursprung sortiert — der Splash als eingebettetes HTML-Fragment für die fremde
   Seite `page-id-992` — und trug den ganzen Vorlauf mit: `landing.html`/`landing.css`
