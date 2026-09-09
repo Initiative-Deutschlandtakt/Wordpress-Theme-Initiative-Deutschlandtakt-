@@ -136,8 +136,8 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[callout type="cyan"]…[/callout]` | Hinweisbox (`cyan`/`violet`/`yellow`) |
 | `[diagonal]…[/diagonal]` | Aussageblock mit durchgehenden Horizont-Diagonalen |
 | `[card]…[/card]` | Karte mit Rahmen und Schatten |
-| `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Violett→Cyan-Rahmen), `arrow="true"` |
-| `[concept color="…" icon="…" title="…" href="…"]…[/concept]` | Konzept-Karte; mit `href` klickbar |
+| `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Violett→Cyan-Rahmen), `arrow="true"`; `bg=""` setzt die Fläche frei (s. u.) |
+| `[concept color="…" icon="…" title="…" href="…"]…[/concept]` | Konzept-Karte; mit `href` klickbar; `bg=""` setzt die Fläche frei (s. u.) |
 | `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
@@ -217,6 +217,27 @@ Sekundär (Cyan), Outline und Gradient-Rahmen (Violett→Cyan). Der WordPress-
 Standard-Button-Block ist im Editor ausgeblendet (`editor-formats.js`,
 reversibel). Die Varianten `ghost`/`inverse` existieren weiter per CSS für
 Sonderfälle (z. B. dunkle Flächen), werden aber nicht als Auswahl angeboten.
+
+### Hintergrundfläche von Button und Konzept-Karte
+
+Button und Konzept-Karte haben in der Seitenleiste das Feld **Hintergrund**.
+Es überschreibt die Fläche, die der gewählte Stil bzw. das Papier vorgibt:
+
+| Auswahl | Fläche |
+|---|---|
+| *Standard (aus dem Stil)* | wie bisher — Violett/Cyan beim Button, Papier bei der Karte |
+| *Verlauf Cyan → Violett* | Markenverlauf, links Cyan, rechts Violett |
+| *Verlauf Violett → Cyan* | derselbe Verlauf in Gegenrichtung |
+| Markenfarben | Violett, Cyan, Gelb, Ink, Papier 1–3, die drei hellen Töne, Grau |
+
+Als Shortcode heißt das Feld `bg` und nimmt zusätzlich einen freien Hex-Wert:
+`[btn href="/mitmachen/" bg="cyan-violet"]Mitglied werden[/btn]`,
+`[concept bg="#E8E3FF" title="Die Idee" href="/idee/"]…[/concept]`.
+
+Die Schriftfarbe wird nicht eingestellt, sondern gerechnet: Das Theme vergleicht
+den Kontrast der Fläche zu Papier und zu Ink und nimmt den besseren — bei
+Verläufen gemessen am schwächeren Ende, damit die Schrift über den ganzen
+Verlauf lesbar bleibt. Beim Verlauf Cyan→Violett gewinnt so die dunkle Schrift.
 
 ### Trenner (Trennelement)
 

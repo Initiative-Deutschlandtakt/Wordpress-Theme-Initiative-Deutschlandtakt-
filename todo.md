@@ -4,6 +4,34 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Hintergrundfläche für Button und Konzept-Karte einstellbar (v2.0.23).** Die
+  Fläche eines Buttons war bisher an seine Variante gebunden (Violett, Cyan,
+  Outline), die Konzept-Karte lag immer auf Papier. Beide haben jetzt in der
+  Seitenleiste das Feld **Hintergrund** — Markenfarben, die hellen Töne, Ink,
+  Papier 1–3 und Grau, dazu die beiden **Markenverläufe Cyan→Violett** und
+  Violett→Cyan. Als Shortcode ist es `bg=""` und nimmt zusätzlich einen freien
+  Hex-Wert.
+  - **Eine Stelle entscheidet über die Schriftfarbe.** `idt_surface_fill()`
+    übersetzt eine `bg`-Angabe in eine Füllung und sagt dazu, ob die Fläche
+    helle Schrift braucht. Dafür kann `idt_surface_is_dark()` jetzt statt einer
+    Farbe eine Liste von Stützfarben bewerten: Bei Verläufen zählt das
+    schwächste Ende, es gewinnt die Schriftfarbe mit dem besseren schlechtesten
+    Kontrast. Beim Verlauf Cyan→Violett ist das die dunkle Schrift — helle
+    Schrift stünde am Cyan-Ende bei 1,6:1. Das bisherige Kontrastverhältnis
+    steckt als `idt_color_contrast()` in einer eigenen Funktion, `[themenblock]`
+    und `[buttonstack]` verhalten sich unverändert.
+  - **Die Verläufe sind Tokens, keine Literale** (Konvention 4): `--idt-grad-cyan-violet`
+    und `--idt-grad-violet-cyan` stehen in `style.css` Abschnitt 2, PHP gibt nur
+    `var(--idt-grad-…)` aus. `idt_surface_gradients()` ist die Liste, aus der
+    sowohl Shortcode als auch Auswahlfeld schöpfen — wer einen Verlauf ergänzt,
+    ergänzt Token und `idt_bg_options()` mit.
+  - **Ein Render-Pfad** (Konvention 2): Block und Shortcode laufen weiter über
+    dieselben `idt_sc_btn()`/`idt_sc_concept()`; die Blöcke bekommen nur ein
+    Auswahlfeld mehr, das serverseitig gerendert wird.
+  - Der Gradient-Rahmen (`variant="gradient"`) und eine eigene Fläche schließen
+    sich aus — die Maske des Rahmens würde die Füllung verdecken, deshalb
+    entfällt sie, sobald `bg` gesetzt ist.
+
 - **Repo für die Veröffentlichung vorbereitet (v2.0.22).** Das Repository soll
   öffentlich werden; dafür ist zweierlei nötig — nichts Vertrauliches im Baum,
   und eine Lizenz, unter der das Theme überhaupt weitergegeben werden darf.
