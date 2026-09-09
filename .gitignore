@@ -6,8 +6,3 @@
 dist/
 *.zip
 *.tar.gz
-
-# Enthält echte Credential-Hashes (Live-Testseite) — nicht versionieren.
-deploy/new-t-datenbank.sql
-deploy/new_t-datenbank.sql
-deploy/htaccess-schutz/.htpasswd

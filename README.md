@@ -13,11 +13,9 @@ lassen und auszuliefern.
 |---|---|
 | `theme/idt-deutschlandtakt/` | das Theme |
 | `docker-compose.yml`, `wp-cli/init.sh` | lokaler Stack (MariaDB, WordPress, wp-cli) |
-| `caddy/Caddyfile` | Reverse-Proxy und TLS für die öffentliche Testseite |
 | `bin/theme-zip.sh` | baut das Release-Zip aus dem Theme |
 | `bin/check-theme.sh`, `bin/check-zip.sh`, `bin/smoke-test.sh` | die Prüfungen, die auch in der CI laufen |
 | `.github/workflows/` | CI für jeden Pull Request, Release beim Setzen eines Tags |
-| `deploy/` | Anleitung und Konfigurationsschnipsel fürs Deployment |
 | `todo.md` | Änderungsjournal (neuester Eintrag oben) |
 
 ## Starten
@@ -37,30 +35,8 @@ docker compose logs -f cli
 Sobald „IDT Deutschlandtakt is ready" erscheint:
 
 - **Website:** http://localhost:8090
-- **Admin:**   http://localhost:8090/wp-admin — Benutzer `admin`
-  (Passwort: seit die Instanz öffentlich ist nicht mehr `admin`,
-  siehe `deploy/DEPLOY.md` → „Zugangsdaten der Testseite")
-
-## Öffentliche Testseite
-
-Dieselbe Instanz wird zusätzlich als öffentliche Testseite unter
-**https://testseite.example** ausgeliefert (DNS A/AAAA bei
-webgo → diese Maschine). Vor WordPress sitzt ein **Caddy**-Container
-(`caddy/Caddyfile`) auf Port 80/443: TLS-Terminierung mit automatischem
-Let's-Encrypt-Zertifikat (inkl. Erneuerung) und HTTP→HTTPS-Redirect.
-
-Die Site-URL folgt dem Host-Header (Allowlist in `docker-compose.yml` →
-`WORDPRESS_CONFIG_EXTRA`), darum funktionieren `localhost:8090` (HTTP, Dev)
-und die Domain (HTTPS) parallel. Die URLs in der Datenbank (Inhalte/GUIDs)
-zeigen auf die öffentliche Domain.
-
-Härtung, weil öffentlich: eigenes Admin-Passwort (siehe
-`deploy/DEPLOY.md` → „Zugangsdaten"), `blog_public=0` (noindex),
-`WORDPRESS_DEBUG=0`, `DISALLOW_FILE_EDIT`. In der Hetzner Cloud Firewall
-müssen eingehend TCP 80 **und** 443 offen sein.
-
-Hinweis: Die frühere Subdomain `new_t` (Unterstrich) wurde verworfen,
-weil Let's Encrypt dafür keine Zertifikate ausstellt.
+- **Admin:**   http://localhost:8090/wp-admin — `admin` / `admin`
+  (Wegwerf-Zugang des lokalen Containers)
 
 ## Stoppen / Zurücksetzen
 
@@ -306,3 +282,18 @@ Ohne JavaScript verlinkt die Lupe auf `#idt-searchbox`; eine `:target`-Regel in
 `style.css` klappt das Overlay auch dann auf, das Formular darin führt regulär
 zur Ergebnisseite. Das kompakte `searchform.php` bleibt für alles erhalten, was
 WordPress selbst ausgibt (Widgets, Suchblock).
+
+## Lizenz
+
+Der Code des Themes steht unter der **GNU General Public License v2 oder später**
+(`LICENSE`), wie es für WordPress-Themes vorgesehen ist. Dieselbe Datei liegt in
+`theme/idt-deutschlandtakt/` und wandert damit in jedes gebaute Zip; die Angaben
+im Theme-Header (`style.css`) und in `theme/idt-deutschlandtakt/readme.txt` sagen
+dasselbe.
+
+Zwei Bestandteile folgen eigenen Bedingungen:
+
+| Bestandteil | Bedingung |
+|---|---|
+| Schrift **Inter** (`assets/fonts/InterVariable*.woff2`) | SIL Open Font License 1.1 — Lizenztext liegt als `assets/fonts/OFL.txt` bei und muss bei Weitergabe mitgeliefert werden |
+| **Logo, Wortmarke, Bildmarken** der Initiative Deutschlandtakt (`assets/logo-idt-*.png`, `assets/site-icon.png`, `screenshot.png`) | nicht von der GPL erfasst; wer das Theme weiterverwendet, ersetzt sie durch eigene Grafiken (Einzelheiten in `theme/idt-deutschlandtakt/readme.txt`) |

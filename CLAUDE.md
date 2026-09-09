@@ -11,17 +11,16 @@ in the repo exists to develop, preview and ship it.
 
 ```
 theme/idt-deutschlandtakt/   das Theme — der eigentliche Inhalt des Repos
-docker-compose.yml           lokaler Stack: MariaDB + WordPress + Caddy + wp-cli
+docker-compose.yml           lokaler Stack: MariaDB + WordPress + wp-cli
 wp-cli/init.sh               One-shot-Bootstrap (Core installieren, Theme aktivieren)
-caddy/Caddyfile              Reverse-Proxy/TLS für die öffentliche Testseite
 bin/theme-zip.sh             baut dist/idt-deutschlandtakt-<version>.zip
 bin/check-theme.sh           statische Prüfungen (Konventionen, Syntax, Palette)
 bin/check-zip.sh             prüft das gebaute Zip auf Upload-Tauglichkeit
 bin/smoke-test.sh            frisches WordPress + Theme + Seitenaufrufe
 bin/php-symbols.php          Tokenizer-Helfer für bin/check-theme.sh
 .github/workflows/           CI je Pull Request, Release beim Tag v<version>
-deploy/                      Anleitung + Konfigurationsschnipsel fürs Deployment
 README.md                    Benutzerdoku: starten, Bausteine, Redaktionswege
+LICENSE                      GPLv2 — dieselbe Datei liegt auch im Theme (und im Zip)
 todo.md                      Änderungsjournal (neuester Eintrag oben unter „Done")
 ```
 

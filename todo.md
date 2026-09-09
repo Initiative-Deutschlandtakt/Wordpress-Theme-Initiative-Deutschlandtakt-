@@ -4,6 +4,36 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Repo für die Veröffentlichung vorbereitet (v2.0.22).** Das Repository soll
+  öffentlich werden; dafür ist zweierlei nötig — nichts Vertrauliches im Baum,
+  und eine Lizenz, unter der das Theme überhaupt weitergegeben werden darf.
+  - **Öffentliche Testseite vollständig entfernt.** `caddy/` (Reverse-Proxy, TLS,
+    ACME-Kontakt) und `deploy/` (Anleitung, `wp-config`-Schnipsel,
+    Basic-Auth-`.htaccess`) sind gelöscht, im `docker-compose.yml` fällt der
+    Caddy-Dienst samt seinen Volumes und der Host-Allowlist in
+    `WORDPRESS_CONFIG_EXTRA` weg. Der Stack ist damit wieder das, was er sein
+    soll: eine lokale Entwicklungsumgebung unter `localhost:8090`. README und
+    `CLAUDE.md` beschreiben keine Testseite mehr, der Admin-Zugang ist wieder der
+    Wegwerf-Zugang `admin`/`admin` des Containers. `bin/check-theme.sh` suchte
+    PHP-Dateien auch unter `deploy/` — der Pfad ist mit entfernt.
+  - **Zugangsdaten aus der Historie getilgt.** `deploy/DEPLOY.md` nannte die
+    Passwörter der Testseite im Klartext, und der Initial Commit trug ein
+    `new_t-deploy-paket.tar.gz` mit vollständigem Datenbank-Dump (Passwort-Hash
+    des Admins) und `.htpasswd`. Beides ist per `git filter-repo` aus allen
+    Commits entfernt, die Passwörter sind unabhängig davon zu wechseln.
+  - **Lizenz gesetzt.** Das Theme steht unter **GPLv2 oder später**: `LICENSE` im
+    Repo und im Theme (wandert damit ins Zip), `License:`/`License URI:` im
+    Theme-Header, dazu `readme.txt` nach WordPress-Konvention mit Copyright,
+    Schrift-Nachweis und dem Hinweis, dass Logo und Wortmarke des Vereins
+    **nicht** von der GPL erfasst sind.
+  - **Inter-Schrift korrekt nachgewiesen.** Die beiden selbst gehosteten
+    `.woff2`-Dateien stehen unter der SIL Open Font License 1.1, die verlangt,
+    dass der Lizenztext mitgeliefert wird — er liegt jetzt als
+    `assets/fonts/OFL.txt` im Theme und im Zip.
+  - **Die Prüfskripte halten das fest:** `bin/check-theme.sh` verlangt `LICENSE`,
+    `readme.txt` und `assets/fonts/OFL.txt` sowie die beiden Lizenz-Header-Felder,
+    `bin/check-zip.sh` prüft, dass alle drei wirklich im Archiv liegen.
+
 - **Zip-Erzeugung und Prüfungen in GitHub Actions.** Das Release-Zip entstand bisher
   nur, wenn jemand `bin/theme-zip.sh` auf seinem Rechner ausführte — mit Checkout,
   Shell und `zip` als Voraussetzung, und ohne dass das Ergebnis irgendwo ankam.

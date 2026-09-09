@@ -31,18 +31,18 @@ ok()      { printf '  \033[32m✓\033[0m %s\n' "$1"; }
 warn()    { printf '  \033[33m•\033[0m %s\n' "$1"; }
 err()     { printf '  \033[31m✗\033[0m %s\n' "$1"; fail=1; }
 
-php_files="$(find "$theme" "$repo/deploy" -name '*.php' | sort)"
+php_files="$(find "$theme" -name '*.php' | sort)"
 
 # -----------------------------------------------------------------------------
 section "1) Theme-Grundgerüst"
 # WordPress verlangt style.css + index.php; functions.php und screenshot.png
 # gehören für dieses Theme dazu (Bausteine bzw. Vorschaubild im Backend).
-for f in style.css index.php functions.php screenshot.png; do
+for f in style.css index.php functions.php screenshot.png LICENSE readme.txt assets/fonts/OFL.txt; do
   if [ -f "$theme/$f" ]; then ok "$f vorhanden"; else err "$f fehlt"; fi
 done
 
 # Header-Felder, die der Theme-Upload und die Update-Prüfung brauchen.
-for field in "Theme Name" "Version" "Requires at least" "Requires PHP" "Text Domain"; do
+for field in "Theme Name" "Version" "Requires at least" "Requires PHP" "Text Domain" "License" "License URI"; do
   if grep -qE "^${field}:[[:space:]]*\S" "$theme/style.css"; then
     ok "Theme-Header: „$field“ gesetzt"
   else
