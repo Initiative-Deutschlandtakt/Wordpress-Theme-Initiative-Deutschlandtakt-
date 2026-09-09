@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.20
+Version: 2.0.21
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1048,10 +1048,24 @@ html.idt-searchbox-open { overflow: hidden; }
    Innenmaß mehr (das bringen die Zeilen mit); die Liste sitzt bündig in der
    Fläche, statt sich wie im Themenblock mit negativen Rändern aus dem Innenmaß
    herauszuziehen. Die erste Zeile braucht keine Trennlinie — die Kante der
-   Fläche ist bereits eine. */
-.idt-buttonstack { padding: 0; }
+   Fläche ist bereits eine. Die Fläche bleibt eckig: der Baustein ist eine
+   Reihe gestapelter Schaltflächen, keine Karte — gerundete Ecken würden die
+   durchlaufenden Haarlinien an den Rändern anschneiden. */
+.idt-buttonstack { padding: 0; border-radius: 0; }
 .idt-buttonstack .idt-themenblock__list { margin: 0; }
 .idt-buttonstack .idt-themenblock__row:first-child { border-top: 0; }
+
+/* Mobil randlos — Full-Bleed-Breakout wie bei .stage (s. Kommentar dort): die
+   Fläche zieht bis an die Viewportkanten, auch wenn der Baustein in
+   .container/.entry (max-width + Gutter) sitzt. Das Innenmaß der Zeilen fällt
+   dabei auf den Seiten-Gutter zurück, damit die Beschriftungen weiter mit dem
+   übrigen Seitentext fluchten. */
+@media (max-width: 640px) {
+  .idt-buttonstack {
+    --tb-pad: var(--gutter);
+    width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  }
+}
 
 /* News-Karte */
 .idt-newscard {
