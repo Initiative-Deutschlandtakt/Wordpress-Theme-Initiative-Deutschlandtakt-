@@ -36,7 +36,7 @@ err()     { printf '  \033[31m✗\033[0m %s\n' "$1"; fail=1; }
 work="$(mktemp -d)"
 server_pid=""
 # Wird über trap aufgerufen, nicht direkt.
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 cleanup() {
   [ -n "$server_pid" ] && kill "$server_pid" 2>/dev/null
   rm -rf "$work"
@@ -80,6 +80,10 @@ wp core install \
   --admin_user=admin --admin_password=admin --admin_email=admin@example.com \
   --skip-email --quiet || { err "wp core install fehlgeschlagen"; exit 1; }
 wp rewrite structure '/%postname%/' --quiet
+# Site-URL festnageln: sonst rät WordPress sie beim Installieren aus dem
+# Verzeichnisnamen („…/wp") und die Permalinks zeigen daneben.
+wp option update home "$url" --quiet
+wp option update siteurl "$url" --quiet
 ok "WordPress installiert unter $url"
 
 # -----------------------------------------------------------------------------
@@ -118,18 +122,28 @@ for _ in $(seq 1 30); do
   sleep 1
 done
 
-# Startseite, eine Unterseite, ein Beitrag, Suche, 404 und der Login —
-# damit sind Front-Page-Template, page.php, single.php, search.php, 404.php
-# und der Adminpfad einmal durchlaufen.
-page_url="$(wp post list --post_type=page --posts_per_page=1 --field=url 2>/dev/null | head -n 1)"
-post_url="$(wp post list --post_type=post --posts_per_page=1 --field=url 2>/dev/null | head -n 1)"
+# Startseite, Unterseite, Beitragsliste, Beitrag, Suche, 404 und Login — damit
+# sind front-page.php, page.php, index.php, single.php, search.php, 404.php und
+# der Adminpfad einmal durchlaufen.
+#
+# Die URLs entstehen aus den Slugs, nicht aus `wp post list --field=url`: dessen
+# Permalink hängt an der Site-URL, die hier gerade geprüft werden soll. Für die
+# einfache Form `/<slug>/` bleiben Startseite und Blog-Seite (eigene Permalinks)
+# und Unterseiten (deren Pfad die Elternseite enthält) außen vor.
+front_id="$(wp option get page_on_front 2>/dev/null || echo 0)"
+blog_id="$(wp option get page_for_posts 2>/dev/null || echo 0)"
+page_slug="$(wp post list --post_type=page --post_status=publish --fields=ID,post_name,post_parent --format=csv 2>/dev/null \
+  | awk -F, -v f="$front_id" -v b="$blog_id" 'NR>1 && $1!=f && $1!=b && $3==0 {print $2; exit}')"
+post_slug="$(wp post list --post_type=post --post_status=publish --posts_per_page=1 --field=post_name 2>/dev/null | head -n 1)"
+blog_slug=""
+[ "$blog_id" != "0" ] && blog_slug="$(wp post get "$blog_id" --field=post_name 2>/dev/null)"
 
 pruefe_seite() { # $1 = URL, $2 = erwarteter Statuscode, $3 = Bezeichnung
   local body status
-  body="$(curl -sS -o "$work/body.html" -w '%{http_code}' "$1" 2>/dev/null)"
-  status="$body"
+  body="$(curl -sS -o "$work/body.html" -w '%{http_code} %{redirect_url}' "$1" 2>/dev/null)"
+  status="${body%% *}"
   if [ "$status" != "$2" ]; then
-    err "$3: HTTP $status statt $2 ($1)"
+    err "$3: HTTP $status statt $2 ($1) ${body#* }"
     return
   fi
   local meldungen
@@ -142,8 +156,13 @@ pruefe_seite() { # $1 = URL, $2 = erwarteter Statuscode, $3 = Bezeichnung
 }
 
 pruefe_seite "$url/" 200 "Startseite"
-[ -n "$page_url" ] && pruefe_seite "$page_url" 200 "Seite"
-[ -n "$post_url" ] && pruefe_seite "$post_url" 200 "Beitrag"
+if [ -n "$page_slug" ]; then
+  pruefe_seite "$url/$page_slug/" 200 "Seite"
+else
+  err "keine prüfbare Seite gefunden — Demo-Inhalte fehlen?"
+fi
+[ -n "$blog_slug" ] && pruefe_seite "$url/$blog_slug/" 200 "Beitragsliste"
+[ -n "$post_slug" ] && pruefe_seite "$url/$post_slug/" 200 "Beitrag"
 pruefe_seite "$url/?s=takt" 200 "Suchergebnisse"
 pruefe_seite "$url/gibt-es-nicht/" 404 "404-Seite"
 pruefe_seite "$url/wp-login.php" 200 "Login"

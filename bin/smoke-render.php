@@ -123,10 +123,13 @@ WP_CLI::line( sprintf( '  Shortcodes gerendert: %d', count( $idt_tags ) ) );
 // -----------------------------------------------------------------------------
 // 5) Patterns: im Inserter sichtbar
 if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
+	// Ohne Argument: alle registrierten Patterns. Das optionale Argument heißt
+	// $outside_init_only und würde genau die ausblenden, die — wie hier — an
+	// „init" registriert werden.
 	$patterns = array_filter(
-		array_keys( WP_Block_Patterns_Registry::get_instance()->get_all_registered( true ) ),
-		function ( $name ) {
-			return 0 === strpos( $name, 'idt/' );
+		WP_Block_Patterns_Registry::get_instance()->get_all_registered(),
+		function ( $pattern ) {
+			return isset( $pattern['name'] ) && 0 === strpos( $pattern['name'], 'idt/' );
 		}
 	);
 	if ( count( $patterns ) < 1 ) {
