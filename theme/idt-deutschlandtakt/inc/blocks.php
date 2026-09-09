@@ -18,6 +18,32 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /**
+ * Auswahlliste für das Feld „Hintergrund" (bg): keine Angabe, die
+ * Markenflächen aus idt_color_hex() und die Markenverläufe aus
+ * idt_surface_gradients(). Button und Konzept-Karte teilen sich die Liste,
+ * damit beide dieselben Flächen anbieten; ein freier Hex-Wert bleibt über die
+ * Shortcode-Schreibweise (bg="#RRGGBB") möglich.
+ */
+function idt_bg_options() {
+	return array(
+		array( 'label' => __( 'Standard (aus dem Stil)', 'idt' ), 'value' => '' ),
+		array( 'label' => __( 'Verlauf Cyan → Violett', 'idt' ), 'value' => 'cyan-violet' ),
+		array( 'label' => __( 'Verlauf Violett → Cyan', 'idt' ), 'value' => 'violet-cyan' ),
+		array( 'label' => __( 'Violett', 'idt' ), 'value' => 'violet' ),
+		array( 'label' => __( 'Cyan', 'idt' ), 'value' => 'cyan' ),
+		array( 'label' => __( 'Gelb', 'idt' ), 'value' => 'yellow' ),
+		array( 'label' => __( 'Ink (dunkles Teal)', 'idt' ), 'value' => 'ink' ),
+		array( 'label' => __( 'Papier', 'idt' ), 'value' => 'paper' ),
+		array( 'label' => __( 'Papier 2 (wärmer)', 'idt' ), 'value' => 'paper-2' ),
+		array( 'label' => __( 'Papier 3 (kräftiger)', 'idt' ), 'value' => 'paper-3' ),
+		array( 'label' => __( 'Violett hell', 'idt' ), 'value' => 'violet-soft' ),
+		array( 'label' => __( 'Cyan hell', 'idt' ), 'value' => 'cyan-soft' ),
+		array( 'label' => __( 'Gelb hell', 'idt' ), 'value' => 'yellow-soft' ),
+		array( 'label' => __( 'Grau', 'idt' ), 'value' => 'gray' ),
+	);
+}
+
+/**
  * Block-Definitionen: Sidebar-Felder (für die UI) + Render (Shortcode-Reuse).
  * Feldtypen: text | textarea | select | toggle | range | color
  */
@@ -97,9 +123,10 @@ function idt_blocks_config() {
 					array( 'label' => 'Outline', 'value' => 'outline' ),
 					array( 'label' => 'Gradient-Rahmen', 'value' => 'gradient' ),
 				) ),
+				array( 'key' => 'bg', 'label' => __( 'Hintergrund (überschreibt den Stil)', 'idt' ), 'type' => 'select', 'default' => '', 'options' => idt_bg_options() ),
 				array( 'key' => 'arrow', 'label' => __( 'Pfeil anzeigen', 'idt' ), 'type' => 'toggle', 'default' => false ),
 			),
-			'render'   => function ( $a ) { return idt_sc_btn( array( 'href' => $a['href'], 'variant' => $a['variant'], 'arrow' => $a['arrow'] ? 'true' : '' ), $a['text'] ); },
+			'render'   => function ( $a ) { return idt_sc_btn( array( 'href' => $a['href'], 'variant' => $a['variant'], 'bg' => $a['bg'], 'arrow' => $a['arrow'] ? 'true' : '' ), $a['text'] ); },
 		),
 		'pill' => array(
 			'title'    => __( 'Pill-Button', 'idt' ),
@@ -181,10 +208,11 @@ function idt_blocks_config() {
 					array( 'label' => 'Netz (netz)', 'value' => 'netz' ),
 					array( 'label' => 'Ohne', 'value' => '' ),
 				) ),
+				array( 'key' => 'bg', 'label' => __( 'Hintergrund der Karte', 'idt' ), 'type' => 'select', 'default' => '', 'options' => idt_bg_options() ),
 				array( 'key' => 'href', 'label' => __( 'Link (optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
 				array( 'key' => 'text', 'label' => __( 'Text', 'idt' ), 'type' => 'textarea', 'default' => 'Kurzer Beschreibungstext zur Konzept-Karte.' ),
 			),
-			'render'   => function ( $a ) { return idt_sc_concept( array( 'color' => $a['color'], 'icon' => $a['icon'], 'title' => $a['title'], 'href' => $a['href'] ), $a['text'] ); },
+			'render'   => function ( $a ) { return idt_sc_concept( array( 'color' => $a['color'], 'icon' => $a['icon'], 'title' => $a['title'], 'href' => $a['href'], 'bg' => $a['bg'] ), $a['text'] ); },
 		),
 		'einschub' => array(
 			'title'    => __( 'Dunkler Einschub', 'idt' ),
