@@ -4,10 +4,23 @@ WordPress-Theme im Corporate Design der Initiative Deutschlandtakt („Horizont"
 inklusive vollständigem Design-Token-System und spielerischen Text-Stilelementen.
 Läuft komplett lokal über Docker.
 
+## Aufbau des Repos
+
+Der Inhalt des Repos ist das Theme; alles andere dient dazu, es lokal laufen zu
+lassen und auszuliefern.
+
+| Pfad | Inhalt |
+|---|---|
+| `theme/idt-deutschlandtakt/` | das Theme |
+| `docker-compose.yml`, `wp-cli/init.sh` | lokaler Stack (MariaDB, WordPress, wp-cli) |
+| `caddy/Caddyfile` | Reverse-Proxy und TLS für die öffentliche Testseite |
+| `bin/theme-zip.sh` | baut das Release-Zip aus dem Theme |
+| `deploy/` | Anleitung und Konfigurationsschnipsel fürs Deployment |
+| `todo.md` | Änderungsjournal (neuester Eintrag oben) |
+
 ## Starten
 
 ```bash
-cd wp-idt
 docker compose up -d
 ```
 
@@ -55,6 +68,19 @@ docker compose down -v         # alles zurücksetzen (DB + WP-Core löschen)
 ```
 
 Nach `down -v` wird beim nächsten `up` alles frisch installiert und neu befüllt.
+
+## Theme-Zip bauen
+
+Für den Upload unter *Design → Themes → Hinzufügen → Theme hochladen*:
+
+```bash
+./bin/theme-zip.sh
+```
+
+Das Skript liest die Versionsnummer aus dem Theme-Header (`style.css`) und legt
+`dist/idt-deutschlandtakt-<version>.zip` an — mit dem Ordner `idt-deutschlandtakt/`
+an der Wurzel des Archivs, genau so, wie WordPress es erwartet. `dist/` ist nicht
+versioniert: Das Zip ist ein Erzeugnis und wird bei Bedarf neu gebaut.
 
 ## Theme bearbeiten
 
