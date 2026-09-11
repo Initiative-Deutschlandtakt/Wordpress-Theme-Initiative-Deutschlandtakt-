@@ -349,14 +349,28 @@ function idt_render_category_filter( $reset_url = '' ) {
 /**
  * Button (eckig, gerahmt) mit Varianten und optionalem Pfeil.
  * [btn href="#" variant="primary" size="lg" arrow="true"]Label[/btn]
- * Varianten: primary | secondary | outline | ghost | inverse
+ * Varianten: primary | secondary | outline | ghost | inverse | gradient
+ *
+ * bg ersetzt die Fläche der Variante durch einen frei gewählten Hintergrund:
+ * Markenname („violet", „cyan", „ink", …), Hex-Wert oder Markenverlauf
+ * („cyan-violet", „violet-cyan"). Die Schriftfarbe ergibt sich aus dem
+ * Kontrast zum Untergrund — s. idt_surface_fill().
+ *   [btn href="/mitmachen/" bg="cyan-violet" arrow="true"]Mitglied werden[/btn]
  */
 function idt_sc_btn( $atts, $content = '' ) {
-	$atts = shortcode_atts( array( 'href' => '#', 'variant' => 'primary', 'size' => '', 'arrow' => '' ), $atts, 'btn' );
+	$atts = shortcode_atts( array( 'href' => '#', 'variant' => 'primary', 'size' => '', 'arrow' => '', 'bg' => '' ), $atts, 'btn' );
 	$cls  = 'idt-btn idt-btn--' . preg_replace( '/[^a-z]/', '', $atts['variant'] );
 	if ( 'lg' === $atts['size'] ) { $cls .= ' idt-btn--lg'; }
+
+	$style = '';
+	$fill  = idt_surface_fill( $atts['bg'] );
+	if ( '' !== $fill['fill'] ) {
+		$cls  .= ' idt-btn--bg idt-btn--on-' . ( $fill['dark'] ? 'dark' : 'light' );
+		$style = ' style="--btn-bg:' . esc_attr( $fill['fill'] ) . '"';
+	}
+
 	$arrow = ( 'true' === $atts['arrow'] || '1' === $atts['arrow'] ) ? idt_icon( 'arrow', 16 ) : '';
-	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '">' . wp_kses_post( do_shortcode( $content ) ) . $arrow . '</a>';
+	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '"' . $style . '>' . wp_kses_post( do_shortcode( $content ) ) . $arrow . '</a>';
 }
 add_shortcode( 'btn', 'idt_sc_btn' );
 
@@ -373,20 +387,34 @@ add_shortcode( 'tag', 'idt_sc_tag' );
  * Konzept-Karte mit farbiger Oberkante und Icon.
  * [concept color="violet" icon="clock" title="Erst der Fahrplan"]Text[/concept]
  * Icons: clock | rail | netz
+ *
+ * bg füllt die Karte statt mit Papier mit einer frei gewählten Fläche:
+ * Markenname, Hex-Wert oder Markenverlauf („cyan-violet", „violet-cyan").
+ * Überschrift, Text und „Mehr erfahren" laufen dann in der Schriftfarbe mit,
+ * die auf dem Untergrund den besseren Kontrast hat — s. idt_surface_fill().
+ *   [concept bg="cyan-violet" color="ink" title="Die Idee" href="/idee/"]…[/concept]
  */
 function idt_sc_concept( $atts, $content = '' ) {
-	$atts = shortcode_atts( array( 'color' => 'violet', 'icon' => '', 'title' => '', 'href' => '' ), $atts, 'concept' );
+	$atts = shortcode_atts( array( 'color' => 'violet', 'icon' => '', 'title' => '', 'href' => '', 'bg' => '' ), $atts, 'concept' );
 	$a    = idt_accent( $atts['color'] );
 	$icon = $atts['icon'] ? '<div class="idt-concept__ic" style="color:' . esc_attr( $a['icon'] ) . '">' . idt_icon( $atts['icon'], 34 ) . '</div>' : '';
 	$head = $atts['title'] ? '<h3>' . esc_html( $atts['title'] ) . '</h3>' : '';
 	$body = '<div class="idt-concept__body">' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
 
+	$cls   = 'idt-concept';
+	$style = 'border-top-color:' . $a['border'];
+	$fill  = idt_surface_fill( $atts['bg'] );
+	if ( '' !== $fill['fill'] ) {
+		$cls   .= ' idt-concept--bg idt-concept--on-' . ( $fill['dark'] ? 'dark' : 'light' );
+		$style .= ';--card-bg:' . $fill['fill'];
+	}
+
 	/* Mit href wird die ganze Karte ein Link (inkl. „Mehr erfahren") — wie auf der Startseite. */
 	if ( $atts['href'] ) {
 		$more = '<span class="idt-newscard__more">Mehr erfahren ' . idt_icon( 'arrow', 16 ) . '</span>';
-		return '<a class="idt-concept idt-concept--link" href="' . esc_url( $atts['href'] ) . '" style="border-top-color:' . esc_attr( $a['border'] ) . '">' . $icon . $head . $body . $more . '</a>';
+		return '<a class="' . esc_attr( $cls . ' idt-concept--link' ) . '" href="' . esc_url( $atts['href'] ) . '" style="' . esc_attr( $style ) . '">' . $icon . $head . $body . $more . '</a>';
 	}
-	return '<div class="idt-concept" style="border-top-color:' . esc_attr( $a['border'] ) . '">' . $icon . $head . $body . '</div>';
+	return '<div class="' . esc_attr( $cls ) . '" style="' . esc_attr( $style ) . '">' . $icon . $head . $body . '</div>';
 }
 add_shortcode( 'concept', 'idt_sc_concept' );
 
@@ -449,17 +477,61 @@ function idt_color_luminance( $hex ) {
 	return 0.2126 * $lin[0] + 0.7152 * $lin[1] + 0.0722 * $lin[2];
 }
 
+/** Kontrastverhältnis (WCAG 2.1) zweier #RRGGBB-Farben. */
+function idt_color_contrast( $a, $b ) {
+	$la = idt_color_luminance( $a );
+	$lb = idt_color_luminance( $b );
+	return ( max( $la, $lb ) + 0.05 ) / ( min( $la, $lb ) + 0.05 );
+}
+
 /**
  * Braucht diese Fläche helle Schrift? Verglichen wird der Kontrast der Farbe
  * zu Papier (hell) und zu Tinte (dunkel); es gewinnt die Schriftfarbe mit dem
  * besseren Kontrast. So stimmt die Lesbarkeit auch bei frei gewählten Farben.
+ *
+ * Für Verläufe darf statt einer Farbe eine Liste der Stützfarben übergeben
+ * werden: dann zählt das schwächste Ende — es gewinnt die Schriftfarbe, deren
+ * schlechtester Kontrast über den ganzen Verlauf hinweg noch der bessere ist.
  */
 function idt_surface_is_dark( $hex ) {
-	$contrast = function ( $a, $b ) {
-		return ( max( $a, $b ) + 0.05 ) / ( min( $a, $b ) + 0.05 );
-	};
-	$surface = idt_color_luminance( $hex );
-	return $contrast( $surface, idt_color_luminance( '#FFF6F0' ) ) >= $contrast( $surface, idt_color_luminance( '#00373C' ) );
+	$light = INF;
+	$dark  = INF;
+	foreach ( (array) $hex as $stop ) {
+		$light = min( $light, idt_color_contrast( $stop, '#FFF6F0' ) );
+		$dark  = min( $dark, idt_color_contrast( $stop, '#00373C' ) );
+	}
+	return $light >= $dark;
+}
+
+/**
+ * Markenverläufe, die als Flächenfüllung wählbar sind. „css" ist der Wert für
+ * background (Token aus style.css Abschnitt 2), „stops" sind die Endfarben —
+ * aus ihnen ergibt sich die Schriftfarbe. Wer hier einen Verlauf ergänzt,
+ * ergänzt das Token in style.css und den Eintrag in idt_bg_options()
+ * (inc/blocks.php) mit.
+ */
+function idt_surface_gradients() {
+	return array(
+		'cyan-violet' => array( 'css' => 'var(--idt-grad-cyan-violet)', 'stops' => array( '#00DCFA', '#6E50FA' ) ),
+		'violet-cyan' => array( 'css' => 'var(--idt-grad-violet-cyan)', 'stops' => array( '#6E50FA', '#00DCFA' ) ),
+	);
+}
+
+/**
+ * Eine bg-Angabe in eine Flächenfüllung übersetzen — Markenname, freier
+ * Hex-Wert oder Markenverlauf. Zurück kommt
+ *   'fill' — der CSS-Wert für background; '' heißt „keine gültige Angabe",
+ *            der Aufrufer bleibt dann bei seiner Vorgabe,
+ *   'dark' — true, wenn die Fläche helle Schrift braucht.
+ */
+function idt_surface_fill( $value ) {
+	$value = strtolower( trim( (string) $value ) );
+	$grads = idt_surface_gradients();
+	if ( isset( $grads[ $value ] ) ) {
+		return array( 'fill' => $grads[ $value ]['css'], 'dark' => idt_surface_is_dark( $grads[ $value ]['stops'] ) );
+	}
+	$hex = idt_color_hex( $value );
+	return array( 'fill' => $hex, 'dark' => '' !== $hex && idt_surface_is_dark( $hex ) );
 }
 
 /**
