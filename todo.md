@@ -4,6 +4,30 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Eckiges Design — alle gerundeten Ecken entfernt (v2.0.24).** Schaltflächen,
+  Karten, Felder und Flächen laufen jetzt durchgehend mit geraden Kanten aus.
+  Zentral gelöst über die Radius-Token in `style.css` Abschnitt 2: `--radius-xs`
+  bis `--radius-pill` stehen auf `0`, die benannte Abstufung bleibt als eine
+  Stellschraube erhalten. Dazu die Stellen mit fest eingetragenen Werten:
+  - **Buttons in allen Formen.** Der `.pill`-Button samt Gradient-Rahmen
+    (`::before`), der Pill-Stack, der Social-Icon-Button (vormals kreisrund,
+    jetzt quadratisch), `.idt-btn` in allen Varianten (über `--radius-sm`) und
+    die WordPress-Kern-Schaltfläche (`core/button`, `core/file`), die Core mit
+    rundem Rahmen ausliefert — neue Regel in Abschnitt 7b. Ein im Editor selbst
+    gesetzter Radius steht inline am Element und gewinnt weiterhin. Die
+    Klassennamen `.pill`/`.idt-pillstack` bleiben, weil Shortcodes, Blöcke und
+    bestehende Inhalte sie tragen.
+  - **Übrige Oberfläche.** Hamburger-Balken, Suchfeld und Such-Button,
+    Schließen-Knopf des Suchoverlays, Dropdown-Menü, Karten, Callout,
+    Konzept-Karte, News-Karte samt Bildkante, Chips, Themenblock, dunkler
+    Einschub, Inhaltsbilder, Beitragsbilder und der Skip-Link.
+  - **Trenner** (`core/separator`, Blockstile „Verlauf" und „Kurzer Strich")
+    enden gerade statt rund.
+  - **Bewusst rund geblieben** sind die Formen, die die Wortmarke zitieren: die
+    Diagonalbalken der Splash-Bühne (`.bar`), der Diagonal-Akzent in
+    `.idt-diagonal` und die Takt-Punkte (`.idt-takt`). Das Logo selbst ist eine
+    Rasterdatei mit runden Balkenenden; eckige CSS-Balken direkt darunter würden
+    wie ein Fehler aussehen.
 - **Hintergrundfläche für Button und Konzept-Karte einstellbar (v2.0.23).** Die
   Fläche eines Buttons war bisher an seine Variante gebunden (Violett, Cyan,
   Outline), die Konzept-Karte lag immer auf Papier. Beide haben jetzt in der
