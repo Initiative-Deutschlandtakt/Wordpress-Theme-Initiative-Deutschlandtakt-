@@ -68,14 +68,50 @@ jobs:
       - name: Zip bauen
         run: ./bin/theme-zip.sh
 
-      # Damit das Theme aus jedem Pull Request heruntergeladen und in eine
-      # WordPress-Instanz hochgeladen werden kann, ohne etwas lokal zu bauen.
+      # GitHub packt jeden Artefakt-Download noch einmal in ein Zip. Ein
+      # hochgeladenes Zip käme deshalb als Zip-im-Zip an, und der
+      # WordPress-Upload lehnt das mit „Dem Theme fehlt das Stylesheet
+      # style.css" ab — er sieht in der Archivwurzel nur ein weiteres Zip.
+      # Hochgeladen wird darum der *Inhalt* des geprüften Archivs: Beim
+      # Herunterladen entsteht daraus wieder genau dieses Zip.
+      - name: Geprüftes Zip für den Upload auspacken
+        id: paket
+        run: |
+          version="$(sed -n 's/^[[:space:]]*Version:[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$/\1/p' \
+            theme/idt-deutschlandtakt/style.css | head -n 1)"
+          mkdir -p dist/paket
+          unzip -q "dist/idt-deutschlandtakt-$version.zip" -d dist/paket
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - uses: actions/upload-artifact@v4
         with:
-          name: idt-deutschlandtakt-zip
-          path: dist/*.zip
+          # Der Artefaktname ist der Dateiname des Downloads — er heißt also
+          # genauso wie das Zip, das der Release-Workflow veröffentlicht.
+          name: idt-deutschlandtakt-${{ steps.paket.outputs.version }}
+          # Das Sternchen hält den Ordner idt-deutschlandtakt/ im Archiv: ab
+          # dem ersten Wildcard bleibt die Verzeichnisstruktur erhalten.
+          # Ohne es lägen die Theme-Dateien in der Wurzel des Downloads.
+          path: dist/paket/*
           if-no-files-found: error
           retention-days: 30
+
+      # Gegenprobe am fertigen Artefakt: Genau diese Einträge werden beim
+      # Herunterladen zum Zip zusammengepackt. Liegt style.css hier eine Ebene
+      # zu hoch, ist der Download für den Theme-Upload unbrauchbar — das soll
+      # die CI sagen und nicht das WordPress-Backend.
+      - uses: actions/download-artifact@v4
+        with:
+          name: idt-deutschlandtakt-${{ steps.paket.outputs.version }}
+          path: dist/probe
+
+      - name: Struktur des Artefakts prüfen
+        run: |
+          if [ ! -f dist/probe/idt-deutschlandtakt/style.css ]; then
+            echo "Artefakt enthält kein idt-deutschlandtakt/style.css — gefunden:" >&2
+            find dist/probe -maxdepth 2 >&2
+            exit 1
+          fi
+          echo "Artefakt enthält idt-deutschlandtakt/style.css — Download ist hochladefertig."
 
   smoke:
     name: WordPress-Smoke-Test (PHP ${{ matrix.php }})
