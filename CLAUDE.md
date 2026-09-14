@@ -83,8 +83,10 @@ Vorschau nicht Markup ist, sondern etwas Laufendes, passen nicht zu
 die Bewegung dabei zurück. Solche Bausteine liegen in
 `theme/idt-deutschlandtakt/blocks/<name>/` mit eigener `block.json` und eigener
 `editor.js` (ebenfalls build-frei). Ihr Frontend-Markup kommt trotzdem aus
-derselben `idt_render_*()`-Funktion in `inc/shortcodes.php` wie der Shortcode;
-`render.php` im Blockordner ist nur die Brücke dorthin. Bisher betrifft das
+derselben `idt_render_*()`-Funktion in `inc/shortcodes.php` wie der Shortcode —
+über einen `render_callback` beim `register_block_type()` in `inc/blocks.php`,
+nicht über das Feld `render` der `block.json`: Das wertet WordPress erst ab 6.1
+aus, der Theme-Header verspricht 6.0. Bisher betrifft das
 `blocks/knotendreieck/` — die bewegte Grafik zum Knotenprinzip.
 `bin/block-meta.php` prüft für diese Blöcke Namensraum, Textdomain, die
 render-Datei, die Skript-Handles und dass die Attribut-Vorgaben in `block.json`

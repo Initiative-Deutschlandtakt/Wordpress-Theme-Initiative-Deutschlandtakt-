@@ -4,6 +4,37 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Knotendreieck blieb auf WordPress vor 6.1 im Frontend leer.** Der Block
+  registrierte seine Ausgabe über das Feld `"render": "file:./render.php"` der
+  `block.json`. Das wertet WordPress erst ab 6.1 aus — der Theme-Header
+  verspricht aber `Requires at least: 6.0`. Auf einer solchen Installation stand
+  der Block im Inserter, bekam aber keinen `render_callback` und gab im Frontend
+  nichts aus. Nachgestellt in einer echten 6.0-Instanz: `render_callback: FEHLT`,
+  Markup 0 Zeichen; der Shortcode `[knotendreieck]` funktionierte weiter.
+  - **Die Brücke ist jetzt PHP.** `register_block_type()` in `inc/blocks.php`
+    bekommt `'render_callback' => 'idt_knotendreieck_render_block'`; die Funktion
+    reicht die Attribute an `idt_render_knotendreieck()` weiter. Damit genügt,
+    was jede `block.json`-fähige WordPress-Version kann, und der Block
+    registriert sich wie alle anderen Bausteine des Themes. `render` in der
+    `block.json` und die Datei `blocks/knotendreieck/render.php` entfallen.
+  - **Der Smoke-Test merkt das künftig.** `bin/smoke-render.php` prüfte bisher
+    nur, ob ein Block *irgendetwas* zurückgibt, und Blöcke mit eigener
+    `block.json` fielen ohnehin durch die Prüfung von `idt_blocks_config()`
+    hindurch. Jetzt wird für jede `blocks/*/block.json` verlangt, dass der Block
+    mit seinen Vorgabewerten Markup erzeugt. Gegenprobe in einer 6.0-Instanz:
+    ohne den Fix schlägt der Test mit „rendert mit seinen Vorgabewerten nichts"
+    fehl, mit dem Fix läuft er durch — ebenso unter 6.9.7.
+  - Geprüft wurde beides in echten Instanzen (WordPress-Core von GitHub, weil
+    `api.wordpress.org` aus dieser Umgebung gesperrt ist): Block im Inserter,
+    Vorschau im Editor, Attribute im Frontend-Markup, Shortcode.
+
+- **README: warum plötzlich zwei Themes „IDT Deutschlandtakt" in der Liste
+  stehen.** Wird das Release-Zip unter macOS ausgepackt und im Finder neu
+  komprimiert, heißt der Ordner darin `idt-deutschlandtakt 2` oder `… 4` — die
+  Zählung für mehrfach geladene Dateien. WordPress benennt das Themeverzeichnis
+  danach und legt ein zweites, eigenständiges Theme mit demselben Anzeigenamen
+  an; aktiv bleibt das alte, und die neuen Bausteine fehlen scheinbar. Der
+  Abschnitt „Theme-Zip beziehen" sagt das jetzt samt Abhilfe.
 - **Verlaufsseite, beige Bausteine und der Logo-Sperrsatz (v2.1.0).** Neue
   Seitenvorlage **„Verlaufsseite (ohne Kopf und Fuß)"** (`page-verlauf.php`):
   kein Menüband, kein Footer, nur der Inhalt der Seite — mittig in einer

@@ -76,6 +76,38 @@ foreach ( $blocks as $name => $type ) {
 }
 WP_CLI::line( sprintf( '  Blöcke gerendert: %d', count( $blocks ) ) );
 
+/* Blöcke mit eigener block.json (theme/.../blocks/*) fallen durch die Prüfung
+ * von idt_blocks_config() unten hindurch — sie stehen nicht darin. Für sie gilt
+ * hier dieselbe Meßlatte: Mit ihren Vorgabewerten müssen sie Markup erzeugen.
+ * Ein leeres Ergebnis heißt in aller Regel, dass die Registrierung keinen
+ * render_callback bekommen hat; im Editor sieht man davon nichts, die Seite
+ * bleibt aber leer. */
+foreach ( glob( get_template_directory() . '/blocks/*/block.json' ) as $idt_meta_pfad ) {
+	$idt_meta = json_decode( file_get_contents( $idt_meta_pfad ), true );
+	$idt_name = $idt_meta['name'] ?? '';
+	if ( ! isset( $blocks[ $idt_name ] ) ) {
+		$idt_probleme[] = "Block $idt_name aus " . basename( dirname( $idt_meta_pfad ) ) . '/block.json ist nicht registriert';
+		continue;
+	}
+	$idt_attrs = array();
+	foreach ( (array) ( $idt_meta['attributes'] ?? array() ) as $idt_key => $idt_schema ) {
+		if ( array_key_exists( 'default', $idt_schema ) ) {
+			$idt_attrs[ $idt_key ] = $idt_schema['default'];
+		}
+	}
+	$idt_html = render_block(
+		array(
+			'blockName'    => $idt_name,
+			'attrs'        => $idt_attrs,
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		)
+	);
+	if ( ! is_string( $idt_html ) || '' === trim( $idt_html ) ) {
+		$idt_probleme[] = "Block $idt_name rendert mit seinen Vorgabewerten nichts — fehlt der render_callback?";
+	}
+}
+
 // -----------------------------------------------------------------------------
 // 3) Blockkonfiguration: Sidebar-Felder und Render-Funktion gehören zusammen
 if ( function_exists( 'idt_blocks_config' ) ) {

@@ -498,8 +498,8 @@ function idt_register_cards_block() {
  * Element direkt einsetzt.
  *
  * An Konvention 2 ändert das nichts: das Frontend-Markup kommt aus
- * idt_render_knotendreieck() (inc/shortcodes.php), aufgerufen von
- * blocks/knotendreieck/render.php und vom Shortcode [knotendreieck].
+ * idt_render_knotendreieck() (inc/shortcodes.php) — für den Block über den
+ * render_callback unten, für den Shortcode [knotendreieck] direkt.
  */
 function idt_register_knotendreieck_block() {
 	$uri = get_template_directory_uri() . '/blocks/knotendreieck';
@@ -523,9 +523,37 @@ function idt_register_knotendreieck_block() {
 		true
 	);
 
-	/* Attribute, Titel, Kategorie und der Verweis auf render.php stehen in
-	 * blocks/knotendreieck/block.json. */
-	register_block_type( get_template_directory() . '/blocks/knotendreieck' );
+	/* Attribute, Titel, Kategorie und Suchworte stehen in
+	 * blocks/knotendreieck/block.json.
+	 *
+	 * Die Ausgabe hängt bewusst am render_callback und nicht am Feld "render"
+	 * der block.json: Das Feld wertet WordPress erst ab 6.1 aus, der
+	 * Theme-Header verspricht aber 6.0. Auf einer älteren Installation wäre
+	 * der Block sonst zwar im Inserter, gäbe im Frontend aber nichts aus — ein
+	 * Fehler, der niemandem auffällt, bis die Seite leer bleibt. So genügt,
+	 * was jede block.json-fähige WordPress-Version kann, und der Block
+	 * registriert sich wie alle anderen Bausteine des Themes. */
+	register_block_type(
+		get_template_directory() . '/blocks/knotendreieck',
+		array( 'render_callback' => 'idt_knotendreieck_render_block' )
+	);
+}
+
+/**
+ * Ausgabe des Blocks — reicht die Attribute an die gemeinsame Render-Funktion
+ * weiter (CLAUDE.md, Konvention 2).
+ *
+ * get_block_wrapper_attributes() bringt Anker und Abstände aus der
+ * Seitenleiste mit; die Klasse idt-knotendreieck kommt für style.css dazu.
+ *
+ * @param array $attributes Blockattribute, siehe block.json.
+ * @return string HTML.
+ */
+function idt_knotendreieck_render_block( $attributes ) {
+	return idt_render_knotendreieck(
+		$attributes,
+		get_block_wrapper_attributes( array( 'class' => 'idt-knotendreieck' ) )
+	);
 }
 
 add_action( 'init', 'idt_register_blocks' );

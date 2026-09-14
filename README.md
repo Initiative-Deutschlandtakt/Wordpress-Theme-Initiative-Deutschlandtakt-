@@ -81,6 +81,24 @@ und bricht ab, wenn darin `idt-deutschlandtakt/style.css` fehlt.
 Das **Release-Asset** unter *Releases* ist davon nicht betroffen: Es wird als
 Datei ausgeliefert und nicht neu verpackt.
 
+**Das Zip nicht auspacken und neu packen.** Das klingt selbstverständlich,
+passiert unter macOS aber von allein: Safari entpackt geladene Archive, wenn
+„Sichere Dateien nach dem Laden öffnen" aktiv ist, und wer den Ordner danach
+im Finder wieder komprimiert, bekommt ein Archiv mit `__MACOSX`-Beiwerk und
+einem Ordner, der `idt-deutschlandtakt 2` oder `idt-deutschlandtakt 4` heißt —
+die Zählung, die macOS an mehrfach geladene Dateien hängt. WordPress benennt
+das Themeverzeichnis nach diesem Ordner und legt damit ein **zweites,
+eigenständiges Theme** an, das in der Liste genauso heißt wie das alte. Wer
+dann nicht umschaltet, arbeitet weiter mit der alten Fassung und wundert sich,
+wo die neuen Bausteine sind.
+
+Symptom: Unter *Design → Themes* stehen mehrere Kacheln „IDT Deutschlandtakt".
+Abhilfe: Die überzähligen löschen (die aktive lässt sich nicht löschen, notfalls
+kurz ein anderes Theme aktivieren) und das unveränderte Zip hochladen —
+WordPress erkennt `idt-deutschlandtakt` dann als vorhanden und bietet
+*„Das Vorhandene durch das Hochgeladene ersetzen"* an. Nur so bleibt der
+Aktualisierungspfad heil.
+
 **Lokal**, wenn es schnell gehen muss:
 
 ```bash
@@ -316,8 +334,8 @@ Als Rückfallebene gibt es den Shortcode
 Im Editor gehört aber der Block benutzt — dort stehen dieselben Felder.
 
 Die Dateien liegen in `theme/idt-deutschlandtakt/blocks/knotendreieck/`
-(`block.json`, `editor.js`, `view.js`, `render.php`, `standbild.svg`), das
-Markup baut `idt_render_knotendreieck()` in `inc/shortcodes.php`. Gezeichnet
+(`block.json`, `editor.js`, `view.js`, `standbild.svg`), das Markup baut
+`idt_render_knotendreieck()` in `inc/shortcodes.php`. Gezeichnet
 wird im Browser — Vanilla JS im Shadow DOM, kein Build-Schritt. Wer an
 Geometrie, Farben oder Vorgabetexten in `view.js` etwas ändert, baut danach das
 Standbild neu und commitet es mit:
