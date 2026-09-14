@@ -4,6 +4,30 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Theme-Download aus der CI ist wieder hochladefertig.** Der WordPress-Upload
+  brach mit „Dem Theme fehlt das Stylesheet style.css" ab — nicht wegen des
+  Zips, sondern wegen seiner Verpackung: GitHub packt jedes Artefakt beim
+  Herunterladen erneut in ein Zip. Das hochgeladene Release-Zip kam deshalb als
+  Zip-im-Zip an, und in der Archivwurzel stand für WordPress nur ein weiteres
+  Zip. Das betraf jeden Artefakt-Download seit jeher, nicht erst v2.0.25.
+  - **Der Inhalt wandert ins Artefakt, nicht das Archiv.** `ci.yml` und
+    `release.yml` packen das von `bin/check-zip.sh` geprüfte Zip aus und laden
+    `dist/paket/*` hoch. Das Sternchen ist der Punkt: Ab dem ersten Wildcard
+    behält `upload-artifact` die Verzeichnisstruktur, der Ordner
+    `idt-deutschlandtakt/` bleibt also erhalten. GitHubs Verpacken stellt beim
+    Herunterladen wieder genau das Archiv her, das der Theme-Upload erwartet.
+    Der Artefaktname trägt jetzt die Versionsnummer und ist damit zugleich der
+    Dateiname des Downloads.
+  - **Die CI prüft ihr eigenes Paket.** Der Job „Release-Zip" lädt sein
+    Artefakt direkt wieder herunter und bricht ab, wenn darin
+    `idt-deutschlandtakt/style.css` fehlt. Ob der Download taugt, soll die CI
+    sagen und nicht das WordPress-Backend.
+  - **Das Release-Asset war nie betroffen** — es wird als Datei ausgeliefert
+    und nicht neu verpackt. In `release.yml` liest jetzt ein Schritt die
+    Theme-Version einmal in `THEME_VERSION`; vorher stand sie zweimal da und
+    beim manuellen Start gar nicht zur Verfügung.
+  - Das Theme selbst ist unverändert, die Version bleibt deshalb bei 2.0.25.
+
 - **Knotendreieck als Block (v2.0.25).** Die bewegte Grafik zum Knotenprinzip —
   drei Knotenbahnhöfe, drei Linien, Züge, die sich zur Minute :00 und :30
   treffen — ist jetzt ein Baustein des Themes. Überschrift, Knotennamen,

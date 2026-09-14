@@ -63,10 +63,23 @@ git tag v2.0.22 && git push origin v2.0.22
 Der Release-Workflow prüft, ob der Tag zur Theme-Version passt, baut das Zip und
 hängt es an ein GitHub-Release — Download unter *Releases* im Repository.
 
-**Für einen Zwischenstand** genügt der Pull Request: Jeder CI-Lauf legt das Zip
-als Artefakt „idt-deutschlandtakt-zip" ab (30 Tage abrufbar, unten auf der Seite
-des Workflow-Laufs). Ohne offenen Pull Request tut es *Actions → Release → Run
-workflow*.
+**Für einen Zwischenstand** genügt der Pull Request: Jeder CI-Lauf legt das
+Theme als Artefakt „idt-deutschlandtakt-<version>" ab (30 Tage abrufbar, unten
+auf der Seite des Workflow-Laufs). Ohne offenen Pull Request tut es
+*Actions → Release → Run workflow*.
+
+Der Download ist direkt hochladefertig — **nicht vorher entpacken.** Dahinter
+steckt eine Eigenheit von GitHub: Ein Artefakt wird beim Herunterladen immer neu
+in ein Zip gepackt. Läge dort ein fertiges Zip, käme es als Zip-im-Zip an, und
+der Theme-Upload lehnte es mit *„Dem Theme fehlt das Stylesheet style.css"* ab —
+in der Archivwurzel stünde ja nur ein weiteres Zip. Die CI lädt deshalb den
+*Inhalt* des geprüften Archivs hoch; GitHubs Verpacken stellt daraus beim
+Herunterladen wieder genau das Zip her, das WordPress erwartet. Dass das so
+bleibt, prüft der Job „Release-Zip" selbst: Er lädt sein eigenes Artefakt zurück
+und bricht ab, wenn darin `idt-deutschlandtakt/style.css` fehlt.
+
+Das **Release-Asset** unter *Releases* ist davon nicht betroffen: Es wird als
+Datei ausgeliefert und nicht neu verpackt.
 
 **Lokal**, wenn es schnell gehen muss:
 

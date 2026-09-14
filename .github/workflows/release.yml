@@ -30,6 +30,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Eine Quelle für die Versionsnummer in allen folgenden Schritten:
+      # der Theme-Header. Beim manuellen Start gibt es keinen Tag, der Name
+      # des Artefakts soll die Version aber trotzdem tragen.
+      - name: Theme-Version lesen
+        run: |
+          header_version="$(sed -n 's/^[[:space:]]*Version:[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$/\1/p' \
+            theme/idt-deutschlandtakt/style.css | head -n 1)"
+          if [ -z "$header_version" ]; then
+            echo "Keine 'Version:' im Theme-Header gefunden." >&2
+            exit 1
+          fi
+          echo "THEME_VERSION=$header_version" >> "$GITHUB_ENV"
+
       - name: Version gegen den Tag prüfen
         # Der Tag ist die Ansage nach außen, der Theme-Header die Wahrheit im
         # Zip. Laufen die auseinander, lädt jemand später v2.0.22 hoch und
@@ -37,21 +50,28 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           tag_version="${GITHUB_REF_NAME#v}"
-          header_version="$(sed -n 's/^[[:space:]]*Version:[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$/\1/p' \
-            theme/idt-deutschlandtakt/style.css | head -n 1)"
-          if [ "$tag_version" != "$header_version" ]; then
-            echo "Tag $GITHUB_REF_NAME passt nicht zur Theme-Version $header_version." >&2
+          if [ "$tag_version" != "$THEME_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME passt nicht zur Theme-Version $THEME_VERSION." >&2
             exit 1
           fi
-          echo "Version $header_version bestätigt."
+          echo "Version $THEME_VERSION bestätigt."
 
       - name: Zip bauen
         run: ./bin/theme-zip.sh
 
+      # Wie in ci.yml: GitHub packt jeden Artefakt-Download noch einmal ein.
+      # Hochgeladen wird darum der Inhalt des Archivs, damit beim Herunterladen
+      # wieder genau dieses Zip entsteht. Das Release-Asset unten ist davon
+      # nicht betroffen — es wird als Datei ausgeliefert, nicht neu verpackt.
+      - name: Zip für das Artefakt auspacken
+        run: |
+          mkdir -p dist/paket
+          unzip -q "dist/idt-deutschlandtakt-$THEME_VERSION.zip" -d dist/paket
+
       - uses: actions/upload-artifact@v4
         with:
-          name: idt-deutschlandtakt-zip
-          path: dist/*.zip
+          name: idt-deutschlandtakt-${{ env.THEME_VERSION }}
+          path: dist/paket/*
           if-no-files-found: error
           retention-days: 90
 
@@ -60,7 +80,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          version="$THEME_VERSION"
           notes="$(mktemp)"
           {
             echo "Theme **IDT Deutschlandtakt $version** als Zip zum Hochladen unter"
