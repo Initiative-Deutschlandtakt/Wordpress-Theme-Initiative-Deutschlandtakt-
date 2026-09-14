@@ -35,6 +35,43 @@ _(keine offenen Aufgaben)_
   danach und legt ein zweites, eigenständiges Theme mit demselben Anzeigenamen
   an; aktiv bleibt das alte, und die neuen Bausteine fehlen scheinbar. Der
   Abschnitt „Theme-Zip beziehen" sagt das jetzt samt Abhilfe.
+- **Verlaufsseite, beige Bausteine und der Logo-Sperrsatz (v2.1.0).** Neue
+  Seitenvorlage **„Verlaufsseite (ohne Kopf und Fuß)"** (`page-verlauf.php`):
+  kein Menüband, kein Footer, nur der Inhalt der Seite — mittig in einer
+  schmalen Spalte auf dem senkrechten Markenverlauf Violett → Cyan. Gedacht
+  für Linkseiten, Kampagnen- und QR-Code-Ziele.
+  - **Ausgeblendet wird über den Template-Slug**, wie schon bei „Ohne Menüband"
+    und „Menü ohne Logo". Die drei Prüfungen lagen als kopierte
+    `is_singular()`-Zeilen in `header.php`; sie stehen jetzt einmal in
+    `idt_page_template_is()` (`functions.php`), daneben `idt_is_verlauf_page()`
+    für die beiden Stellen in `header.php` und `footer.php`. Die Verlaufsfläche
+    selbst hängt an der Body-Klasse `idt-verlauf` (`idt_body_class()`), damit
+    sie die ganze Seite färbt und nicht nur den Inhaltsbereich.
+  - **Logo-Sperrsatz als Baustein** — die Variante der Marke für dunkle und
+    farbige Flächen: dreizeilige Wortmarke links, Signet im Kreis rechts.
+    Shortcode `[logo]`, Block „Logo (Wortmarke + Signet)", eine Render-Funktion
+    (`idt_render_logo()` in `inc/shortcodes.php`, Konvention 2). Das Signet ist
+    Inline-SVG in einem 148er-Koordinatensystem und nutzt die Farbtoken
+    (Konvention 4); die Wortmarke ist echter Text in Inter, kein Bild — scharf
+    in jeder Größe, vorlesbar und in der Schriftfarbe der Fläche. Alle Maße
+    hängen an einer Variablen (`--logo-size`, begrenzt durch `--logo-fit`),
+    die Proportionen sind am Entwurf gemessen.
+  - **Beige Varianten** für Pill-Button, Button und Social-Kachel: gefüllte
+    Papierfläche, halbrunde Enden bzw. weiche Ecke. Dafür zwei neue Radien-Token
+    (`--radius-bar`, `--radius-soft`) — die eckige Regel des Themes bleibt, die
+    runde Form zitiert wie die übrigen Ausnahmen die Wortmarke. Die
+    Social-Leiste bekam dazu ein Feld **Ausrichtung** und gibt ihren Stil an die
+    Icons weiter.
+  - **Wo die Varianten stehen, entscheidet die Kaskade.** Sie liegen bei ihren
+    Geschwistern in den Abschnitten 7 und 7b, nicht im neuen Abschnitt 6c:
+    gleiche Spezifität, also gewinnt die spätere Regel — vor den Grundregeln
+    wäre `.pill--beige` wirkungslos geblieben.
+  - **Vorlage „Verlaufsseite"** (`inc/patterns.php`) setzt Logo, drei beige
+    Buttons und die beige Social-Leiste fertig zusammen. Im Editor unterlegt
+    `assets/editor.css` die hellen Bausteine mit demselben Verlauf — sonst
+    stünden sie unsichtbar auf dem weißen Editor-Grund.
+  - **Mindestbreite des Pill-Stacks** wird als `min(…, 100%)` ausgegeben: Auf
+    dem Telefon schrumpft der Stack mit, statt über den Rand zu laufen.
 
 - **Theme-Download aus der CI ist wieder hochladefertig.** Der WordPress-Upload
   brach mit „Dem Theme fehlt das Stylesheet style.css" ab — nicht wegen des
@@ -42,14 +79,13 @@ _(keine offenen Aufgaben)_
   Herunterladen erneut in ein Zip. Das hochgeladene Release-Zip kam deshalb als
   Zip-im-Zip an, und in der Archivwurzel stand für WordPress nur ein weiteres
   Zip. Das betraf jeden Artefakt-Download seit jeher, nicht erst v2.0.25.
-  - **Der Inhalt wandert ins Artefakt, nicht das Archiv.** `ci.yml` und
-    `release.yml` packen das von `bin/check-zip.sh` geprüfte Zip aus und laden
-    `dist/paket/*` hoch. Das Sternchen ist der Punkt: Ab dem ersten Wildcard
-    behält `upload-artifact` die Verzeichnisstruktur, der Ordner
-    `idt-deutschlandtakt/` bleibt also erhalten. GitHubs Verpacken stellt beim
-    Herunterladen wieder genau das Archiv her, das der Theme-Upload erwartet.
-    Der Artefaktname trägt jetzt die Versionsnummer und ist damit zugleich der
-    Dateiname des Downloads.
+  - **Der Inhalt wandert ins Artefakt, nicht das Archiv.** `ci.yml` packt das
+    von `bin/check-zip.sh` geprüfte Zip aus und lädt `dist/paket/*` hoch. Das
+    Sternchen ist der Punkt: Ab dem ersten Wildcard behält `upload-artifact`
+    die Verzeichnisstruktur, der Ordner `idt-deutschlandtakt/` bleibt also
+    erhalten. GitHubs Verpacken stellt beim Herunterladen wieder genau das
+    Archiv her, das der Theme-Upload erwartet. Der Artefaktname trägt jetzt die
+    Versionsnummer und ist damit zugleich der Dateiname des Downloads.
   - **Die CI prüft ihr eigenes Paket.** Der Job „Release-Zip" lädt sein
     Artefakt direkt wieder herunter und bricht ab, wenn darin
     `idt-deutschlandtakt/style.css` fehlt. Ob der Download taugt, soll die CI
@@ -58,6 +94,12 @@ _(keine offenen Aufgaben)_
     und nicht neu verpackt. In `release.yml` liest jetzt ein Schritt die
     Theme-Version einmal in `THEME_VERSION`; vorher stand sie zweimal da und
     beim manuellen Start gar nicht zur Verfügung.
+  - **`release.yml` lädt kein eigenes Artefakt mehr hoch.** Der Workflow ruft
+    `ci.yml` auf, und deren Job „Release-Zip“ legt das Artefakt bereits in
+    denselben Lauf — auch beim manuellen Start. Ein zweites gleichen Namens
+    hätte den Release mit „409 Conflict“ abgebrochen, denn Artefakte sind seit
+    `upload-artifact@v4` unveränderlich. Aufgefallen wäre das erst beim ersten
+    Tag, weil es im Repo bis dahin weder Tags noch Releases gab.
   - Das Theme selbst ist unverändert, die Version bleibt deshalb bei 2.0.25.
 
 - **Knotendreieck als Block (v2.0.25).** Die bewegte Grafik zum Knotenprinzip —

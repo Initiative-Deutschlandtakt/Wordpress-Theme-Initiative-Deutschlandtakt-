@@ -164,5 +164,17 @@ function idt_register_patterns() {
 			. "<!-- wp:idt/knotendreieck {\"bildunterschrift\":\"Zur Minute :00 und :30 stehen sich an jedem Knoten die Züge beider Richtungen gegenüber. Erst dieses Zeitfenster macht aus drei Linien ein Netz.\"} /-->",
 	) );
 
+	register_block_pattern( 'idt/verlaufsseite', array(
+		'title'         => __( 'Verlaufsseite (Logo, Buttons, Social-Leiste)', 'idt' ),
+		'description'   => __( 'Der Inhalt einer Linkseite auf dem Markenverlauf: Logo-Sperrsatz, drei beige Buttons untereinander und darunter die beige Social-Leiste. Gedacht für Seiten mit der Vorlage „Verlaufsseite (ohne Kopf und Fuß)" — die Verlaufsfläche selbst bringt die Vorlage mit, nicht dieses Muster.', 'idt' ),
+		'categories'    => array( 'idt' ),
+		/* Die Verlaufsseite ist eine schmale Spalte (620px) — in dieser Breite
+		   zeigt die Vorschau dasselbe Bild wie das Frontend. */
+		'viewportWidth' => 620,
+		'content'       => "<!-- wp:idt/logo {\"size\":120,\"color\":\"paper\",\"align\":\"center\"} /-->\n"
+			. "<!-- wp:idt/pillstack {\"buttons\":\"Über die Initiative | #\\nMitglied werden | #\\nAktuelles | #\",\"style\":\"beige\",\"align\":\"center\",\"minwidth\":420} /-->\n"
+			. "<!-- wp:idt/sociallinks {\"links\":\"linkedin | #\\ninstagram | #\\nbluesky | #\",\"style\":\"beige\",\"align\":\"center\"} /-->",
+	) );
+
 }
 add_action( 'init', 'idt_register_patterns' );

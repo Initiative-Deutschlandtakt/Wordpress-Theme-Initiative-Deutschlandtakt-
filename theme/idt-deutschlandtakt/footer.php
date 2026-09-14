@@ -7,6 +7,11 @@
 ?>
 </main><!-- #content -->
 
+<?php
+/* Footer ausblendbar: Seiten mit der Vorlage „Verlaufsseite" stehen ohne
+   Gerüst da — kein Menüband (s. header.php), kein Footer. Die Seite selbst
+   bestimmt, was auf der Verlaufsfläche steht. */
+if ( ! idt_is_verlauf_page() ) : ?>
 <footer class="site-footer">
 	<div class="fwrap">
 		<div class="frow">
@@ -53,6 +58,7 @@
 		</div>
 	</div>
 </footer>
+<?php endif; ?>
 
 <?php wp_footer(); ?>
 </body>

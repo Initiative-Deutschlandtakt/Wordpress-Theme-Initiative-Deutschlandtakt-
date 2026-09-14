@@ -122,6 +122,7 @@ function idt_blocks_config() {
 					array( 'label' => 'Sekundär (Cyan)', 'value' => 'secondary' ),
 					array( 'label' => 'Outline', 'value' => 'outline' ),
 					array( 'label' => 'Gradient-Rahmen', 'value' => 'gradient' ),
+					array( 'label' => 'Beige (für farbige Flächen)', 'value' => 'beige' ),
 				) ),
 				array( 'key' => 'bg', 'label' => __( 'Hintergrund (überschreibt den Stil)', 'idt' ), 'type' => 'select', 'default' => '', 'options' => idt_bg_options() ),
 				array( 'key' => 'arrow', 'label' => __( 'Pfeil anzeigen', 'idt' ), 'type' => 'toggle', 'default' => false ),
@@ -139,6 +140,7 @@ function idt_blocks_config() {
 					array( 'label' => 'Outline', 'value' => '' ),
 					array( 'label' => 'Solid (gefüllt)', 'value' => 'solid' ),
 					array( 'label' => 'Violett-Outline (Gradient-Rand bei Klick)', 'value' => 'violet' ),
+					array( 'label' => 'Beige (für farbige Flächen)', 'value' => 'beige' ),
 				) ),
 			),
 			'render'   => function ( $a ) { return idt_sc_pill( array( 'href' => $a['href'], 'style' => $a['style'] ), $a['text'] ); },
@@ -174,6 +176,7 @@ function idt_blocks_config() {
 					array( 'label' => 'Solid (gefüllt)', 'value' => 'solid' ),
 					array( 'label' => 'Violett-Outline (Gradient-Rand bei Klick)', 'value' => 'violet' ),
 					array( 'label' => 'Outline hell (für dunklen Grund)', 'value' => 'on-ink' ),
+					array( 'label' => 'Beige (für farbige Flächen)', 'value' => 'beige' ),
 				) ),
 				array( 'key' => 'align', 'label' => __( 'Ausrichtung', 'idt' ), 'type' => 'select', 'default' => 'center', 'options' => array(
 					array( 'label' => 'Zentriert', 'value' => 'center' ),
@@ -309,8 +312,12 @@ function idt_blocks_config() {
 					array( 'label' => 'RSS', 'value' => 'rss' ),
 				) ),
 				array( 'key' => 'href', 'label' => __( 'Link (URL)', 'idt' ), 'type' => 'text', 'default' => '#' ),
+				array( 'key' => 'style', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
+					array( 'label' => __( 'Outline', 'idt' ), 'value' => '' ),
+					array( 'label' => __( 'Beige (für farbige Flächen)', 'idt' ), 'value' => 'beige' ),
+				) ),
 			),
-			'render'   => function ( $a ) { return idt_sc_social( array( 'platform' => $a['platform'], 'href' => $a['href'] ) ); },
+			'render'   => function ( $a ) { return idt_sc_social( array( 'platform' => $a['platform'], 'href' => $a['href'], 'style' => $a['style'] ) ); },
 		),
 		'sociallinks' => array(
 			'title'    => __( 'Social-Leiste', 'idt' ),
@@ -323,8 +330,37 @@ function idt_blocks_config() {
 					'type'    => 'textarea',
 					'default' => "x | #\nfacebook | #\ninstagram | #\nlinkedin | #\nyoutube | #\nmastodon | #\nbluesky | #\nrss | #",
 				),
+				array( 'key' => 'style', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
+					array( 'label' => __( 'Outline', 'idt' ), 'value' => '' ),
+					array( 'label' => __( 'Beige (für farbige Flächen)', 'idt' ), 'value' => 'beige' ),
+				) ),
+				array( 'key' => 'align', 'label' => __( 'Ausrichtung', 'idt' ), 'type' => 'select', 'default' => 'left', 'options' => array(
+					array( 'label' => __( 'Links', 'idt' ), 'value' => 'left' ),
+					array( 'label' => __( 'Zentriert', 'idt' ), 'value' => 'center' ),
+					array( 'label' => __( 'Rechts', 'idt' ), 'value' => 'right' ),
+				) ),
 			),
-			'render'   => function ( $a ) { return idt_sc_socialrow( array(), $a['links'] ); },
+			'render'   => function ( $a ) { return idt_sc_socialrow( array( 'style' => $a['style'], 'align' => $a['align'] ), $a['links'] ); },
+		),
+		'logo' => array(
+			'title'    => __( 'Logo (Wortmarke + Signet)', 'idt' ),
+			'icon'     => 'admin-site-alt3',
+			'keywords' => array( 'logo', 'marke', 'wortmarke', 'signet', 'dt' ),
+			'fields'   => array(
+				array( 'key' => 'size', 'label' => __( 'Größe des Signets (px)', 'idt' ), 'type' => 'range', 'default' => 96, 'min' => 32, 'max' => 400 ),
+				array( 'key' => 'color', 'label' => __( 'Schriftfarbe der Wortmarke', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
+					array( 'label' => __( 'Von der Fläche erben', 'idt' ), 'value' => '' ),
+					array( 'label' => __( 'Papier (für dunkle/farbige Flächen)', 'idt' ), 'value' => 'paper' ),
+					array( 'label' => __( 'Ink (für helle Flächen)', 'idt' ), 'value' => 'ink' ),
+				) ),
+				array( 'key' => 'align', 'label' => __( 'Ausrichtung', 'idt' ), 'type' => 'select', 'default' => 'center', 'options' => array(
+					array( 'label' => __( 'Zentriert', 'idt' ), 'value' => 'center' ),
+					array( 'label' => __( 'Links', 'idt' ), 'value' => 'left' ),
+					array( 'label' => __( 'Rechts', 'idt' ), 'value' => 'right' ),
+				) ),
+				array( 'key' => 'href', 'label' => __( 'Link (optional, z. B. /)', 'idt' ), 'type' => 'text', 'default' => '' ),
+			),
+			'render'   => function ( $a ) { return idt_render_logo( array( 'size' => $a['size'], 'color' => $a['color'], 'align' => $a['align'], 'href' => $a['href'] ) ); },
 		),
 		'neuigkeiten' => array(
 			'title'    => __( 'Beiträge-Übersicht (dynamisch)', 'idt' ),

@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.0.25' );
+define( 'IDT_VERSION', '2.1.0' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -178,6 +178,35 @@ function idt_customize_preview_assets() {
 	);
 }
 add_action( 'customize_preview_init', 'idt_customize_preview_assets' );
+
+/* -------------------------------------------------------------------------
+ * Seitenvorlagen
+ * ----------------------------------------------------------------------
+ * Die Sondervorlagen des Themes blenden Teile des Gerüsts aus (Logo, Menüband,
+ * Footer). Geprüft wird dafür der Template-Slug der Seite und nicht das gerade
+ * aktive Template-File: So greift die Wahl auch für die statische Startseite,
+ * die WordPress über front-page.php rendert, während in der Seiten-Einstellung
+ * weiterhin die gewählte Vorlage steht. */
+
+/** Trägt die aktuelle Seite diese Vorlage? (z. B. 'page-verlauf.php') */
+function idt_page_template_is( $slug ) {
+	return is_singular( 'page' ) && $slug === get_page_template_slug();
+}
+
+/** Läuft die aktuelle Seite auf der Vorlage „Verlaufsseite"? */
+function idt_is_verlauf_page() {
+	return idt_page_template_is( 'page-verlauf.php' );
+}
+
+/* Die Verlaufsfläche hängt an einer Body-Klasse, damit sie die ganze Seite
+ * einfärbt (style.css 6c) und nicht nur den Inhaltsbereich. */
+function idt_body_class( $classes ) {
+	if ( idt_is_verlauf_page() ) {
+		$classes[] = 'idt-verlauf';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'idt_body_class' );
 
 /* -------------------------------------------------------------------------
  * Assets

@@ -53,3 +53,20 @@
 .idt-cards > * > .idt-concept,
 .idt-cards > * > .idt-newscard,
 .idt-cards > * > .idt-card { height: 100%; }
+
+/* =============================================================================
+   Bausteine für farbige Flächen — im Editor sichtbar halten
+   ============================================================================= */
+
+/* Der Editor-Grund ist weiß, und die Vorlage einer Seite färbt ihn nicht mit.
+   Papierfarbene Bausteine — der Logo-Sperrsatz in Papier, beige Buttons, beige
+   Social-Kacheln — stünden darauf unsichtbar. Sie bekommen deshalb nur hier
+   die Fläche unter sich, für die sie gemacht sind: den Markenverlauf der
+   Verlaufsseite (style.css 6c). Im Frontend bringt die Seitenvorlage ihn
+   selbst mit. */
+.idt-logo-outer:has(.idt-logo--paper),
+.idt-pillstack-outer:has(.pill--beige),
+.idt-socialrow--beige {
+  background: var(--idt-grad-seite);
+  padding: var(--space-5);
+}
