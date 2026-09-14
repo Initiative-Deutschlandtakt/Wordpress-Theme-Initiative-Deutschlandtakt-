@@ -25,6 +25,5 @@
 		"fahrzeugStil": { "type": "string", "default": "Striche" }
 	},
 	"editorScript": "idt-knotendreieck-editor",
-	"script": "idt-knotendreieck-view",
-	"render": "file:./render.php"
+	"script": "idt-knotendreieck-view"
 }
