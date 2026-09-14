@@ -4,6 +4,44 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Verlaufsseite, beige Bausteine und der Logo-Sperrsatz (v2.1.0).** Neue
+  Seitenvorlage **„Verlaufsseite (ohne Kopf und Fuß)"** (`page-verlauf.php`):
+  kein Menüband, kein Footer, nur der Inhalt der Seite — mittig in einer
+  schmalen Spalte auf dem senkrechten Markenverlauf Violett → Cyan. Gedacht
+  für Linkseiten, Kampagnen- und QR-Code-Ziele.
+  - **Ausgeblendet wird über den Template-Slug**, wie schon bei „Ohne Menüband"
+    und „Menü ohne Logo". Die drei Prüfungen lagen als kopierte
+    `is_singular()`-Zeilen in `header.php`; sie stehen jetzt einmal in
+    `idt_page_template_is()` (`functions.php`), daneben `idt_is_verlauf_page()`
+    für die beiden Stellen in `header.php` und `footer.php`. Die Verlaufsfläche
+    selbst hängt an der Body-Klasse `idt-verlauf` (`idt_body_class()`), damit
+    sie die ganze Seite färbt und nicht nur den Inhaltsbereich.
+  - **Logo-Sperrsatz als Baustein** — die Variante der Marke für dunkle und
+    farbige Flächen: dreizeilige Wortmarke links, Signet im Kreis rechts.
+    Shortcode `[logo]`, Block „Logo (Wortmarke + Signet)", eine Render-Funktion
+    (`idt_render_logo()` in `inc/shortcodes.php`, Konvention 2). Das Signet ist
+    Inline-SVG in einem 148er-Koordinatensystem und nutzt die Farbtoken
+    (Konvention 4); die Wortmarke ist echter Text in Inter, kein Bild — scharf
+    in jeder Größe, vorlesbar und in der Schriftfarbe der Fläche. Alle Maße
+    hängen an einer Variablen (`--logo-size`, begrenzt durch `--logo-fit`),
+    die Proportionen sind am Entwurf gemessen.
+  - **Beige Varianten** für Pill-Button, Button und Social-Kachel: gefüllte
+    Papierfläche, halbrunde Enden bzw. weiche Ecke. Dafür zwei neue Radien-Token
+    (`--radius-bar`, `--radius-soft`) — die eckige Regel des Themes bleibt, die
+    runde Form zitiert wie die übrigen Ausnahmen die Wortmarke. Die
+    Social-Leiste bekam dazu ein Feld **Ausrichtung** und gibt ihren Stil an die
+    Icons weiter.
+  - **Wo die Varianten stehen, entscheidet die Kaskade.** Sie liegen bei ihren
+    Geschwistern in den Abschnitten 7 und 7b, nicht im neuen Abschnitt 6c:
+    gleiche Spezifität, also gewinnt die spätere Regel — vor den Grundregeln
+    wäre `.pill--beige` wirkungslos geblieben.
+  - **Vorlage „Verlaufsseite"** (`inc/patterns.php`) setzt Logo, drei beige
+    Buttons und die beige Social-Leiste fertig zusammen. Im Editor unterlegt
+    `assets/editor.css` die hellen Bausteine mit demselben Verlauf — sonst
+    stünden sie unsichtbar auf dem weißen Editor-Grund.
+  - **Mindestbreite des Pill-Stacks** wird als `min(…, 100%)` ausgegeben: Auf
+    dem Telefon schrumpft der Stack mit, statt über den Rand zu laufen.
+
 - **Theme-Download aus der CI ist wieder hochladefertig.** Der WordPress-Upload
   brach mit „Dem Theme fehlt das Stylesheet style.css" ab — nicht wegen des
   Zips, sondern wegen seiner Verpackung: GitHub packt jedes Artefakt beim

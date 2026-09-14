@@ -57,13 +57,19 @@ function idt_sc_stat( $atts ) {
 }
 add_shortcode( 'stat', 'idt_sc_stat' );
 
-/** Pill-Button. Stile: '' (Outline) | solid | on-ink (helle Outline für dunklen Grund) | violet (violette Outline, Gradient-Rand bei Klick). */
+/**
+ * Pill-Button. Stile: '' (Outline) | solid | on-ink (helle Outline für dunklen
+ * Grund) | violet (violette Outline, Gradient-Rand bei Klick) | beige (gefüllte
+ * Papierfläche mit halbrunden Enden — die Variante für Verlaufs- und
+ * Bildflächen, s. style.css 6c).
+ */
 function idt_sc_pill( $atts, $content = '' ) {
 	$atts = shortcode_atts( array( 'href' => '#', 'style' => '' ), $atts, 'pill' );
 	$cls  = 'pill';
 	if ( 'solid' === $atts['style'] )  { $cls .= ' pill--solid'; }
 	if ( 'on-ink' === $atts['style'] ) { $cls .= ' pill--on-ink'; }
 	if ( 'violet' === $atts['style'] ) { $cls .= ' pill--violet'; }
+	if ( 'beige' === $atts['style'] )  { $cls .= ' pill--beige'; }
 	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '">' . wp_kses_post( do_shortcode( $content ) ) . '</a>';
 }
 add_shortcode( 'pill', 'idt_sc_pill' );
@@ -77,7 +83,10 @@ function idt_sc_pillstack( $atts, $content = '' ) {
 	$atts  = shortcode_atts( array( 'align' => 'center', 'minwidth' => 0 ), $atts, 'pillstack' );
 	$align = in_array( $atts['align'], array( 'left', 'center', 'right' ), true ) ? $atts['align'] : 'center';
 	$min   = (int) $atts['minwidth'];
-	$style = $min > 0 ? ' style="min-width:' . $min . 'px"' : '';
+	/* min(…, 100%) statt nackter Pixel: Die Mindestbreite gilt, solange sie in
+	   die Spalte passt — auf dem Telefon schrumpft der Stack mit, statt über
+	   den Rand zu laufen. */
+	$style = $min > 0 ? ' style="min-width:min(' . $min . 'px, 100%)"' : '';
 	return '<div class="idt-pillstack-outer" style="text-align:' . esc_attr( $align ) . '">' .
 		'<span class="idt-pillstack"' . $style . '>' . do_shortcode( $content ) . '</span></div>';
 }
@@ -487,7 +496,9 @@ function idt_render_category_filter( $reset_url = '' ) {
 /**
  * Button (eckig, gerahmt) mit Varianten und optionalem Pfeil.
  * [btn href="#" variant="primary" size="lg" arrow="true"]Label[/btn]
- * Varianten: primary | secondary | outline | ghost | inverse | gradient
+ * Varianten: primary | secondary | outline | ghost | inverse | gradient | beige
+ * („beige" ist die gefüllte Papierfläche mit halbrunden Enden für Verlaufs-
+ * und Bildflächen, s. style.css 6c.)
  *
  * bg ersetzt die Fläche der Variante durch einen frei gewählten Hintergrund:
  * Markenname („violet", „cyan", „ink", …), Hex-Wert oder Markenverlauf
@@ -833,33 +844,42 @@ function idt_sc_newscard( $atts, $content = '' ) {
 add_shortcode( 'newscard', 'idt_sc_newscard' );
 
 /**
- * Social-Icon-Link (rund, im Pill-Stil).
- * [social platform="x" href="https://x.com/…"]
+ * Social-Icon-Link (quadratische Kachel im Pill-Stil).
+ * [social platform="x" href="https://x.com/…" style="beige"]
  * Plattformen: x | facebook | instagram | linkedin | youtube | mastodon | bluesky | rss
+ * Stile: '' (Outline) | beige (gefüllte Papierkachel mit cyanem Zeichen — die
+ * Variante für Verlaufs- und Bildflächen, s. style.css 6c).
  */
 function idt_sc_social( $atts ) {
-	$atts  = shortcode_atts( array( 'platform' => 'x', 'href' => '#' ), $atts, 'social' );
+	$atts  = shortcode_atts( array( 'platform' => 'x', 'href' => '#', 'style' => '' ), $atts, 'social' );
 	$label = ucfirst( $atts['platform'] );
-	return '<a class="idt-social__icon" href="' . esc_url( $atts['href'] ) . '" aria-label="' . esc_attr( $label ) . '" rel="me noopener">' .
+	$cls   = 'idt-social__icon';
+	if ( 'beige' === $atts['style'] ) { $cls .= ' idt-social__icon--beige'; }
+	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '" aria-label="' . esc_attr( $label ) . '" rel="me noopener">' .
 		idt_icon( $atts['platform'], 20 ) . '</a>';
 }
 add_shortcode( 'social', 'idt_sc_social' );
 
 /**
- * Social-Leiste — eine Reihe runder Social-Icons.
+ * Social-Leiste — eine Reihe von Social-Icons.
  * Inhalt: eine Zeile je Icon, „Plattform | Link" (dieselbe Schreibweise wie
  * bei [pillstack]):
- *   [socialrow]
+ *   [socialrow style="beige" align="center"]
  *   x | https://x.com/…
  *   mastodon | https://…
  *   [/socialrow]
+ * style gibt den Stil an alle Icons weiter, align richtet die Reihe aus.
  */
 function idt_sc_socialrow( $atts, $content = '' ) {
+	$atts  = shortcode_atts( array( 'style' => '', 'align' => 'left' ), $atts, 'socialrow' );
+	$align = in_array( $atts['align'], array( 'left', 'center', 'right' ), true ) ? $atts['align'] : 'left';
 	$icons = '';
 	foreach ( (array) idt_parse_button_lines( $content ) as $line ) {
-		$icons .= idt_sc_social( array( 'platform' => $line[0], 'href' => $line[1] ) );
+		$icons .= idt_sc_social( array( 'platform' => $line[0], 'href' => $line[1], 'style' => $atts['style'] ) );
 	}
-	return '<div class="idt-socialrow">' . $icons . '</div>';
+	$cls = 'idt-socialrow idt-socialrow--' . $align;
+	if ( 'beige' === $atts['style'] ) { $cls .= ' idt-socialrow--beige'; }
+	return '<div class="' . esc_attr( $cls ) . '">' . $icons . '</div>';
 }
 add_shortcode( 'socialrow', 'idt_sc_socialrow' );
 
@@ -1091,3 +1111,118 @@ function idt_sc_beitragsliste( $atts ) {
 	) );
 }
 add_shortcode( 'beitragsliste', 'idt_sc_beitragsliste' );
+
+/* =========================================================================
+ * Logo-Sperrsatz — Wortmarke links, Signet rechts
+ * ====================================================================== */
+
+/**
+ * Vorgaben des Logo-Sperrsatzes — eine Stelle für Shortcode und Block.
+ *
+ * size  = Durchmesser des Signets in px; alles andere (Schriftgrad,
+ *         Zeilenabstand, Abstand zur Wortmarke) rechnet sich daraus.
+ * color = '' erbt die Schriftfarbe der Umgebung (auf der Verlaufsseite also
+ *         Papier), 'paper'/'ink' setzen sie fest.
+ */
+function idt_logo_defaults() {
+	return array(
+		'size'  => 96,
+		'color' => '',
+		'href'  => '',
+		'align' => 'center',
+	);
+}
+
+/**
+ * Das Signet als Inline-SVG: das Marken-Raster im Kreis.
+ *
+ * Die Geometrie steht in einem 148×148-Koordinatensystem (Kreisdurchmesser =
+ * Kantenlänge), damit sie unabhängig von der Darstellungsgröße bleibt: die
+ * dunkle Scheibe, darüber die beiden Marken-Balken mit halbrunden Enden im
+ * Verlauf Cyan→Violett, darüber die vier Papierlinien des Rasters. Alles
+ * Überstehende beschneidet der Kreis (clipPath) — die Balken laufen deshalb
+ * bewusst über den Rand hinaus.
+ *
+ * Inline statt als Bilddatei, damit die Marke die Farbtoken des Themes nutzt
+ * (Konvention 4) und in jeder Größe scharf bleibt. Die IDs müssen je Aufruf
+ * eindeutig sein, sonst greift bei mehreren Logos auf einer Seite das erste
+ * Verlaufs-/Clip-Element für alle.
+ */
+function idt_logo_signet() {
+	static $count = 0;
+	++$count;
+	$grad = 'idt-logo-verlauf-' . $count;
+	$clip = 'idt-logo-kreis-' . $count;
+
+	return '<svg class="idt-logo__signet" viewBox="0 0 148 148" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">'
+		. '<defs>'
+		. '<linearGradient id="' . $grad . '" x1="0" y1="0" x2="148" y2="0" gradientUnits="userSpaceOnUse">'
+		/* Bis knapp zur Mitte reines Cyan, danach der Übergang ins Violett —
+		   so trifft der Verlauf die Marke, statt über die ganze Breite zu
+		   mitteln. */
+		. '<stop offset="0" stop-color="var(--idt-cyan, #00DCFA)"/>'
+		. '<stop offset=".47" stop-color="var(--idt-cyan, #00DCFA)"/>'
+		. '<stop offset=".9" stop-color="var(--idt-violet, #6E50FA)"/>'
+		. '<stop offset="1" stop-color="var(--idt-violet, #6E50FA)"/>'
+		. '</linearGradient>'
+		. '<clipPath id="' . $clip . '"><circle cx="74" cy="74" r="74"/></clipPath>'
+		. '</defs>'
+		. '<g clip-path="url(#' . $clip . ')">'
+		. '<circle cx="74" cy="74" r="74" fill="var(--idt-ink, #00373C)"/>'
+		/* Langer, leicht ansteigender Balken (der „Horizont") und die kurze
+		   Pille darunter — beide mit halbrunden Enden wie die Wortmarke. */
+		. '<line x1="-12" y1="53.8" x2="160" y2="44" stroke="url(#' . $grad . ')" stroke-width="24" stroke-linecap="round"/>'
+		. '<line x1="79" y1="94.5" x2="160" y2="94.5" stroke="url(#' . $grad . ')" stroke-width="26" stroke-linecap="round"/>'
+		/* Die vier Senkrechten liegen oben auf und queren die Balken. */
+		. '<g fill="var(--idt-paper, #FFF6F0)">'
+		. '<rect x="32" y="0" width="4" height="148"/>'
+		. '<rect x="56" y="0" width="4" height="148"/>'
+		. '<rect x="76.5" y="0" width="4" height="148"/>'
+		. '<rect x="111.5" y="0" width="4" height="148"/>'
+		. '</g>'
+		. '</g></svg>';
+}
+
+/**
+ * Logo-Sperrsatz — dreizeilige Wortmarke, rechts daneben das Signet.
+ *
+ * Die Variante der Marke für dunkle und farbige Flächen (Verlaufsseite,
+ * Einschub, Bild): Die Schrift ist echter Text in der Theme-Schrift Inter,
+ * kein Bild — sie bleibt dadurch scharf, vorlesbar und nimmt die Schriftfarbe
+ * ihrer Umgebung an.
+ *
+ * @param array $args size (px), color ('' | paper | ink), href, align.
+ */
+function idt_render_logo( $args = array() ) {
+	$args  = wp_parse_args( $args, idt_logo_defaults() );
+	$size  = max( 32, min( 400, (int) $args['size'] ) );
+	$align = in_array( $args['align'], array( 'left', 'center', 'right' ), true ) ? $args['align'] : 'center';
+
+	$class = 'idt-logo';
+	if ( in_array( $args['color'], array( 'paper', 'ink' ), true ) ) {
+		$class .= ' idt-logo--' . $args['color'];
+	}
+
+	$mark = '<span class="idt-logo__wordmark">'
+		. '<span class="idt-logo__line">Initiative</span>'
+		. '<span class="idt-logo__line">Deutschland</span>'
+		. '<span class="idt-logo__line idt-logo__line--takt">Takt</span>'
+		. '</span>' . idt_logo_signet();
+
+	$attr = ' class="' . esc_attr( $class ) . '" style="--logo-size:' . $size . 'px"';
+	$inner = '' !== $args['href']
+		? '<a href="' . esc_url( $args['href'] ) . '"' . $attr . ' rel="home">' . $mark . '</a>'
+		: '<span' . $attr . '>' . $mark . '</span>';
+
+	return '<div class="idt-logo-outer" style="text-align:' . esc_attr( $align ) . '">' . $inner . '</div>';
+}
+
+/**
+ * Logo-Sperrsatz als Shortcode.
+ * [logo size="120" color="paper" href="/" align="center"]
+ */
+function idt_sc_logo( $atts ) {
+	$atts = shortcode_atts( idt_logo_defaults(), $atts, 'logo' );
+	return idt_render_logo( $atts );
+}
+add_shortcode( 'logo', 'idt_sc_logo' );
