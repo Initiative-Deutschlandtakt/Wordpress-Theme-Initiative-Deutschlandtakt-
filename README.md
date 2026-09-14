@@ -146,17 +146,19 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[lead]Text[/lead]` | hervorgehobener Einleitungsabsatz |
 | `[takt count="8"]` | dekorativer Takt-Rhythmus |
 | `[stat number="2008" label="gegründet"]` | große Kennzahl mit Label |
-| `[pill href="…"]Text[/pill]` | Pill-Button (`style="solid"` / `style="violet"`) |
+| `[pill href="…"]Text[/pill]` | Pill-Button (`style="solid"` / `style="violet"` / `style="beige"`) |
 | `[callout type="cyan"]…[/callout]` | Hinweisbox (`cyan`/`violet`/`yellow`) |
 | `[diagonal]…[/diagonal]` | Aussageblock mit durchgehenden Horizont-Diagonalen |
 | `[card]…[/card]` | Karte mit Rahmen und Schatten |
-| `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Violett→Cyan-Rahmen), `arrow="true"`; `bg=""` setzt die Fläche frei (s. u.) |
+| `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Violett→Cyan-Rahmen)/`beige`, `arrow="true"`; `bg=""` setzt die Fläche frei (s. u.) |
 | `[concept color="…" icon="…" title="…" href="…"]…[/concept]` | Konzept-Karte; mit `href` klickbar; `bg=""` setzt die Fläche frei (s. u.) |
 | `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
 | `[buttonstack bg="ink"]…[/buttonstack]` | Button-Stack: derselbe Baustein nur mit den Linkzeilen — ohne Eyebrow, Überschrift und Vortext; `bg` wie beim Themenblock |
 | `[beitragsliste count="3"]` | dynamische Beitragsliste im Zeilen-Layout (Datum + Chip links, Titel und Anriss rechts) |
+| `[socialrow style="beige" align="center"]…[/socialrow]` | Social-Leiste, eine Zeile je Icon („Plattform \| Link"); `style="beige"` für farbige Flächen |
+| `[logo size="120" color="paper"]` | Logo-Sperrsatz: dreizeilige Wortmarke, rechts daneben das Signet (s. u.) |
 
 ### Im Editor bearbeiten statt tippen
 
@@ -350,6 +352,34 @@ rendert den Editor-Inhalt der Seite **„Startseite"** (`the_content()`), die mi
 Design als Blöcke/Shortcodes befüllt ist (siehe `idt_content_startseite()` in
 `inc/demo-content.php`). Dadurch ist die Startseite vollständig im Block-Editor
 bearbeitbar. Die Beiträge-Reihe unten ist das dynamische `[neuigkeiten]`-Element.
+
+## Verlaufsseite (Linkseite)
+
+Für Linkseiten („Link in Bio"), Kampagnen- und QR-Code-Ziele gibt es die
+Seitenvorlage **„Verlaufsseite (ohne Kopf und Fuß)"** (Seite bearbeiten →
+Seitenleiste → *Seite* → **Vorlage**). Sie zeigt **kein Menüband und keinen
+Footer**, sondern nur den Inhalt der Seite — mittig in einer schmalen Spalte auf
+dem senkrechten Markenverlauf **Violett (oben) → Cyan (unten)**.
+
+Fertig bestückt liegt der Inhalt als Vorlage **Verlaufsseite (Logo, Buttons,
+Social-Leiste)** im Inserter unter Tab **Vorlagen** → **Deutschlandtakt**:
+Logo-Sperrsatz, drei beige Buttons untereinander, darunter die beige
+Social-Leiste. Nach dem Einfügen in der Seitenleiste je Zeile Beschriftung und
+Ziel eintragen.
+
+Drei Bausteine gehören dazu; sie funktionieren auch auf jeder anderen farbigen
+oder dunklen Fläche:
+
+| Baustein | Block / Shortcode | Wirkung |
+|---|---|---|
+| **Logo (Wortmarke + Signet)** | `/Logo`, `[logo]` | Dreizeilige Wortmarke, rechts daneben das Signet im Kreis. Echter Text in Inter statt Bild — scharf in jeder Größe und vorlesbar. Felder: Größe des Signets (alle übrigen Maße folgen ihr), Schriftfarbe (von der Fläche erben / Papier / Ink), Ausrichtung, optionaler Link. |
+| **Beige Buttons** | Stil **Beige** an Button, Pill-Button und Pill-Button-Stack | Gefüllte Papierfläche mit halbrunden Enden. Die runde Form ist hier kein Bruch mit dem sonst eckigen Design, sondern das Zitat der Wortmarke. Gestapelt (Pill-Button-Stack) sind das die breiten Schaltflächen der Linkseite. |
+| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. |
+
+Im Editor steht der Inhalt weiterhin auf weißem Grund — die Verlaufsfläche
+bringt die Seitenvorlage mit, nicht der Block. Damit die hellen Bausteine dort
+nicht unsichtbar werden, unterlegt `assets/editor.css` sie im Editor mit
+demselben Verlauf; im Frontend passiert das nicht.
 
 ## Suche
 

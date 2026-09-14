@@ -17,15 +17,15 @@
 
 <?php
 /* Menüband ausblendbar: Seiten mit der Vorlage „Ohne Menüband" bekommen
-   keinen Site-Header. Geprüft wird der Template-Slug (nicht das gerade
-   aktive Template-File), damit es auch für die statische Startseite
-   greift — dort rendert front-page.php, die Vorlagen-Wahl bleibt aber
-   in der Seiten-Einstellung sichtbar. */
-$idt_no_nav = is_singular( 'page' ) && 'page-no-nav.php' === get_page_template_slug();
+   keinen Site-Header, Seiten mit der Vorlage „Verlaufsseite" ebenso wenig
+   (dort fällt zusätzlich der Footer weg, s. footer.php). Geprüft wird der
+   Template-Slug (nicht das gerade aktive Template-File), damit es auch für
+   die statische Startseite greift — s. idt_page_template_is(). */
+$idt_no_nav = idt_page_template_is( 'page-no-nav.php' ) || idt_is_verlauf_page();
 /* Logo ausblendbar, Menü bleibt: Vorlage „Menü ohne Logo" — für die
    Startseite, deren Splash-Bühne das Logo bereits selbst zeigt. Gleiches
    Prinzip wie bei $idt_no_nav (Template-Slug statt aktivem Template-File). */
-$idt_no_logo = is_singular( 'page' ) && 'page-no-logo.php' === get_page_template_slug();
+$idt_no_logo = idt_page_template_is( 'page-no-logo.php' );
 if ( ! $idt_no_nav ) : ?>
 <header class="site-header<?php echo $idt_no_logo ? ' site-header--no-logo' : ''; ?>">
 	<div class="container site-header__inner">

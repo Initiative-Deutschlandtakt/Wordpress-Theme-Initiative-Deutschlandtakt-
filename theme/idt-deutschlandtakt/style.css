@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.25
+Version: 2.1.0
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -68,6 +68,9 @@ Tags: custom-colors, custom-menu, featured-images
      [btn] und [concept], s. idt_surface_gradients() in inc/shortcodes.php). */
   --idt-grad-cyan-violet: linear-gradient(90deg, var(--idt-cyan), var(--idt-violet));
   --idt-grad-violet-cyan: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  /* Derselbe Verlauf senkrecht — die Fläche der Vorlage „Verlaufsseite"
+     (oben Violett, unten Cyan, s. Abschnitt 6c). */
+  --idt-grad-seite: linear-gradient(180deg, var(--idt-violet), var(--idt-cyan));
 
   /* ---- Semantic / Status ---------------------------------------------- */
   --idt-success: #1F8A5B;
@@ -177,6 +180,13 @@ Tags: custom-colors, custom-menu, featured-images
   --radius-lg: 0;
   --radius-pill: 0;
   --radius-card: var(--radius-md);
+  /* Die beiden Ausnahmen der eckigen Regel — die Formen, die die Wortmarke
+     zitieren: Balken und Pillen laufen halbrund aus (--radius-bar), die
+     quadratischen Kacheln der Social-Leiste bekommen die weiche Ecke
+     (--radius-soft). Genutzt von den Bausteinen der Verlaufsseite,
+     Abschnitt 6c. */
+  --radius-bar:  999px;
+  --radius-soft: 10px;
 
   /* ---- Borders -------------------------------------------------------- */
   --bw-hair: 1px;
@@ -706,6 +716,107 @@ html.idt-searchbox-open { overflow: hidden; }
 .stage2__caption { margin: clamp(24px, 5vh, 40px) 0 0; text-align: center; font-weight: 700; font-size: var(--fs-sm); line-height: 1.4; letter-spacing: .01em; color: var(--idt-ink); }
 
 /* =============================================================================
+   6c) VERLAUFSSEITE (Vorlage „Verlaufsseite", ohne Kopf und Fuß)
+   -----------------------------------------------------------------------------
+   Eine nackte Seite auf dem senkrechten Markenverlauf: oben Violett, unten
+   Cyan, dazwischen nichts als der Inhalt der Seite — Logo, ein paar beige
+   Buttons, die Social-Leiste. Der Verlauf hängt an der Body-Klasse, damit er
+   die ganze Seite färbt und nicht nur den Inhaltsbereich; gesetzt wird sie in
+   idt_body_class() (functions.php), Menüband und Footer entfallen in
+   header.php bzw. footer.php.
+
+   Der Logo-Sperrsatz darunter steht hier, weil er für diese Fläche gebaut ist —
+   nutzbar ist er überall, wo eine dunkle oder farbige Fläche eine helle Marke
+   braucht. Die beigen Varianten von Pill, Button und Social-Kachel stehen bei
+   ihren Geschwistern (Abschnitte 7 und 7b): Dort kommen die Grundregeln, und
+   eine Variante muss dahinter stehen, um sie zu überschreiben.
+   ============================================================================= */
+
+body.idt-verlauf {
+  min-height: 100svh;
+  color: var(--idt-paper);
+  /* fixed: Der Verlauf bleibt am Viewport verankert, eine längere Seite
+     scrollt darüber hinweg, statt ihn zu strecken. */
+  background: var(--idt-grad-seite) fixed no-repeat;
+  background-size: cover;
+}
+
+/* Inhalt mittig in einer schmalen Spalte — die Breite einer Linkseite, nicht
+   die eines Textes. */
+.idt-verlauf__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* „safe" verhindert, dass zentrierter Inhalt oben abgeschnitten wird, wenn
+     er höher als der Viewport ist; ältere Browser ignorieren die Zeile und
+     bleiben bei der Zentrierung darüber. */
+  justify-content: safe center;
+  min-height: 100svh;
+  width: min(620px, 100%);
+  margin: 0 auto;
+  padding: var(--space-8) var(--gutter);
+}
+
+/* Auf der Verlaufsfläche steht alles hell und mittig. */
+.idt-verlauf .entry--verlauf { max-width: none; text-align: center; }
+.idt-verlauf .entry--verlauf > * { max-width: none; }
+.idt-verlauf h1, .idt-verlauf h2, .idt-verlauf h3, .idt-verlauf h4,
+.idt-verlauf p, .idt-verlauf li { color: var(--idt-paper); }
+/* Textlinks laufen hell mit — Schaltflächen, Social-Kacheln und die Marke
+   bringen ihre eigene Schriftfarbe mit und bleiben deshalb ausgenommen
+   (sonst stünde beige Schrift auf beiger Fläche). */
+.idt-verlauf a:not(.pill):not(.idt-btn):not(.idt-social__icon):not(.idt-logo) { color: var(--idt-paper); }
+.idt-verlauf .idt-eyebrow { color: var(--idt-paper); }
+.idt-verlauf .idt-eyebrow::before { color: var(--idt-paper); }
+
+/* -----------------------------------------------------------------------------
+   Logo-Sperrsatz — dreizeilige Wortmarke, rechts daneben das Signet
+   (idt_render_logo() in inc/shortcodes.php, Shortcode [logo], Block „Logo").
+   Alle Maße hängen an --logo-size, dem Durchmesser des Signets: Schriftgrad,
+   Zeilenabstand und der Abstand zur Wortmarke sind Vielfache davon, damit der
+   Sperrsatz in jeder Größe dieselben Proportionen behält.
+   ----------------------------------------------------------------------------- */
+.idt-logo-outer { margin: var(--space-6) 0; }
+.idt-logo {
+  --logo-size: 96px;
+  /* Der Sperrsatz ist rund 3,7 Signet-Durchmesser breit. Auf schmalen
+     Bildschirmen wäre die eingestellte Größe deshalb zu groß — --logo-fit
+     nimmt dort, was in die Spalte passt, und lässt die Proportionen intakt.
+     Gerechnet wird mit allen Maßen dieses Blocks. */
+  --logo-fit: min(var(--logo-size), calc((100vw - 2 * var(--gutter)) / 3.7));
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--logo-fit) * 0.27);
+  color: inherit;          /* erbt die Schriftfarbe der Fläche */
+  text-decoration: none;
+  text-align: right;
+}
+.idt-logo:hover { text-decoration: none; }
+.idt-logo--paper { color: var(--idt-paper); }
+.idt-logo--ink   { color: var(--idt-ink); }
+
+.idt-logo__wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  /* Die Maße der Wortmarke stammen aus dem Entwurf und sind auf den
+     Signet-Durchmesser bezogen (Werte für ein 148-px-Signet): Versalhöhe
+     33 px → Schriftgrad 0,294 · Sperrung 0,11 em · Zeilenabstand 47 px. */
+  font-size: calc(var(--logo-fit) * 0.294);
+  letter-spacing: 0.11em;
+  line-height: 1.083;
+  text-transform: uppercase;
+}
+/* Die dritte Zeile läuft gesperrt („T A K T"); der negative Rand nimmt den
+   Sperrabstand hinter dem letzten Buchstaben wieder zurück, damit die Zeile
+   rechts bündig mit den beiden darüber steht. */
+.idt-logo__line--takt { letter-spacing: 1.07em; margin-right: -1.07em; }
+
+.idt-logo__signet { flex: 0 0 auto; width: var(--logo-fit); height: var(--logo-fit); }
+
+/* =============================================================================
    7) SPIELERISCHE STILELEMENTE  — für die Gestaltung der Texte
    ============================================================================= */
 
@@ -741,6 +852,16 @@ html.idt-searchbox-open { overflow: hidden; }
 .pill--violet:hover::before { opacity: 0; }
 .pill--violet:active, .pill--violet:focus-visible { border-color: transparent; color: var(--idt-violet); }
 .pill--violet:active::before, .pill--violet:focus-visible::before { opacity: 1; }
+/* Beiger Pill-Button — gefüllte Papierfläche mit halbrunden Enden, die Variante
+   für farbige Flächen (Verlaufsseite, Bild, dunkler Einschub). Die runde Form
+   ist kein Bruch mit dem eckigen Design, sondern das Zitat der Wortmarke
+   (s. Kommentar bei den Radien in Abschnitt 2). */
+.pill--beige {
+  color: var(--idt-ink); background: var(--idt-paper); border-color: var(--idt-paper);
+  border-radius: var(--radius-bar); padding: 16px 34px;
+}
+.pill--beige::before { display: none; }
+.pill--beige:hover { color: var(--idt-ink); background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
 
 /* Pill-Stack — vertikal gestapelte Pill-Buttons in einheitlicher Breite:
    der inline-flex-Container wird so breit wie der breiteste Button,
@@ -748,6 +869,8 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-pillstack-outer { margin: var(--space-5) 0; }
 .idt-pillstack { display: inline-flex; flex-direction: column; align-items: stretch; gap: 14px; }
 .idt-pillstack .pill { width: 100%; }
+/* Gestapelt sind die beigen Pills die breiten Schaltflächen der Linkseite. */
+.idt-pillstack .pill--beige { padding-left: var(--space-6); padding-right: var(--space-6); }
 
 /* Social-Icon — quadratischer Icon-Button (Pill-Verwandter, gleiche Gradient-Border bei Hover). */
 .idt-social__icon {
@@ -772,6 +895,18 @@ html.idt-searchbox-open { overflow: hidden; }
    bricht auf schmalen Bildschirmen um. Das margin der Icons bleibt ihr eigener
    Abstand, wenn sie einzeln im Fließtext stehen. */
 .idt-socialrow { display: flex; flex-wrap: wrap; align-items: center; margin: var(--space-4) 0; }
+/* Beige Social-Kachel — Papierfläche, cyanes Zeichen, weiche Ecke: die Leiste
+   für farbige Flächen. */
+.idt-social__icon--beige {
+  color: var(--idt-cyan); background: var(--idt-paper); border-color: var(--idt-paper);
+  border-radius: var(--radius-soft);
+}
+.idt-social__icon--beige::before { display: none; }
+.idt-social__icon--beige:hover { color: var(--idt-cyan-hover); background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
+/* Ausrichtung der Leiste (Feld „Ausrichtung" am Block „Social-Leiste"). */
+.idt-socialrow--left   { justify-content: flex-start; }
+.idt-socialrow--center { justify-content: center; }
+.idt-socialrow--right  { justify-content: flex-end; }
 
 /* Eyebrow — Mono-Label über Überschriften */
 .eyebrow, .idt-eyebrow {
@@ -896,6 +1031,13 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-btn--ghost:hover { background: var(--idt-paper-2); }
 .idt-btn--inverse { background: var(--idt-paper); color: var(--idt-ink); border-color: var(--idt-paper); }
 .idt-btn--inverse:hover { background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
+/* Beige Variante mit halbrunden Enden — das Gegenstück zum beigen Pill-Button
+   für farbige Flächen (s. Abschnitt 7, .pill--beige). */
+.idt-btn--beige {
+  background: var(--idt-paper); color: var(--idt-ink); border-color: var(--idt-paper);
+  border-radius: var(--radius-bar); padding: 14px 28px;
+}
+.idt-btn--beige:hover { background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
 /* Gradient-Rahmen — Violett→Cyan nur als Rand (Masken-Technik wie beim Pill),
    Füllung bleibt hell. */
 .idt-btn--gradient { position: relative; z-index: 0; background: var(--idt-paper); color: var(--idt-ink); border-color: transparent; }
