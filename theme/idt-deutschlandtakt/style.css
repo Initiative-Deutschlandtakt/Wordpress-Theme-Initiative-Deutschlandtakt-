@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.1.0
+Version: 2.1.1
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -757,8 +757,12 @@ body.idt-verlauf {
   padding: var(--space-8) var(--gutter);
 }
 
-/* Auf der Verlaufsfläche steht alles hell und mittig. */
-.idt-verlauf .entry--verlauf { max-width: none; text-align: center; }
+/* Auf der Verlaufsfläche steht alles hell und mittig. Die Inhaltsspalte nimmt
+   die volle Breite der Bühne ein: `.entry` zentriert sich sonst über
+   automatische Seitenränder, und die schrumpfen den Inhalt im Flex-Container
+   auf seine natürliche Breite — die Bausteine darin (Button-Stack, Logo)
+   richteten sich dann nach dieser Restbreite statt nach der Spalte. */
+.idt-verlauf .entry--verlauf { max-width: none; width: 100%; margin-left: 0; margin-right: 0; text-align: center; }
 .idt-verlauf .entry--verlauf > * { max-width: none; }
 .idt-verlauf h1, .idt-verlauf h2, .idt-verlauf h3, .idt-verlauf h4,
 .idt-verlauf p, .idt-verlauf li { color: var(--idt-paper); }
@@ -779,11 +783,12 @@ body.idt-verlauf {
 .idt-logo-outer { margin: var(--space-6) 0; }
 .idt-logo {
   --logo-size: 96px;
-  /* Der Sperrsatz ist rund 3,7 Signet-Durchmesser breit. Auf schmalen
-     Bildschirmen wäre die eingestellte Größe deshalb zu groß — --logo-fit
-     nimmt dort, was in die Spalte passt, und lässt die Proportionen intakt.
-     Gerechnet wird mit allen Maßen dieses Blocks. */
-  --logo-fit: min(var(--logo-size), calc((100vw - 2 * var(--gutter)) / 3.7));
+  /* Der Sperrsatz ist rund 3,8 Signet-Durchmesser breit (Wortmarke + Abstand
+     + Signet, im Browser nachgemessen). Auf schmalen Bildschirmen wäre die
+     eingestellte Größe deshalb zu groß — --logo-fit nimmt dort, was in die
+     Spalte passt, und lässt die Proportionen intakt. Der Teiler 3,9 hält
+     etwas Reserve, damit auch eine breiter rendernde Schrift nicht anstößt. */
+  --logo-fit: min(var(--logo-size), calc((100vw - 2 * var(--gutter)) / 3.9));
   display: inline-flex;
   align-items: center;
   gap: calc(var(--logo-fit) * 0.27);
@@ -815,6 +820,17 @@ body.idt-verlauf {
 .idt-logo__line--takt { letter-spacing: 1.07em; margin-right: -1.07em; }
 
 .idt-logo__signet { flex: 0 0 auto; width: var(--logo-fit); height: var(--logo-fit); }
+
+/* Genauer als die vw-Schätzung darüber: Wo Container-Queries zur Verfügung
+   stehen, rechnet --logo-fit mit der Breite der Spalte, in der der Sperrsatz
+   wirklich steht (100cqw) statt mit der des Fensters. Das trifft auch dann,
+   wenn ein Scrollbalken Platz wegnimmt oder das Logo in einer schmaleren
+   Spalte steht (Karte, Einschub, Footer-Spalte). Ohne Unterstützung bleibt
+   es bei der Schätzung — deshalb steht sie oben und nicht hier. */
+@supports (container-type: inline-size) {
+  .idt-logo-outer { container-type: inline-size; }
+  .idt-logo { --logo-fit: min(var(--logo-size), calc(100cqw / 3.9)); }
+}
 
 /* =============================================================================
    7) SPIELERISCHE STILELEMENTE  — für die Gestaltung der Texte
@@ -867,8 +883,11 @@ body.idt-verlauf {
    der inline-flex-Container wird so breit wie der breiteste Button,
    align-items:stretch zieht alle übrigen auf dieselbe Breite. */
 .idt-pillstack-outer { margin: var(--space-5) 0; }
-.idt-pillstack { display: inline-flex; flex-direction: column; align-items: stretch; gap: 14px; }
-.idt-pillstack .pill { width: 100%; }
+.idt-pillstack { display: inline-flex; flex-direction: column; align-items: stretch; gap: 14px; max-width: 100%; }
+/* Im Stack ist jeder Button eine Zeile über die volle Breite — eine lange
+   Beschriftung bricht deshalb um, statt die Seite seitlich hinauszuschieben.
+   Einzeln stehende Pills bleiben einzeilig (white-space: nowrap oben). */
+.idt-pillstack .pill { width: 100%; max-width: 100%; white-space: normal; text-align: center; }
 /* Gestapelt sind die beigen Pills die breiten Schaltflächen der Linkseite. */
 .idt-pillstack .pill--beige { padding-left: var(--space-6); padding-right: var(--space-6); }
 
