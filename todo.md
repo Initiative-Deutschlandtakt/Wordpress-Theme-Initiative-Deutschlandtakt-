@@ -4,6 +4,33 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Verlaufsseite lief auf dem Telefon seitlich aus dem Bild (v2.1.1).** Auf der
+  Live-Seite stand der erste Button über den rechten Rand hinaus, und Logo wie
+  Social-Leiste saßen dadurch sichtbar außermittig. Nachgestellt bei 390 px
+  Viewport: Das Dokument war 442 px breit — 52 px Überlauf.
+  - **Ursache war `white-space: nowrap` am Pill-Button.** Das ist für einzeln
+    stehende Pills richtig (sie sollen nicht mitten im Wort brechen), im
+    Button-Stack aber nicht: Dort ist jeder Button eine Zeile über die volle
+    Breite, und eine lange Beschriftung wie „Unsere Agenda für die Schiene
+    2035" schob die ganze Spalte hinaus. Im Stack brechen die Beschriftungen
+    jetzt um (`.idt-pillstack .pill`), der Stack selbst bekommt
+    `max-width: 100%`.
+  - **Die Breitenformel des Logo-Sperrsatzes war zu knapp.** Sie stammte aus
+    einer Messung vor der Feinjustierung der Wortmarke; seitdem ist der
+    Sperrsatz 3,81 statt 3,7 Signet-Durchmesser breit. Der Teiler steht auf 3,9
+    (etwas Reserve), und wo Container-Queries zur Verfügung stehen, rechnet die
+    Größe mit der Breite der Spalte (`100cqw`) statt mit der des Fensters —
+    damit stimmt sie auch, wenn ein Scrollbalken Platz wegnimmt oder das Logo
+    in einer schmaleren Spalte steht.
+  - **Die Inhaltsspalte nimmt jetzt die volle Bühnenbreite ein.** `.entry`
+    zentriert sich über automatische Seitenränder; im Flex-Container der Bühne
+    schrumpfte der Inhalt dadurch auf seine natürliche Breite (418 px), und
+    Button-Stack wie Logo richteten sich nach dieser Restbreite statt nach der
+    Spalte — auf dem Desktop war das Logo deshalb kleiner als eingestellt.
+  - Nachgemessen im Browser bei 320, 360, 375, 390, 412, 414, 430, 480, 600,
+    768, 1024 und 1280 px: kein waagerechter Überlauf mehr, kein Element außer
+    halb des Viewports, die Wortmarke wird nirgends gequetscht.
+
 - **Knotendreieck blieb auf WordPress vor 6.1 im Frontend leer.** Der Block
   registrierte seine Ausgabe über das Feld `"render": "file:./render.php"` der
   `block.json`. Das wertet WordPress erst ab 6.1 aus — der Theme-Header
