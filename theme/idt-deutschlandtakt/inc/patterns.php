@@ -151,5 +151,18 @@ function idt_register_patterns() {
 			. idt_kartenraster_close(),
 	) );
 
+	register_block_pattern( 'idt/knotenprinzip', array(
+		'title'         => __( 'Knotenprinzip erklärt (Grafik mit Text)', 'idt' ),
+		'description'   => __( 'Die bewegte Knotendreieck-Grafik mit Dachzeile, Überschrift und einem Absatz davor — der Erklärabschnitt für die Seite „Die Idee".', 'idt' ),
+		'categories'    => array( 'idt' ),
+		/* Die Grafik ist auf 800px angelegt; in dieser Breite zeigt die
+		   Vorschau sie so, wie sie im Text steht. */
+		'viewportWidth' => 800,
+		'content'       => "<!-- wp:paragraph --><p><span class=\"idt-eyebrow\">Das Prinzip</span></p><!-- /wp:paragraph -->\n"
+			. "<!-- wp:heading {\"level\":2} --><h2>Warum sich alles am Knoten entscheidet</h2><!-- /wp:heading -->\n"
+			. "<!-- wp:idt/lead {\"text\":\"Drei Städte, drei Strecken: Fahren die Züge ohne Absprache, wartet man irgendwo. Treffen sie sich zur selben Minute im Knoten, steigt man in wenigen Minuten um — und das an jedem der drei Bahnhöfe gleichzeitig.\"} /-->\n"
+			. "<!-- wp:idt/knotendreieck {\"bildunterschrift\":\"Zur Minute :00 und :30 stehen sich an jedem Knoten die Züge beider Richtungen gegenüber. Erst dieses Zeitfenster macht aus drei Linien ein Netz.\"} /-->",
+	) );
+
 }
 add_action( 'init', 'idt_register_patterns' );

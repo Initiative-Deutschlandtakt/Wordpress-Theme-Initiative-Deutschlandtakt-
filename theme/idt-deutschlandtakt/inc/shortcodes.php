@@ -181,6 +181,144 @@ function idt_sc_splash2( $atts, $content = '' ) {
 add_shortcode( 'splash2', 'idt_sc_splash2' );
 
 /* =========================================================================
+ * Knotendreieck — interaktive Grafik zum Knotenprinzip
+ * ====================================================================== */
+
+/**
+ * Vorgabewerte des Knotendreiecks.
+ *
+ * Eine Quelle für beide Oberflächen: der Shortcode fällt hier hinein, der
+ * Block liest dieselben Werte über idt_knotendreieck_block_attributes()
+ * (inc/blocks.php) als Attribut-Vorgaben. In view.js stehen dieselben Texte
+ * noch einmal — dort als letzte Rückfallebene, wenn das Custom Element ohne
+ * Attribute im Markup steht.
+ */
+function idt_knotendreieck_defaults() {
+	return array(
+		'grafikTitel'      => 'Das Knotenprinzip',
+		'subzeile'         => 'Knoten :00 und :30',
+		'knotenOben'       => 'Hollerbrück',
+		'knotenLinks'      => 'Mardingen',
+		'knotenRechts'     => 'Kirchsee',
+		'bildunterschrift' => '',
+		'zyklusSekunden'   => 13.5,
+		'autoplay'         => true,
+		'fahrzeugStil'     => 'Striche',
+	);
+}
+
+/**
+ * Knotendreieck rendern — die eine Render-Funktion hinter Shortcode und Block
+ * (blocks/knotendreieck/render.php ruft sie auf).
+ *
+ * Ausgegeben wird nur die Hülle: ein <figure> mit dem Custom Element
+ * <idt-knotendreieck>, dem Standbild für den Fall ohne JavaScript und der
+ * Bildunterschrift. Gezeichnet wird die Grafik im Browser von
+ * blocks/knotendreieck/view.js.
+ *
+ * Die Bildunterschrift steht bewusst als <figcaption> unter der Grafik und
+ * nicht im Bild: dort bleibt sie durchsuchbar und für Screenreader lesbar.
+ * Die Überschrift sitzt umgekehrt im Bild, damit sie dabeibleibt, wenn jemand
+ * die Grafik in einen Vortrag oder in soziale Medien zieht.
+ *
+ * @param array  $args    Beschriftungen und Bewegungsoptionen, siehe idt_knotendreieck_defaults().
+ * @param string $wrapper Fertige Attributliste für das <figure>. Leer = Klasse
+ *                        idt-knotendreieck; der Block reicht hier
+ *                        get_block_wrapper_attributes() herein, damit Anker
+ *                        und Abstände aus der Seitenleiste ankommen.
+ * @return string HTML.
+ */
+function idt_render_knotendreieck( $args = array(), $wrapper = '' ) {
+	$a = wp_parse_args( $args, idt_knotendreieck_defaults() );
+
+	/* Zyklusdauer im Bereich des Editor-Reglers halten: darunter ist die
+	   Bewegung nicht mehr zu verfolgen, darüber wartet man auf den Knoten. */
+	$zyklus = max( 8.0, min( 24.0, (float) $a['zyklusSekunden'] ) );
+	$stil   = 'Punkte' === $a['fahrzeugStil'] ? 'Punkte' : 'Striche';
+
+	$grafik = sprintf(
+		'<idt-knotendreieck grafik-titel="%s" subzeile="%s" knoten-oben="%s"'
+			. ' knoten-links="%s" knoten-rechts="%s" cycle-seconds="%s"'
+			. ' vehicle-style="%s" autoplay="%s"></idt-knotendreieck>',
+		esc_attr( $a['grafikTitel'] ),
+		esc_attr( $a['subzeile'] ),
+		esc_attr( $a['knotenOben'] ),
+		esc_attr( $a['knotenLinks'] ),
+		esc_attr( $a['knotenRechts'] ),
+		esc_attr( (string) $zyklus ),
+		esc_attr( $stil ),
+		$a['autoplay'] ? 'true' : 'false'
+	);
+
+	/* Ein Custom Element ohne JavaScript rendert nichts — das Standbild zur
+	   Minute :30 tritt an seine Stelle. Es wird aus view.js gebaut
+	   (bin/knotendreieck-standbild.js) und trägt deshalb die Vorgabetexte,
+	   nicht die hier eingestellten: ein zweiter Zeichenweg für dasselbe Bild
+	   liefe über kurz oder lang auseinander. Die Beschreibung bleibt darum
+	   allgemein und beschreibt das Prinzip, nicht die Knotennamen. */
+	$standbild = '';
+	if ( file_exists( get_template_directory() . '/blocks/knotendreieck/standbild.svg' ) ) {
+		$standbild = sprintf(
+			'<noscript><img class="idt-knotendreieck__standbild" src="%s" alt="%s" width="1000" height="1000" decoding="async"></noscript>',
+			esc_url( get_template_directory_uri() . '/blocks/knotendreieck/standbild.svg' ),
+			esc_attr__( 'Modell eines Knotendreiecks: drei Knotenbahnhöfe, drei Linien, Abfahrten zur Minute :02 und :32', 'idt' )
+		);
+	}
+
+	$caption = trim( (string) $a['bildunterschrift'] );
+	$caption = '' !== $caption
+		? '<figcaption class="wp-element-caption">' . esc_html( $caption ) . '</figcaption>'
+		: '';
+
+	if ( '' === $wrapper ) {
+		$wrapper = 'class="idt-knotendreieck"';
+	}
+
+	return '<figure ' . $wrapper . '>' . $grafik . $standbild . $caption . '</figure>';
+}
+
+/**
+ * Knotendreieck als Shortcode — Rückfallebene für Stellen ohne Block-Editor.
+ * Im Editor gehört der Block „Knotendreieck" benutzt, dort stehen dieselben
+ * Felder in der Seitenleiste.
+ *
+ *   [knotendreieck titel="Das Knotenprinzip" oben="Hollerbrück"
+ *                  links="Mardingen" rechts="Kirchsee"
+ *                  sekunden="13.5" autoplay="ja" fahrzeuge="Striche"
+ *                  bildunterschrift="…"]
+ *
+ * WordPress schreibt Shortcode-Attribute klein — deshalb die kurzen Namen
+ * hier statt der camelCase-Schlüssel des Blocks.
+ */
+function idt_sc_knotendreieck( $atts ) {
+	$d    = idt_knotendreieck_defaults();
+	$atts = shortcode_atts( array(
+		'titel'            => $d['grafikTitel'],
+		'unten'            => $d['subzeile'],
+		'oben'             => $d['knotenOben'],
+		'links'            => $d['knotenLinks'],
+		'rechts'           => $d['knotenRechts'],
+		'bildunterschrift' => $d['bildunterschrift'],
+		'sekunden'         => $d['zyklusSekunden'],
+		'autoplay'         => 'ja',
+		'fahrzeuge'        => $d['fahrzeugStil'],
+	), $atts, 'knotendreieck' );
+
+	return idt_render_knotendreieck( array(
+		'grafikTitel'      => $atts['titel'],
+		'subzeile'         => $atts['unten'],
+		'knotenOben'       => $atts['oben'],
+		'knotenLinks'      => $atts['links'],
+		'knotenRechts'     => $atts['rechts'],
+		'bildunterschrift' => $atts['bildunterschrift'],
+		'zyklusSekunden'   => $atts['sekunden'],
+		'autoplay'         => in_array( strtolower( (string) $atts['autoplay'] ), array( 'ja', 'true', '1', 'yes' ), true ),
+		'fahrzeugStil'     => $atts['fahrzeuge'],
+	) );
+}
+add_shortcode( 'knotendreieck', 'idt_sc_knotendreieck' );
+
+/* =========================================================================
  * Elemente aus der „Example Landing Page" (Design-System) — für den Editor.
  * ====================================================================== */
 

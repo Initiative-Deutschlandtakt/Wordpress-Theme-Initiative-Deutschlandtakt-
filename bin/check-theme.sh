@@ -12,7 +12,8 @@
 #
 # Geprüft werden die vier Konventionen aus CLAUDE.md — Version an zwei Stellen,
 # ein Baustein/eine Render-Funktion, idt-Präfix, Design-Tokens statt Literale —
-# dazu Syntax (PHP/JS), Theme-Header, Direktzugriffsschutz und Debug-Reste.
+# dazu Syntax (PHP/JS), Theme-Header, Direktzugriffsschutz, Debug-Reste und die
+# Metadaten der Blöcke mit eigener block.json.
 #
 # Kein `set -e`: Es werden alle Fehler gesammelt und am Ende zusammen gemeldet,
 # damit ein Durchlauf die vollständige Liste zeigt.
@@ -151,19 +152,19 @@ fi
 
 # -----------------------------------------------------------------------------
 section "7) Direktzugriffsschutz"
-# functions.php und alles unter inc/ wird nie direkt aufgerufen — ohne Guard
-# ist eine direkt angesurfte Datei eine offene Tür. Template-Dateien
+# functions.php und alles unter inc/ und blocks/ wird nie direkt aufgerufen —
+# ohne Guard ist eine direkt angesurfte Datei eine offene Tür. Template-Dateien
 # (page.php, header.php …) brauchen ihn nicht, sie laufen nur über WordPress.
 guard_ok=1
 while IFS= read -r f; do
   grep -q "defined( 'ABSPATH' )" "$f" || { err "${f#"$repo"/}: ABSPATH-Guard fehlt"; guard_ok=0; }
-done < <(find "$theme/inc" -name '*.php'; echo "$theme/functions.php")
-[ "$guard_ok" -eq 1 ] && ok "functions.php und inc/ sind gegen Direktaufruf geschützt"
+done < <(find "$theme/inc" "$theme/blocks" -name '*.php' 2>/dev/null; echo "$theme/functions.php")
+[ "$guard_ok" -eq 1 ] && ok "functions.php, inc/ und blocks/ sind gegen Direktaufruf geschützt"
 
 # -----------------------------------------------------------------------------
 section "8) Keine Debug-Reste"
 debug_php="$(grep -rnE '\b(var_dump|print_r|error_log|xdebug_break)[[:space:]]*\(' --include='*.php' "$theme" || true)"
-debug_js="$(grep -rnE 'console\.(log|debug|dir)[[:space:]]*\(|\bdebugger\b' "$theme/assets" --include='*.js' || true)"
+debug_js="$(grep -rnE 'console\.(log|debug|dir)[[:space:]]*\(|\bdebugger\b' "$theme/assets" "$theme/blocks" --include='*.js' 2>/dev/null || true)"
 if [ -n "$debug_php$debug_js" ]; then
   printf '%s\n%s\n' "$debug_php" "$debug_js" | grep -v '^$' | while IFS= read -r line; do
     err "Debug-Ausgabe: ${line#"$repo"/}"
@@ -177,18 +178,22 @@ fi
 section "9) JavaScript"
 if command -v node >/dev/null 2>&1; then
   js_ok=1
-  for f in "$theme"/assets/*.js; do
+  js_count=0
+  # assets/ und die Sicht-/Editor-Skripte der Blöcke unter blocks/.
+  while IFS= read -r f; do
+    js_count=$((js_count + 1))
     if ! out="$(node --check "$f" 2>&1)"; then
       err "${f#"$repo"/}: $(head -n 3 <<< "$out" | tail -n 1)"
       js_ok=0
     fi
     # Konvention 3: alles in eine IIFE, damit nichts ins globale Scope leakt.
+    # Der Kopfkommentar darf davorstehen, deshalb die erste Zeile Code suchen.
     if ! grep -qE '^\(\s*function|^\(\s*\(\s*\)\s*=>|^\s*\(function' "$f"; then
       err "${f#"$repo"/}: nicht in eine IIFE gekapselt"
       js_ok=0
     fi
-  done
-  [ "$js_ok" -eq 1 ] && ok "alle assets/*.js parsen und sind gekapselt"
+  done < <(find "$theme/assets" "$theme/blocks" -name '*.js' 2>/dev/null | sort)
+  [ "$js_ok" -eq 1 ] && ok "$js_count JS-Dateien parsen und sind gekapselt"
 else
   warn "node nicht gefunden — JS-Syntaxprüfung übersprungen"
 fi
@@ -202,6 +207,25 @@ if [ -n "$todos" ]; then
   while IFS= read -r line; do warn "offener Merker: ${line#"$repo"/}"; done <<< "$todos"
 else
   ok "keine offenen TODO/FIXME-Merker im Theme"
+fi
+
+# -----------------------------------------------------------------------------
+section "11) Blöcke mit eigener block.json"
+# Die meisten Bausteine stehen in idt_blocks_config() und werden oben schon
+# mitgeprüft. Ein Block, der seine Metadaten in einer block.json mitbringt,
+# liegt daneben: Namensraum, Textdomain, die render-Datei, die Skript-Handles
+# und die Attribut-Vorgaben stehen dort in JSON statt in PHP. Ausgewertet wird
+# das in bin/block-meta.php.
+block_dirs="$(find "$theme/blocks" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')"
+if [ "$block_dirs" = "0" ]; then
+  ok "keine block.json-Blöcke vorhanden"
+else
+  block_problems="$(php "$repo/bin/block-meta.php" "$theme")"
+  if [ -n "$block_problems" ]; then
+    while IFS= read -r line; do err "$line"; done <<< "$block_problems"
+  else
+    ok "$block_dirs Block-Ordner: Namensraum, Textdomain, render-Datei, Handles und Vorgaben stimmen"
+  fi
 fi
 
 # -----------------------------------------------------------------------------
