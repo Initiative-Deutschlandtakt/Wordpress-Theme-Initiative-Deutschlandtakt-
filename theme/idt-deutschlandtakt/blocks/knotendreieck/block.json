@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "idt/knotendreieck",
+	"title": "Knotendreieck",
+	"category": "idt",
+	"icon": "networking",
+	"description": "Interaktive Grafik zum Knotenprinzip: drei Knoten, drei Linien, Abfahrten zur Minute :02 und :32.",
+	"keywords": [ "knoten", "takt", "deutschlandtakt", "grafik", "fahrplan", "dt" ],
+	"textdomain": "idt",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"spacing": { "margin": true }
+	},
+	"attributes": {
+		"grafikTitel": { "type": "string", "default": "Das Knotenprinzip" },
+		"subzeile": { "type": "string", "default": "Knoten :00 und :30" },
+		"knotenOben": { "type": "string", "default": "Hollerbrück" },
+		"knotenLinks": { "type": "string", "default": "Mardingen" },
+		"knotenRechts": { "type": "string", "default": "Kirchsee" },
+		"bildunterschrift": { "type": "string", "default": "" },
+		"zyklusSekunden": { "type": "number", "default": 13.5 },
+		"autoplay": { "type": "boolean", "default": true },
+		"fahrzeugStil": { "type": "string", "default": "Striche" }
+	},
+	"editorScript": "idt-knotendreieck-editor",
+	"script": "idt-knotendreieck-view",
+	"render": "file:./render.php"
+}

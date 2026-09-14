@@ -4,6 +4,60 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Knotendreieck als Block (v2.0.25).** Die bewegte Grafik zum Knotenprinzip —
+  drei Knotenbahnhöfe, drei Linien, Züge, die sich zur Minute :00 und :30
+  treffen — ist jetzt ein Baustein des Themes. Überschrift, Knotennamen,
+  Unterzeile und Bildunterschrift stehen im Editor in der Seitenleiste, dazu
+  Zyklusdauer, Autostart und die Form der Fahrzeuge. Kein Build-Schritt, keine
+  Abhängigkeiten: Vanilla JS im Shadow DOM (`blocks/knotendreieck/view.js`).
+  - **Ein Render-Pfad** (Konvention 2): das Frontend-Markup kommt aus
+    `idt_render_knotendreieck()` in `inc/shortcodes.php`. Der Block ruft sie
+    über `blocks/knotendreieck/render.php` auf, der Shortcode
+    `[knotendreieck]` über `idt_sc_knotendreieck()` — dieselbe Funktion, eine
+    Escaping-Stelle, eine Begrenzung der Zyklusdauer auf 8–24 Sekunden.
+  - **Eigene Editor-Oberfläche statt `idt_blocks_config()`.** Das ist die erste
+    Abweichung von der gemeinsamen `assets/blocks.js` — aus einem Grund: deren
+    Vorschau läuft über `ServerSideRender`, der bei jedem Tastendruck neues HTML
+    anfordert und damit eine laufende Animation zurücksetzt. Der Block bringt
+    deshalb `block.json` und eine ebenfalls build-freie `editor.js` mit und
+    setzt das Custom Element direkt ein. `script` statt `viewScript` in der
+    `block.json` ist Absicht: so lädt WordPress `view.js` auch im Editorrahmen,
+    und die Vorschau zeigt dieselbe Grafik wie die Seite — nur ohne Autostart,
+    damit beim Schreiben nichts im Augenwinkel zappelt.
+  - **Markenfarben statt Näherungswerte** (Konvention 4). Die Grafik kam mit
+    eigenen Tönen (`#1B3A3E`, `#FDF3EE`, `#5B3EE8`, `#45C6F0`); das waren
+    sichtbar Annäherungen an die Marke. Sie stehen jetzt auf `--idt-ink`,
+    `--idt-paper`, `--idt-violet` und `--idt-cyan`; die dritte Kante bekam mit
+    `#3796FA` eine Mischung aus Cyan und Violett. Die Werte stehen als fünf
+    Konstanten am Kopf von `view.js` und nicht als `var(--…)`, weil dieselben
+    Funktionen das Standbild erzeugen — eine per `<img>` geladene SVG-Datei
+    sieht die Custom Properties des Dokuments nicht.
+  - **Standbild wird gebaut, nicht gepflegt.** `bin/knotendreieck-standbild.js`
+    ruft `fullSvg(30)` aus `view.js` unter Node auf und schreibt
+    `blocks/knotendreieck/standbild.svg` — das, was ohne JavaScript im
+    `<noscript>` erscheint. Zwei Zeichenwege für dasselbe Bild liefen
+    unweigerlich auseinander. Es trägt deshalb die Vorgabetexte, nicht die
+    eingestellten; die Bildbeschreibung bleibt darum allgemein.
+  - **Fest bleiben die Fahrzeiten** 28 / 28 / 57 Minuten und die Knotenfenster
+    :28–:32 und :58–:02. Sie hängen zusammen: eine frei geänderte Minutenzahl
+    würde nur die Beschriftung ändern, nicht den Fahrplan — das Bild behauptete
+    dann etwas anderes, als die Bewegung zeigt. Ein Hinweis dazu steht in der
+    Seitenleiste.
+  - **Bedienbar und ruhig.** Play-/Pause-Knopf, Zeitregler mit Pfeiltasten
+    (Umschalt = fünf Minuten), Pos1, Ende und Leertaste; Autostart erst beim
+    Sichtbarwerden und nie wieder, sobald jemand den Regler angefasst hat. Bei
+    systemweit reduzierter Bewegung und vor dem Drucken steht die Grafik auf
+    Minute :30. Die Bildunterschrift steht als `figcaption` unter dem Bild und
+    bleibt damit durchsuchbar; die Überschrift sitzt im Bild, damit sie
+    mitwandert, wenn jemand die Grafik weiterverwendet.
+  - **Dazu:** Vorlage „Knotenprinzip erklärt" (`inc/patterns.php`), Abschnitt 7e
+    in `style.css` für Figur, Bildunterschrift und Standbild, und zwei
+    erweiterte Prüfungen — `bin/check-theme.sh` nimmt `blocks/` bei
+    JS-Syntax, IIFE-Kapselung, Debug-Resten und ABSPATH-Guard mit und ruft neu
+    `bin/block-meta.php` auf, das für jede `block.json` Namensraum, Textdomain,
+    render-Datei, Skript-Handles und die Deckung der Attribut-Vorgaben mit
+    `idt_<name>_defaults()` prüft.
+
 - **Eckiges Design — alle gerundeten Ecken entfernt (v2.0.24).** Schaltflächen,
   Karten, Felder und Flächen laufen jetzt durchgehend mit geraden Kanten aus.
   Zentral gelöst über die Radius-Token in `style.css` Abschnitt 2: `--radius-xs`

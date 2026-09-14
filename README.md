@@ -15,6 +15,7 @@ lassen und auszuliefern.
 | `docker-compose.yml`, `wp-cli/init.sh` | lokaler Stack (MariaDB, WordPress, wp-cli) |
 | `bin/theme-zip.sh` | baut das Release-Zip aus dem Theme |
 | `bin/check-theme.sh`, `bin/check-zip.sh`, `bin/smoke-test.sh` | die Prüfungen, die auch in der CI laufen |
+| `bin/knotendreieck-standbild.js` | baut das Standbild der Knotendreieck-Grafik neu (Node) |
 | `.github/workflows/` | CI für jeden Pull Request, Release beim Setzen eines Tags |
 | `todo.md` | Änderungsjournal (neuester Eintrag oben) |
 
@@ -256,6 +257,59 @@ beim Trenner als *Hintergrund* ab, zeichnet den Strich selbst aber als Rahmen �
 ohne die Regeln in `style.css` (Abschnitt 7d) bleibt ein gewählter Verlauf
 deshalb unsichtbar und der Trenner grau. Registriert sind die Stile in
 `inc/blocks.php` (`idt_register_core_block_styles()`).
+
+### Knotendreieck (bewegte Grafik zum Knotenprinzip)
+
+Der Block **Knotendreieck** (Inserter, Kategorie *Deutschlandtakt*) zeigt drei
+Knotenbahnhöfe, drei Linien und die Züge, die sich zur Minute :00 und :30 in
+jedem Knoten treffen. Fertig zusammengesetzt mit Dachzeile, Überschrift und
+Einleitung gibt es ihn als Vorlage **„Knotenprinzip erklärt"**.
+
+In der Seitenleiste stehen zwei Bereiche:
+
+| Bereich | Felder |
+|---|---|
+| **Beschriftung** | Überschrift im Bild, Zeile unten links, die drei Knotennamen, Bildunterschrift |
+| **Bewegung** | Dauer eines Stundenzyklus (8–24 Sekunden), Autostart, Fahrzeuge als Striche oder Punkte |
+
+Die Überschrift sitzt bewusst **im** Bild: So bleibt sie dabei, wenn jemand die
+Grafik in einen Vortrag oder in soziale Medien zieht. Ab etwa zwanzig Zeichen
+verkleinert sie sich automatisch, statt aus dem Rahmen zu laufen; dasselbe gilt
+für lange Knotennamen. Die Bildunterschrift steht dagegen als `figcaption`
+**unter** der Grafik und bleibt damit durchsuchbar und für Screenreader lesbar.
+
+Im Editor läuft die Animation nicht von selbst — sonst zappelt beim Schreiben
+die halbe Seite; der Play-Knopf unter der Grafik zeigt sie. Auf der Website
+startet sie, sobald die Grafik im Sichtfeld steht. Weiter gilt:
+
+* Play-/Pause-Knopf, Pfeiltasten (mit Umschalt in Fünf-Minuten-Schritten),
+  Pos1, Ende und Leertaste bedienen den Zeitregler.
+* Sobald jemand den Regler anfasst, stoppt der Lauf und startet nicht von
+  selbst wieder.
+* Bei systemweit reduzierter Bewegung läuft nichts an, die Grafik steht auf
+  Minute :30. Vor dem Drucken friert sie ebenfalls dort ein.
+* Ohne JavaScript erscheint statt der Grafik das Standbild
+  `blocks/knotendreieck/standbild.svg`.
+
+**Nicht einstellbar sind die Fahrzeiten** 28 / 28 / 57 Minuten und die
+Knotenfenster :28–:32 und :58–:02 — sie hängen zusammen. Eine frei geänderte
+Minutenzahl würde nur die Beschriftung ändern, nicht den Fahrplan; das Bild
+behauptete dann etwas anderes, als die Bewegung zeigt.
+
+Als Rückfallebene gibt es den Shortcode
+`[knotendreieck titel="…" oben="…" links="…" rechts="…" unten="…" sekunden="13.5" autoplay="ja" fahrzeuge="Striche" bildunterschrift="…"]`.
+Im Editor gehört aber der Block benutzt — dort stehen dieselben Felder.
+
+Die Dateien liegen in `theme/idt-deutschlandtakt/blocks/knotendreieck/`
+(`block.json`, `editor.js`, `view.js`, `render.php`, `standbild.svg`), das
+Markup baut `idt_render_knotendreieck()` in `inc/shortcodes.php`. Gezeichnet
+wird im Browser — Vanilla JS im Shadow DOM, kein Build-Schritt. Wer an
+Geometrie, Farben oder Vorgabetexten in `view.js` etwas ändert, baut danach das
+Standbild neu und commitet es mit:
+
+```bash
+./bin/knotendreieck-standbild.js
+```
 
 ## Logo im Kopfmenü
 

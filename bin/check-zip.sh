@@ -50,7 +50,10 @@ fi
 
 # 2) Pflichtdateien sind wirklich im Archiv (nicht nur im Arbeitsverzeichnis).
 for f in style.css index.php functions.php screenshot.png inc/shortcodes.php assets/blocks.js \
-         assets/fonts/InterVariable.woff2 LICENSE readme.txt assets/fonts/OFL.txt; do
+         assets/fonts/InterVariable.woff2 LICENSE readme.txt assets/fonts/OFL.txt \
+         blocks/knotendreieck/block.json blocks/knotendreieck/render.php \
+         blocks/knotendreieck/view.js blocks/knotendreieck/editor.js \
+         blocks/knotendreieck/standbild.svg; do
   grep -qx "$slug/$f" <<< "$entries" || err "fehlt im Archiv: $f"
 done
 ok "Pflichtdateien im Archiv geprüft"

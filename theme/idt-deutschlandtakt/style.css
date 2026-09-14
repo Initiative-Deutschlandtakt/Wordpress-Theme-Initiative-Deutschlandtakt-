@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.0.24
+Version: 2.0.25
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1218,6 +1218,44 @@ hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
 .wp-block-separator.is-style-idt-kurz { margin: var(--space-5) 0; }
 .wp-block-separator.is-style-idt-kurz.aligncenter { margin-left: auto; margin-right: auto; }
 .wp-block-separator.is-style-idt-kurz.alignright { margin-left: auto; margin-right: 0; }
+
+/* -----------------------------------------------------------------------------
+   7e) KNOTENDREIECK — der Block idt/knotendreieck
+   -----------------------------------------------------------------------------
+   Die Grafik selbst bringt ihre Gestaltung mit: sie lebt im Shadow DOM von
+   blocks/knotendreieck/view.js und ist von außen bewusst nicht erreichbar —
+   eine Marken-Abbildung soll sich nicht mit einer Seitenregel verschieben
+   lassen. Was hier steht, ist deshalb nur das Drumherum: der Platz, den die
+   Grafik auf der Seite einnimmt, die Zeile darunter und das Standbild für den
+   Fall ohne JavaScript.
+
+   Die Schrift der Grafik kommt trotz Shadow DOM aus dem Theme: @font-face
+   wirkt dokumentweit, und view.js nennt dieselbe Familie wie --font-sans.
+   ----------------------------------------------------------------------------- */
+.idt-knotendreieck { margin: var(--space-7) auto; max-width: 800px; }
+
+/* Bildunterschrift — bewusst unter dem Bild statt darin: dort bleibt sie
+   markierbar, durchsuchbar und für Screenreader lesbar. Die Überschrift sitzt
+   umgekehrt in der Grafik, damit sie mitwandert, wenn jemand das Bild
+   weiterverwendet. */
+.idt-knotendreieck > figcaption {
+  margin: var(--space-4) 0 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Standbild (<noscript>): dieselbe Breite wie die Grafik. Die Rundung und der
+   Abstand aus „.entry img" gelten hier nicht — die Abbildung hat ihren eigenen
+   eckigen Rahmen und sitzt schon im Abstand der Figur. */
+.idt-knotendreieck__standbild {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 0;
+}
 
 /* =============================================================================
    8) CONTENT (Seiten / Beiträge)

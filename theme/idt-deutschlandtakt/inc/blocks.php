@@ -417,6 +417,7 @@ function idt_register_blocks() {
 	wp_localize_script( 'idt-blocks', 'IDT_BLOCKS', $js );
 
 	idt_register_cards_block();
+	idt_register_knotendreieck_block();
 }
 
 /**
@@ -448,6 +449,49 @@ function idt_register_cards_block() {
 		'category'      => 'idt',
 	) );
 }
+
+/**
+ * Knotendreieck — Block mit eigener Oberfläche.
+ *
+ * Die übrigen Elemente teilen sich assets/blocks.js: Sidebar-Felder aus
+ * idt_blocks_config(), Vorschau über ServerSideRender. Das Knotendreieck
+ * passt dort nicht hinein, denn seine Vorschau ist kein Stück Markup, sondern
+ * eine laufende Grafik — ServerSideRender würde sie bei jedem Tastendruck neu
+ * anfordern und dabei zurücksetzen. Es bekommt darum eine eigene, ebenfalls
+ * build-freie Oberfläche in blocks/knotendreieck/editor.js, die das Custom
+ * Element direkt einsetzt.
+ *
+ * An Konvention 2 ändert das nichts: das Frontend-Markup kommt aus
+ * idt_render_knotendreieck() (inc/shortcodes.php), aufgerufen von
+ * blocks/knotendreieck/render.php und vom Shortcode [knotendreieck].
+ */
+function idt_register_knotendreieck_block() {
+	$uri = get_template_directory_uri() . '/blocks/knotendreieck';
+
+	/* block.json verweist mit "script" und "editorScript" auf genau diese
+	 * beiden Handles. Ohne sie suchte WordPress neben den Dateien eine
+	 * *.asset.php aus einem Build-Schritt — den es hier nicht gibt.
+	 *
+	 * "script" (statt "viewScript") ist Absicht: WordPress lädt es im
+	 * Frontend und im Editor-Rahmen, und nur so zeichnet die Vorschau im
+	 * Editor dieselbe Grafik wie die Seite. Dass sie dort nicht von selbst
+	 * losläuft, regelt editor.js über autoplay="false" — eine Animation, die
+	 * beim Schreiben im Augenwinkel zappelt, will niemand. */
+	wp_register_script( 'idt-knotendreieck-view', $uri . '/view.js', array(), IDT_VERSION, true );
+
+	wp_register_script(
+		'idt-knotendreieck-editor',
+		$uri . '/editor.js',
+		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+		IDT_VERSION,
+		true
+	);
+
+	/* Attribute, Titel, Kategorie und der Verweis auf render.php stehen in
+	 * blocks/knotendreieck/block.json. */
+	register_block_type( get_template_directory() . '/blocks/knotendreieck' );
+}
+
 add_action( 'init', 'idt_register_blocks' );
 
 /**
