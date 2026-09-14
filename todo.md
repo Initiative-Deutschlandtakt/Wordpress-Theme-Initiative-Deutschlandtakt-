@@ -10,14 +10,13 @@ _(keine offenen Aufgaben)_
   Herunterladen erneut in ein Zip. Das hochgeladene Release-Zip kam deshalb als
   Zip-im-Zip an, und in der Archivwurzel stand für WordPress nur ein weiteres
   Zip. Das betraf jeden Artefakt-Download seit jeher, nicht erst v2.0.25.
-  - **Der Inhalt wandert ins Artefakt, nicht das Archiv.** `ci.yml` und
-    `release.yml` packen das von `bin/check-zip.sh` geprüfte Zip aus und laden
-    `dist/paket/*` hoch. Das Sternchen ist der Punkt: Ab dem ersten Wildcard
-    behält `upload-artifact` die Verzeichnisstruktur, der Ordner
-    `idt-deutschlandtakt/` bleibt also erhalten. GitHubs Verpacken stellt beim
-    Herunterladen wieder genau das Archiv her, das der Theme-Upload erwartet.
-    Der Artefaktname trägt jetzt die Versionsnummer und ist damit zugleich der
-    Dateiname des Downloads.
+  - **Der Inhalt wandert ins Artefakt, nicht das Archiv.** `ci.yml` packt das
+    von `bin/check-zip.sh` geprüfte Zip aus und lädt `dist/paket/*` hoch. Das
+    Sternchen ist der Punkt: Ab dem ersten Wildcard behält `upload-artifact`
+    die Verzeichnisstruktur, der Ordner `idt-deutschlandtakt/` bleibt also
+    erhalten. GitHubs Verpacken stellt beim Herunterladen wieder genau das
+    Archiv her, das der Theme-Upload erwartet. Der Artefaktname trägt jetzt die
+    Versionsnummer und ist damit zugleich der Dateiname des Downloads.
   - **Die CI prüft ihr eigenes Paket.** Der Job „Release-Zip" lädt sein
     Artefakt direkt wieder herunter und bricht ab, wenn darin
     `idt-deutschlandtakt/style.css` fehlt. Ob der Download taugt, soll die CI
@@ -26,6 +25,12 @@ _(keine offenen Aufgaben)_
     und nicht neu verpackt. In `release.yml` liest jetzt ein Schritt die
     Theme-Version einmal in `THEME_VERSION`; vorher stand sie zweimal da und
     beim manuellen Start gar nicht zur Verfügung.
+  - **`release.yml` lädt kein eigenes Artefakt mehr hoch.** Der Workflow ruft
+    `ci.yml` auf, und deren Job „Release-Zip“ legt das Artefakt bereits in
+    denselben Lauf — auch beim manuellen Start. Ein zweites gleichen Namens
+    hätte den Release mit „409 Conflict“ abgebrochen, denn Artefakte sind seit
+    `upload-artifact@v4` unveränderlich. Aufgefallen wäre das erst beim ersten
+    Tag, weil es im Repo bis dahin weder Tags noch Releases gab.
   - Das Theme selbst ist unverändert, die Version bleibt deshalb bei 2.0.25.
 
 - **Knotendreieck als Block (v2.0.25).** Die bewegte Grafik zum Knotenprinzip —

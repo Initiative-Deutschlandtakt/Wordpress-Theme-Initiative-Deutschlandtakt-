@@ -31,8 +31,8 @@ jobs:
       - uses: actions/checkout@v4
 
       # Eine Quelle für die Versionsnummer in allen folgenden Schritten:
-      # der Theme-Header. Beim manuellen Start gibt es keinen Tag, der Name
-      # des Artefakts soll die Version aber trotzdem tragen.
+      # der Theme-Header. Beim manuellen Start gibt es keinen Tag, der
+      # Dateiname des Zips braucht die Version aber trotzdem.
       - name: Theme-Version lesen
         run: |
           header_version="$(sed -n 's/^[[:space:]]*Version:[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$/\1/p' \
@@ -59,22 +59,13 @@ jobs:
       - name: Zip bauen
         run: ./bin/theme-zip.sh
 
-      # Wie in ci.yml: GitHub packt jeden Artefakt-Download noch einmal ein.
-      # Hochgeladen wird darum der Inhalt des Archivs, damit beim Herunterladen
-      # wieder genau dieses Zip entsteht. Das Release-Asset unten ist davon
-      # nicht betroffen — es wird als Datei ausgeliefert, nicht neu verpackt.
-      - name: Zip für das Artefakt auspacken
-        run: |
-          mkdir -p dist/paket
-          unzip -q "dist/idt-deutschlandtakt-$THEME_VERSION.zip" -d dist/paket
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: idt-deutschlandtakt-${{ env.THEME_VERSION }}
-          path: dist/paket/*
-          if-no-files-found: error
-          retention-days: 90
-
+      # Kein zweites Artefakt an dieser Stelle: Der Job „pruefungen“ ruft
+      # ci.yml auf, und dessen Job „Release-Zip“ hat das Artefakt
+      # „idt-deutschlandtakt-<version>“ in denselben Lauf schon hochgeladen —
+      # auch beim manuellen Start. Artefakte sind seit upload-artifact@v4
+      # unveränderlich; ein zweites gleichen Namens im selben Lauf bricht mit
+      # „409 Conflict“ ab. Das Release-Asset unten ist davon nicht betroffen:
+      # Es wird als Datei ausgeliefert und nicht neu verpackt.
       - name: Release anlegen
         if: startsWith(github.ref, 'refs/tags/v')
         env:
