@@ -26,6 +26,11 @@ $idt_no_nav = idt_page_template_is( 'page-no-nav.php' ) || idt_is_verlauf_page()
    Startseite, deren Splash-Bühne das Logo bereits selbst zeigt. Gleiches
    Prinzip wie bei $idt_no_nav (Template-Slug statt aktivem Template-File). */
 $idt_no_logo = idt_page_template_is( 'page-no-logo.php' );
+/* Menüform aus dem Customizer: 'band' (Vorgabe) oder 'overlay' — s.
+   idt_nav_style() in functions.php. Das Markup ist bis auf die Inverse-
+   Fassung des Logos identisch; unterschieden wird über die Body-Klasse
+   .idt-nav-overlay (style.css 5c). */
+$idt_nav_overlay = 'overlay' === idt_nav_style();
 if ( ! $idt_no_nav ) : ?>
 <header class="site-header<?php echo $idt_no_logo ? ' site-header--no-logo' : ''; ?>">
 	<div class="container site-header__inner">
@@ -35,6 +40,13 @@ if ( ! $idt_no_nav ) : ?>
 		<?php else : /* … sonst das mitgelieferte Marken-PNG. */ ?>
 			<a class="site-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-transparent.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
+				<?php if ( $idt_nav_overlay ) : /* Beim aufklappbaren Menü kippt das Menüband auf
+				         Markentinte, sobald das Menü offen ist — die dunkle Schrift der Wortmarke
+				         verschwände darauf. Deshalb liegt die Inverse-Fassung (dieselbe, die der
+				         Footer nutzt) darüber und wird eingeblendet. Rein dekorativ, daher ohne
+				         Alternativtext: Die Marke steht schon im alt des Bildes darunter. */ ?>
+					<img class="site-header__logo-inverse" src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-inverse.png' ); ?>" alt="" aria-hidden="true">
+				<?php endif; ?>
 			</a>
 		<?php endif; ?>
 		<nav class="main-nav" id="main-nav" aria-label="<?php esc_attr_e( 'Hauptmenü', 'idt' ); ?>">
@@ -64,10 +76,17 @@ if ( ! $idt_no_nav ) : ?>
 			<a class="idt-searchtoggle" href="#idt-searchbox" aria-expanded="false" aria-controls="idt-searchbox" aria-label="<?php esc_attr_e( 'Suche öffnen', 'idt' ); ?>">
 				<?php echo idt_icon( 'search', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</a>
+			<?php /* Beim aufklappbaren Menü steht neben den Balken das Wort „Menü" —
+			         es macht die Schaltfläche auch auf dem Desktop als Menü lesbar und
+			         weicht beim Öffnen zusammen (style.css 5c). Im Menüband bleibt die
+			         Beschriftung ausgeblendet, dort trägt das aria-label die Bedeutung. */ ?>
 			<button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="<?php esc_attr_e( 'Menü öffnen', 'idt' ); ?>">
-				<span class="nav-toggle__bar"></span>
-				<span class="nav-toggle__bar"></span>
-				<span class="nav-toggle__bar"></span>
+				<span class="nav-toggle__icon" aria-hidden="true">
+					<span class="nav-toggle__bar"></span>
+					<span class="nav-toggle__bar"></span>
+					<span class="nav-toggle__bar"></span>
+				</span>
+				<span class="nav-toggle__label" aria-hidden="true"><?php esc_html_e( 'Menü', 'idt' ); ?></span>
 			</button>
 		</div>
 	</div>

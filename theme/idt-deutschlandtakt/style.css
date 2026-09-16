@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.1.1
+Version: 2.2.0
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -410,13 +410,23 @@ blockquote {
 
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
-  display: none; flex-direction: column; justify-content: center; gap: 5px;
-  width: 46px; height: 42px; padding: 9px 8px; margin: 0;
+  display: none; align-items: center; gap: var(--space-2);
+  height: 42px; padding: 9px 8px; margin: 0;
   background: transparent; border: var(--bw-frame) solid var(--idt-ink);
   border-radius: var(--radius-sm); cursor: pointer; -webkit-appearance: none; appearance: none;
+  color: var(--idt-ink);
 }
-.nav-toggle__bar { display: block; width: 100%; height: 2.5px; background: var(--idt-ink);
+/* Die Breite steht jetzt am Balkenpaket statt an der Schaltfläche — nur so
+   kann daneben noch die Beschriftung „Menü" Platz finden (aufklappbares Menü,
+   s. 5c). 26 px ist dabei genau der Inhaltskasten der früheren Angabe
+   `width: 46px`: 46 abzüglich 2×2 px Rahmen und 2×8 px Polsterung (alles
+   border-box). Die Schaltfläche bleibt damit 46×42 groß und liest sich
+   weiterhin als Paar mit der Lupe daneben. */
+.nav-toggle__icon { display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 26px; height: 100%; }
+.nav-toggle__bar { display: block; width: 100%; height: 2.5px; background: currentColor;
   transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out); }
+/* Im Menüband bleibt das Wort stumm — dort trägt das aria-label die Bedeutung. */
+.nav-toggle__label { display: none; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
@@ -577,6 +587,225 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-searchbox__close { top: var(--space-3); right: var(--space-3); width: 40px; height: 40px; }
   .idt-searchfield__submit { padding: 10px 16px; font-size: var(--fs-xs); }
   .idt-result { padding: var(--space-4); }
+}
+
+/* =============================================================================
+   5c) AUFKLAPPBARES MENÜ — zweite Menüform, wählbar im Customizer
+   =============================================================================
+   Gegenentwurf zum Menüband aus Abschnitt 5: Die Menüpunkte stehen nicht
+   offen im Kopf, sondern liegen auf jeder Breite hinter der Schaltfläche
+   „Menü". Beim Öffnen kippt das Menüband auf Markentinte — das ist der
+   Kern der Sache und nicht Zierde: Die Seite tritt zurück, das Menü ist
+   für den Moment der Ort, an dem man sich befindet.
+
+     Desktop (> 900 px) — die Punkte fächern waagerecht aus dem Hamburger auf,
+       einer nach dem anderen, und fallen dabei leicht von oben ein. Der Platz
+       ist schon vorher reserviert (`visibility` statt `display`), damit Logo
+       und Aktionsleiste beim Öffnen nicht springen. Das Wort „Menü" weicht
+       zusammen, die Balken werden zum Kreuz.
+     Telefon (≤ 900 px) — die Tinte nimmt den ganzen Bildschirm ein. Logo und
+       Kreuz bleiben stehen, wo sie waren, die Punkte stehen rechtsbündig
+       darunter. Kein Seitenpanel, kein Abdunkler: Die Fläche selbst ist der
+       Grund, auf dem das Menü liegt.
+
+   Alles hängt an drei Klassen: `.idt-nav-overlay` am <body> wählt diese Form
+   (idt_body_class()), `.idt-nav-open` am <html> ist der offene Zustand,
+   `.idt-js` am <html> belegt, dass JavaScript läuft. Ohne `.idt-js` greift
+   nichts von hier — dann stehen die Punkte offen wie im Menüband, statt
+   unerreichbar hinter einer toten Schaltfläche zu liegen (idt_nav_js_flag()).
+   ============================================================================= */
+
+/* ---- Schaltfläche „Menü" ---- */
+/* Anders als im Menüband auf jeder Breite sichtbar — sie ist hier der einzige
+   Weg ins Menü. */
+.idt-nav-overlay .nav-toggle { display: inline-flex; }
+.idt-nav-overlay .nav-toggle__label {
+  display: block; overflow: hidden; white-space: nowrap;
+  max-width: 8em; /* großzügig: begrenzt nichts, ist nur der Startwert der Animation */
+  font-size: var(--fs-xs); font-weight: var(--fw-bold);
+  text-transform: uppercase; letter-spacing: var(--ls-label); line-height: 1;
+  transition: max-width var(--dur-base) var(--ease-out),
+              opacity var(--dur-fast) var(--ease-out),
+              margin-left var(--dur-base) var(--ease-out);
+}
+.idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
+/* Offen: Das Wort weicht zusammen (der negative Rand schluckt auch die Lücke
+   zum Balkenpaket), übrig bleibt das Kreuz. */
+.idt-nav-overlay .nav-toggle[aria-expanded="true"] .nav-toggle__label {
+  max-width: 0; opacity: 0; margin-left: calc(var(--space-2) * -1);
+}
+
+/* ---- Das Menüband kippt auf Markentinte ---- */
+/* Der Kopf bleibt dabei über allem: Auf dem Telefon liegt die Tafel darunter,
+   Logo und Kreuz bleiben also sichtbar und an ihrem Platz — genau dort, wo
+   man sie beim Öffnen zuletzt gesehen hat. */
+.idt-nav-overlay .site-header {
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+}
+.idt-nav-open .idt-nav-overlay .site-header {
+  background: var(--surface-inverse); border-bottom-color: transparent;
+  z-index: calc(var(--z-overlay) + 1);
+  /* Die Mattscheibe des Menübands (Abschnitt 5) muss weg, solange das Menü
+     offen ist: Ein Element mit Filter wird zum Bezugsrahmen aller
+     `position: fixed`-Nachfahren, und die Tafel darin bliebe dann kopfhoch
+     statt bildschirmhoch. */
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+/* Schrift und Linien auf der Tinte in Papierfarbe. */
+.idt-nav-open .idt-nav-overlay .main-nav a,
+.idt-nav-open .idt-nav-overlay .nav-toggle,
+.idt-nav-open .idt-nav-overlay .idt-searchtoggle { color: var(--text-on-inverse); }
+.idt-nav-open .idt-nav-overlay .nav-toggle,
+.idt-nav-open .idt-nav-overlay .idt-searchtoggle { border-color: color-mix(in srgb, var(--idt-paper) 30%, transparent); }
+.idt-nav-open .idt-nav-overlay .nav-toggle:hover,
+.idt-nav-open .idt-nav-overlay .idt-searchtoggle:hover {
+  color: var(--idt-ink); background: var(--idt-cyan); border-color: var(--idt-cyan);
+}
+.idt-nav-open .idt-nav-overlay .main-nav a:hover { color: var(--accent-secondary); border-bottom-color: var(--accent-secondary); }
+.idt-nav-open .idt-nav-overlay .main-nav .current-menu-item > a { border-bottom-color: var(--idt-cyan); }
+
+/* Die Wortmarke trägt dunkle Schrift und verschwände auf der Tinte. Die
+   Inverse-Fassung (dieselbe wie im Footer) liegt deckungsgleich darüber und
+   wird eingeblendet; sie steht nur beim mitgelieferten Logo zur Verfügung,
+   ein eigenes Logo aus „Website-Identität" bleibt unverändert (s. README). */
+/* Innerhalb des Menübands müssen Logo und Aktionsleiste über der Tafel
+   liegen — sonst deckt diese das Kreuz zu, mit dem man wieder herauskommt.
+   Nach außen zählt allein der z-index des Menübands (oben), die Tafel deckt
+   die Seite also trotzdem ab. */
+.idt-nav-overlay .site-header__brand,
+.idt-nav-overlay .site-header__actions { position: relative; z-index: 2; }
+.idt-nav-overlay .main-nav { z-index: 1; }
+.idt-nav-overlay .site-header__logo-inverse {
+  position: absolute; top: 0; left: 0; height: var(--header-logo-h); width: auto;
+  opacity: 0; transition: opacity var(--dur-base) var(--ease-out); pointer-events: none;
+}
+.idt-nav-open .idt-nav-overlay .site-header__logo-inverse { opacity: 1; }
+
+/* ---- Desktop: waagerechtes Ausfächern ---- */
+/* Nur mit JavaScript verstecken — s. Kopfkommentar. */
+.idt-js .idt-nav-overlay .main-nav { visibility: hidden; }
+.idt-js .idt-nav-overlay .main-nav > ul > li {
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.idt-nav-open .idt-nav-overlay .main-nav { visibility: visible; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li { opacity: 1; transform: none; }
+/* Treppe: Jeder Punkt kommt 60 ms nach dem vorigen — das Menü fächert auf,
+   statt als Block zu erscheinen. Acht Stufen reichen für ein Hauptmenü;
+   alles darüber erscheint mit der letzten Stufe. */
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(1) { transition-delay: 0ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(2) { transition-delay: 60ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(3) { transition-delay: 120ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(4) { transition-delay: 180ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(5) { transition-delay: 240ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(6) { transition-delay: 300ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(7) { transition-delay: 360ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(n+8) { transition-delay: 420ms; }
+
+/* Untermenüs auf dem Desktop: Das Flyout aus Abschnitt 5 steht auf heller
+   Karte — auf der Tinte darüber wirkt es sonst wie ein Fremdkörper. */
+.idt-nav-open .idt-nav-overlay .main-nav .sub-menu {
+  background: var(--idt-ink-hover); border-color: color-mix(in srgb, var(--idt-paper) 20%, transparent);
+}
+.idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { color: var(--text-on-inverse); }
+.idt-nav-open .idt-nav-overlay .main-nav .sub-menu a:hover {
+  color: var(--accent-secondary); background: color-mix(in srgb, var(--idt-paper) 8%, transparent);
+}
+
+/* ---- Telefon: die Tinte nimmt den ganzen Bildschirm ---- */
+@media (max-width: 900px) {
+  .idt-nav-overlay .main-nav {
+    /* Setzt die Leisten-Regeln aus Abschnitt 5 zurück: aus der aufklappenden
+       Leiste unter dem Kopf wird eine Fläche über der ganzen Seite. Sie liegt
+       unter dem Menüband (dessen z-index oben steigt), damit Logo und Kreuz
+       darauf stehen bleiben und nahtlos in sie übergehen. */
+    position: fixed; inset: 0; left: 0; right: 0; top: 0; bottom: 0;
+    width: auto; max-height: none; overflow-y: auto;
+    /* Oben so viel Luft, dass die Punkte unter dem Menüband beginnen. */
+    padding: calc(68px + var(--space-7)) var(--gutter) var(--space-7);
+    background: var(--surface-inverse); color: var(--text-on-inverse);
+    border-bottom: none; box-shadow: none;
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
+  }
+  .idt-nav-open .idt-nav-overlay .main-nav {
+    opacity: 1; visibility: visible; max-height: none;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
+  }
+
+  .idt-nav-overlay .main-nav ul { padding: 0; align-items: flex-end; }
+  /* Rechtsbündig wie im Vorbild: Die Punkte stehen unter dem Kreuz, mit dem
+     man sie geöffnet hat, und der Daumen liegt ohnehin rechts. */
+  .idt-nav-overlay .main-nav li { border-bottom: none; text-align: right; width: 100%; }
+  .idt-nav-overlay .main-nav a {
+    display: block; padding: var(--space-3) 0; border-bottom: none;
+    font-size: var(--fs-h2); font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-wide); color: var(--text-on-inverse);
+  }
+  .idt-nav-open .idt-nav-overlay .main-nav .current-menu-item > a {
+    color: var(--accent-secondary); border-bottom: none;
+  }
+
+  /* Die Treppe läuft auf dem Telefon mit — hier von rechts statt von oben,
+     weil die Punkte rechtsbündig stehen. */
+  .idt-js .idt-nav-overlay .main-nav > ul > li { transform: translateX(12px); }
+  .idt-nav-open .idt-nav-overlay .main-nav > ul > li { transform: none; }
+
+  /* Untermenüs: eingerückt und dauerhaft offen (kein Hover auf Touch),
+     kleiner und ruhiger als die Hauptpunkte. */
+  .idt-nav-overlay .main-nav .sub-menu {
+    padding: 0 0 var(--space-3); background: transparent; border: none;
+  }
+  .idt-nav-open .idt-nav-overlay .main-nav .sub-menu { background: transparent; border: none; }
+  .idt-nav-overlay .main-nav .sub-menu li { text-align: right; }
+  .idt-nav-overlay .main-nav .sub-menu a,
+  .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a {
+    padding: var(--space-2) 0; font-size: var(--fs-body); font-weight: var(--fw-regular);
+    color: var(--text-on-inverse-muted); background: transparent;
+  }
+}
+
+/* Flache Bildschirme — Telefone im Querformat, kleine Geräte. Mit der vollen
+   Überschriftengröße rutschen dort die letzten Menüpunkte unter den Rand; die
+   Tafel scrollt zwar, aber ein Menü, das man erst scrollen muss, ist ein
+   halbes Menü. Nachgemessen bei 320×568 und 844×390. */
+@media (max-width: 900px) and (max-height: 640px) {
+  .idt-nav-overlay .main-nav { padding-top: calc(68px + var(--space-4)); }
+  .idt-nav-overlay .main-nav a { font-size: var(--fs-lead); padding: var(--space-2) 0; }
+  .idt-nav-overlay .main-nav .sub-menu a,
+  .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-sm); padding: var(--space-1) 0; }
+}
+/* Zweite Stufe für das Querformat auf dem Telefon (gemessen bei 844×390):
+   Dort bleiben unter dem Menüband nur gut 300 px, und auch die Lesegröße
+   reicht nicht mehr. Eng, aber vollständig sichtbar ist besser als groß und
+   halb abgeschnitten. */
+@media (max-width: 900px) and (max-height: 440px) {
+  .idt-nav-overlay .main-nav { padding-top: calc(68px + var(--space-2)); padding-bottom: var(--space-4); }
+  .idt-nav-overlay .main-nav a { font-size: var(--fs-body); line-height: var(--lh-snug); padding: var(--space-1) 0; }
+  .idt-nav-overlay .main-nav .sub-menu,
+  .idt-nav-open .idt-nav-overlay .main-nav .sub-menu { padding-bottom: var(--space-1); }
+  .idt-nav-overlay .main-nav .sub-menu a,
+  .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-xs); padding: 2px 0; }
+}
+
+/* Seite hinter der Tafel stillstellen (Klasse von assets/nav.js, nur im
+   Tafel-Modus gesetzt) — analog zum Such-Overlay in 5b. Das Vorbild lässt
+   die Seite hinter dem Menü weiterscrollen; das ist kein Vorbild. */
+html.idt-nav-lock { overflow: hidden; }
+
+/* Wer Bewegung abbestellt hat, bekommt dieselben Zustände ohne Weg dorthin:
+   Die Tafel ist da oder nicht, die Punkte stehen sofort. */
+@media (prefers-reduced-motion: reduce) {
+  .idt-nav-overlay .site-header,
+  .idt-nav-overlay .site-header__logo-inverse,
+  .idt-nav-overlay .main-nav,
+  .idt-nav-overlay .main-nav > ul > li,
+  .idt-nav-overlay .nav-toggle__label,
+  .idt-nav-overlay .nav-toggle__bar {
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
 }
 
 /* =============================================================================
