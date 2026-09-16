@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.1.1
+Version: 2.2.0
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -410,13 +410,23 @@ blockquote {
 
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
-  display: none; flex-direction: column; justify-content: center; gap: 5px;
-  width: 46px; height: 42px; padding: 9px 8px; margin: 0;
+  display: none; align-items: center; gap: var(--space-2);
+  height: 42px; padding: 9px 8px; margin: 0;
   background: transparent; border: var(--bw-frame) solid var(--idt-ink);
   border-radius: var(--radius-sm); cursor: pointer; -webkit-appearance: none; appearance: none;
+  color: var(--idt-ink);
 }
-.nav-toggle__bar { display: block; width: 100%; height: 2.5px; background: var(--idt-ink);
+/* Die Breite steht jetzt am Balkenpaket statt an der Schaltfläche — nur so
+   kann daneben noch die Beschriftung „Menü" Platz finden (aufklappbares Menü,
+   s. 5c). 26 px ist dabei genau der Inhaltskasten der früheren Angabe
+   `width: 46px`: 46 abzüglich 2×2 px Rahmen und 2×8 px Polsterung (alles
+   border-box). Die Schaltfläche bleibt damit 46×42 groß und liest sich
+   weiterhin als Paar mit der Lupe daneben. */
+.nav-toggle__icon { display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 26px; height: 100%; }
+.nav-toggle__bar { display: block; width: 100%; height: 2.5px; background: currentColor;
   transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out); }
+/* Im Menüband bleibt das Wort stumm — dort trägt das aria-label die Bedeutung. */
+.nav-toggle__label { display: none; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
@@ -577,6 +587,205 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-searchbox__close { top: var(--space-3); right: var(--space-3); width: 40px; height: 40px; }
   .idt-searchfield__submit { padding: 10px 16px; font-size: var(--fs-xs); }
   .idt-result { padding: var(--space-4); }
+}
+
+/* =============================================================================
+   5c) AUFKLAPPBARES MENÜ — zweite Menüform, wählbar im Customizer
+   =============================================================================
+   Gegenentwurf zum Menüband aus Abschnitt 5: Die Menüpunkte stehen nicht
+   offen im Kopf, sondern liegen auf jeder Breite hinter der Schaltfläche
+   „Menü". Zwei Auftritte, eine Mechanik:
+
+     Desktop (> 900 px) — die Punkte fächern waagerecht aus dem Hamburger auf,
+       einer nach dem anderen, und fallen dabei leicht von oben ein. Der Platz
+       ist schon vorher reserviert (`visibility` statt `display`), damit Logo
+       und Aktionsleiste beim Öffnen nicht springen. Das Wort „Menü" weicht
+       zusammen, die Balken werden zum Kreuz.
+     Telefon (≤ 900 px) — statt der Leiste unter dem Kopf fährt eine Tafel in
+       Markentinte von rechts ein und legt sich mit einem Abdunkler über die
+       Seite. Sie trägt ihre eigene Schließen-Schaltfläche, sperrt das
+       Scrollen der Seite dahinter und hält den Tastaturfokus fest
+       (assets/nav.js).
+
+   Alles hängt an drei Klassen: `.idt-nav-overlay` am <body> wählt diese Form
+   (idt_body_class()), `.idt-nav-open` am <html> ist der offene Zustand,
+   `.idt-js` am <html> belegt, dass JavaScript läuft. Ohne `.idt-js` greift
+   nichts von hier — dann stehen die Punkte offen wie im Menüband, statt
+   unerreichbar hinter einer toten Schaltfläche zu liegen (idt_nav_js_flag()).
+   ============================================================================= */
+
+/* ---- Schaltfläche „Menü" ---- */
+/* Anders als im Menüband auf jeder Breite sichtbar — sie ist hier der einzige
+   Weg ins Menü. */
+.idt-nav-overlay .nav-toggle { display: inline-flex; }
+.idt-nav-overlay .nav-toggle__label {
+  display: block; overflow: hidden; white-space: nowrap;
+  max-width: 8em; /* großzügig: begrenzt nichts, ist nur der Startwert der Animation */
+  font-size: var(--fs-xs); font-weight: var(--fw-bold);
+  text-transform: uppercase; letter-spacing: var(--ls-label); line-height: 1;
+  transition: max-width var(--dur-base) var(--ease-out),
+              opacity var(--dur-fast) var(--ease-out),
+              margin-left var(--dur-base) var(--ease-out);
+}
+.idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
+/* Offen: Das Wort weicht zusammen (der negative Rand schluckt auch die Lücke
+   zum Balkenpaket), übrig bleibt das Kreuz. */
+.idt-nav-overlay .nav-toggle[aria-expanded="true"] .nav-toggle__label {
+  max-width: 0; opacity: 0; margin-left: calc(var(--space-2) * -1);
+}
+.idt-nav-overlay .nav-toggle[aria-expanded="true"] { color: var(--idt-paper); background: var(--idt-ink); border-color: var(--idt-ink); }
+
+/* ---- Desktop: waagerechtes Ausfächern ---- */
+/* Nur mit JavaScript verstecken — s. Kopfkommentar. */
+.idt-js .idt-nav-overlay .main-nav { visibility: hidden; }
+.idt-js .idt-nav-overlay .main-nav > ul > li {
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.idt-nav-open .idt-nav-overlay .main-nav { visibility: visible; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li { opacity: 1; transform: none; }
+/* Treppe: Jeder Punkt kommt 60 ms nach dem vorigen — das Menü fächert auf,
+   statt als Block zu erscheinen. Acht Stufen reichen für ein Hauptmenü;
+   alles darüber erscheint mit der letzten Stufe. */
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(1) { transition-delay: 0ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(2) { transition-delay: 60ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(3) { transition-delay: 120ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(4) { transition-delay: 180ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(5) { transition-delay: 240ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(6) { transition-delay: 300ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(7) { transition-delay: 360ms; }
+.idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(n+8) { transition-delay: 420ms; }
+
+/* Die Schließen-Schaltfläche gehört der Tafel — auf dem Desktop schließt der
+   Hamburger selbst, der offen daneben steht. */
+.idt-nav-overlay .main-nav__close { display: none; }
+
+/* Abdunkler: liegt nur unter der Tafel, das Ausfächern auf dem Desktop
+   braucht keinen (das Menü bleibt Teil des Kopfes). */
+.nav-backdrop { display: none; }
+
+/* ---- Telefon: Tafel von rechts ---- */
+@media (max-width: 900px) {
+  /* Ohne diese drei Zeilen bliebe die Tafel kopfhoch statt bildschirmhoch.
+     Grund ist `backdrop-filter` am Menüband (Abschnitt 5): Ein Element mit
+     Filter wird zum Bezugsrahmen aller `position: fixed`-Nachfahren — die
+     Tafel liegt im Menüband, `top: 0; bottom: 0` misst dann dessen 69 px
+     statt der Fensterhöhe (nachgemessen: 104 px statt 844 px). Statt die
+     Tafel aus dem Menüband herauszulösen (sie muss dort bleiben, sonst
+     fächert sie auf dem Desktop nicht aus dem Hamburger auf) entfällt auf
+     Tafel-Breiten der Filter. Die Mattscheibe kostet das wenig: Sobald die
+     Tafel offen ist, deckt sie das Menüband ohnehin ab, und geschlossen
+     steht statt der Transparenz die volle Papierfläche. */
+  .idt-nav-overlay .site-header {
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    background: var(--idt-paper);
+  }
+
+  .idt-nav-overlay .main-nav {
+    /* Setzt die Leisten-Regeln aus Abschnitt 5 zurück und macht daraus eine
+       Ebene über der Seite. */
+    position: fixed; top: 0; right: 0; bottom: 0; left: auto;
+    width: min(360px, 86vw); max-height: none; overflow-y: auto;
+    z-index: var(--z-overlay);
+    padding: calc(var(--space-8) + var(--space-2)) 0 var(--space-6);
+    background: var(--surface-inverse); color: var(--text-on-inverse);
+    border-bottom: none; border-left: var(--bw-frame) solid var(--idt-cyan);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%); visibility: hidden;
+    transition: transform var(--dur-slow) var(--ease-out), visibility 0s linear var(--dur-slow);
+  }
+  /* Der Abdunkler ist ein Geschwister des Menübands, die Tafel steckt darin.
+     Das Menüband ist `position: sticky` mit z-index (Abschnitt 5) und damit
+     ein eigener Stapelkontext — die 1000 der Tafel gelten nur innerhalb
+     davon, nach außen zählt allein der z-index des Menübands. Ohne diese
+     Zeile läge der Abdunkler also über der Tafel und würde jeden Klick auf
+     einen Menüpunkt schlucken. Solange die Tafel offen ist, steigt deshalb
+     das Menüband selbst über den Abdunkler. */
+  .idt-nav-open .idt-nav-overlay .site-header { z-index: calc(var(--z-overlay) + 1); }
+
+  .idt-nav-open .idt-nav-overlay .main-nav {
+    transform: translateX(0); visibility: visible; max-height: none;
+    transition: transform var(--dur-slow) var(--ease-out), visibility 0s;
+  }
+  /* Auf der Tafel fällt die Treppe weg: Die Punkte sind schon da, wenn sie
+     einfährt — sonst liefe die Bewegung doppelt. */
+  .idt-js .idt-nav-overlay .main-nav > ul > li,
+  .idt-nav-open .idt-nav-overlay .main-nav > ul > li {
+    opacity: 1; transform: none; transition: none; transition-delay: 0s;
+  }
+
+  .idt-nav-overlay .main-nav ul { padding: 0; }
+  .idt-nav-overlay .main-nav li { border-bottom-color: color-mix(in srgb, var(--idt-paper) 18%, transparent); }
+  .idt-nav-overlay .main-nav a {
+    /* Größer und luftiger als im Menüband — die Tafel hat den Platz, und
+       Daumen treffen besser. */
+    padding: var(--space-4) var(--space-5); font-size: var(--fs-body);
+    font-weight: var(--fw-semibold); color: var(--text-on-inverse);
+    border-left: var(--bw-frame-bold) solid transparent;
+  }
+  .idt-nav-overlay .main-nav a:hover,
+  .idt-nav-overlay .main-nav a:focus-visible { color: var(--accent-secondary); }
+  /* Die aktuelle Seite markiert ein Balken am linken Rand — die Unterstreichung
+     des Menübands geht auf der Tafel unter. */
+  .idt-nav-overlay .main-nav .current-menu-item > a {
+    border-left-color: var(--idt-cyan); color: var(--accent-secondary);
+    background: color-mix(in srgb, var(--idt-paper) 6%, transparent);
+  }
+
+  /* Untermenüs: wie im Menüband eingerückt und dauerhaft offen (kein Hover
+     auf Touch), nur in den Farben der Tafel. */
+  .idt-nav-overlay .main-nav .sub-menu { padding: 0 0 var(--space-2); background: transparent; }
+  .idt-nav-overlay .main-nav .sub-menu a {
+    padding: var(--space-3) var(--space-5) var(--space-3) var(--space-7);
+    font-size: var(--fs-sm); font-weight: var(--fw-regular);
+    color: var(--text-on-inverse-muted);
+  }
+  .idt-nav-overlay .main-nav .sub-menu a:hover { color: var(--accent-secondary); }
+
+  /* Schließen-Schaltfläche oben rechts auf der Tafel — der Hamburger liegt
+     darunter und ist nicht mehr erreichbar. */
+  .idt-nav-overlay .main-nav__close {
+    display: inline-flex; align-items: center; justify-content: center;
+    position: absolute; top: var(--space-4); right: var(--space-4);
+    width: 44px; height: 44px; padding: 0;
+    font-size: 30px; line-height: 1;
+    color: var(--text-on-inverse); background: transparent;
+    border: var(--bw-hair) solid color-mix(in srgb, var(--idt-paper) 28%, transparent);
+    border-radius: var(--radius-sm); cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .idt-nav-overlay .main-nav__close:hover { color: var(--accent-secondary); border-color: var(--idt-cyan); }
+
+  /* `:not([hidden])` ist Absicht und keine Zierde: `display: block` würde die
+     Vorgabe des hidden-Attributs überstimmen, und der Abdunkler läge auch
+     im Ruhezustand über der Seite — samt aller Klicks, die er schluckt.
+     assets/nav.js nimmt das Attribut beim Öffnen weg und setzt es nach dem
+     Ausblenden wieder. */
+  .nav-backdrop:not([hidden]) {
+    display: block; position: fixed; inset: 0;
+    z-index: calc(var(--z-overlay) - 1);
+    background: color-mix(in srgb, var(--idt-ink) 62%, transparent);
+    opacity: 0; transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  .idt-nav-open .nav-backdrop { opacity: 1; }
+}
+
+/* Seite hinter der Tafel stillstellen (Klasse von assets/nav.js, nur im
+   Tafel-Modus gesetzt) — analog zum Such-Overlay in 5b. */
+html.idt-nav-lock { overflow: hidden; }
+
+/* Wer Bewegung abbestellt hat, bekommt dieselben Zustände ohne Weg dorthin:
+   Die Tafel ist da oder nicht, die Punkte stehen sofort. */
+@media (prefers-reduced-motion: reduce) {
+  .idt-nav-overlay .main-nav,
+  .idt-nav-overlay .main-nav > ul > li,
+  .idt-nav-overlay .nav-toggle__label,
+  .idt-nav-overlay .nav-toggle__bar,
+  .nav-backdrop {
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
 }
 
 /* =============================================================================

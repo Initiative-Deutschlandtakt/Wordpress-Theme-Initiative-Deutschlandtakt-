@@ -363,6 +363,35 @@ Inverse-Variante (`assets/logo-idt-inverse.png`), und die Splash-Bühne bringt i
 selbst mit — Seiten mit der Vorlage **„Menü ohne Logo"** blenden den Marken-Block im
 Kopfmenü deshalb ganz aus (das Menü bleibt).
 
+## Form des Hauptmenüs
+
+Dasselbe WP-Menü (Position *primary*) lässt sich auf zwei Arten zeigen —
+umstellbar unter **Design → Customizer → Website-Identität → Form des Hauptmenüs**:
+
+| Einstellung | Desktop | Smartphone |
+|---|---|---|
+| **Menüband** (Vorgabe) | Die Menüpunkte stehen offen nebeneinander, Untermenüs klappen bei Hover auf. | Ab 900 px abwärts klappt der Hamburger sie als Leiste unter dem Kopf auf. |
+| **Aufklappbar** | Die Punkte liegen hinter der Schaltfläche **Menü**; ein Klick fächert sie waagerecht auf, einer nach dem anderen. Das Wort weicht dabei zusammen, die Balken werden zum Kreuz. | Statt der Leiste fährt eine Tafel in Markentinte von rechts ein, legt einen Abdunkler über die Seite und bringt ihre eigene Schließen-Schaltfläche mit. |
+
+Beide Formen bedienen sich gleich: Esc schließt, ein Klick auf einen Menüpunkt
+schließt, und die Tafel hält den Tastaturfokus fest, solange sie offen ist.
+Untermenüs erscheinen auf dem Desktop als Flyout, auf dem Telefon eingerückt und
+dauerhaft offen — dort gibt es kein Hover.
+
+Die Wahl ändert nur Body-Klasse und Stylesheet-Abschnitt, nicht das Markup: Beide
+Formen rendern dasselbe `wp_nav_menu()` aus `header.php`. Das Aussehen steht in
+`style.css` (Abschnitt 5 Menüband, 5c aufklappbar), das Verhalten in
+`assets/nav.js`.
+
+Ohne JavaScript bleibt das Menü erreichbar: Die aufklappbare Form versteckt die
+Punkte nur, wenn `idt_nav_js_flag()` die Klasse `idt-js` gesetzt hat — sonst
+stehen sie offen wie im Menüband.
+
+**Zur Abwägung:** Das Menüband zeigt, was es auf der Seite gibt, ohne dass jemand
+klicken muss; die aufklappbare Form macht den Kopf ruhiger, kostet aber genau
+diese Sichtbarkeit. Für eine Vereinsseite, auf der Besucher etwas *suchen*, ist
+das Menüband deshalb die Vorgabe geblieben.
+
 ## Startseite
 
 Die Homepage wird **nicht** mehr fest in `front-page.php` verdrahtet: Die Vorlage

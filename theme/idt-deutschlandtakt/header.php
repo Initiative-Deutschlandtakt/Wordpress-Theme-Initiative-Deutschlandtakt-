@@ -26,6 +26,11 @@ $idt_no_nav = idt_page_template_is( 'page-no-nav.php' ) || idt_is_verlauf_page()
    Startseite, deren Splash-Bühne das Logo bereits selbst zeigt. Gleiches
    Prinzip wie bei $idt_no_nav (Template-Slug statt aktivem Template-File). */
 $idt_no_logo = idt_page_template_is( 'page-no-logo.php' );
+/* Menüform aus dem Customizer: 'band' (Vorgabe) oder 'overlay' — s.
+   idt_nav_style() in functions.php. Das Markup ist bis auf die Schließen-
+   Schaltfläche der Tafel und den Abdunkler identisch; unterschieden wird
+   über die Body-Klasse .idt-nav-overlay (style.css 5c). */
+$idt_nav_overlay = 'overlay' === idt_nav_style();
 if ( ! $idt_no_nav ) : ?>
 <header class="site-header<?php echo $idt_no_logo ? ' site-header--no-logo' : ''; ?>">
 	<div class="container site-header__inner">
@@ -38,6 +43,13 @@ if ( ! $idt_no_nav ) : ?>
 			</a>
 		<?php endif; ?>
 		<nav class="main-nav" id="main-nav" aria-label="<?php esc_attr_e( 'Hauptmenü', 'idt' ); ?>">
+			<?php if ( $idt_nav_overlay ) : /* Auf dem Telefon deckt die Tafel den Kopf mit ab —
+			         der Hamburger dahinter ist dann nicht mehr erreichbar, also trägt die Tafel
+			         ihre eigene Schließen-Schaltfläche (Desktop: per CSS ausgeblendet). */ ?>
+			<button type="button" class="main-nav__close" aria-label="<?php esc_attr_e( 'Menü schließen', 'idt' ); ?>">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<?php endif; ?>
 			<?php
 			wp_nav_menu( array(
 				'theme_location' => 'primary',
@@ -64,14 +76,24 @@ if ( ! $idt_no_nav ) : ?>
 			<a class="idt-searchtoggle" href="#idt-searchbox" aria-expanded="false" aria-controls="idt-searchbox" aria-label="<?php esc_attr_e( 'Suche öffnen', 'idt' ); ?>">
 				<?php echo idt_icon( 'search', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</a>
+			<?php /* Beim aufklappbaren Menü steht neben den Balken das Wort „Menü" —
+			         es macht die Schaltfläche auch auf dem Desktop als Menü lesbar und
+			         weicht beim Öffnen zusammen (style.css 5c). Im Menüband bleibt die
+			         Beschriftung ausgeblendet, dort trägt das aria-label die Bedeutung. */ ?>
 			<button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="<?php esc_attr_e( 'Menü öffnen', 'idt' ); ?>">
-				<span class="nav-toggle__bar"></span>
-				<span class="nav-toggle__bar"></span>
-				<span class="nav-toggle__bar"></span>
+				<span class="nav-toggle__icon" aria-hidden="true">
+					<span class="nav-toggle__bar"></span>
+					<span class="nav-toggle__bar"></span>
+					<span class="nav-toggle__bar"></span>
+				</span>
+				<span class="nav-toggle__label" aria-hidden="true"><?php esc_html_e( 'Menü', 'idt' ); ?></span>
 			</button>
 		</div>
 	</div>
 </header>
+<?php if ( $idt_nav_overlay ) : /* Abdunkler hinter der Menütafel — ein Klick schließt sie. */ ?>
+<div class="nav-backdrop" hidden></div>
+<?php endif; ?>
 <?php idt_render_search_overlay(); ?>
 <?php endif; ?>
 

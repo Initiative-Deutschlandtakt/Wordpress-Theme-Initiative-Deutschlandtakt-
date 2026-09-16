@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.1.1' );
+define( 'IDT_VERSION', '2.2.0' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -104,6 +104,46 @@ function idt_header_logo_height_default() {
 	return 38;
 }
 
+/* -------------------------------------------------------------------------
+ * Menüform: Menüband oder aufklappbares Menü
+ * ----------------------------------------------------------------------
+ * Zwei gleichwertige Oberflächen für dasselbe WP-Menü (Position „primary"):
+ *
+ *   'band'    — die bisherige Leiste: Punkte stehen auf dem Desktop offen
+ *               nebeneinander, erst unter 900 px klappt ein Hamburger sie auf.
+ *   'overlay' — das Menü liegt auf jeder Breite hinter einer Schaltfläche
+ *               „Menü"; auf dem Desktop fächern die Punkte waagerecht aus dem
+ *               Hamburger auf, auf dem Telefon fährt eine Tafel von rechts ein.
+ *
+ * Gewählt wird unter „Design → Customizer → Website-Identität"; Vorgabe bleibt
+ * das Menüband, damit bestehende Seiten sich ohne Zutun nicht verändern.
+ * Gerendert wird in beiden Fällen dasselbe Markup (header.php) — es
+ * unterscheiden sich nur Body-Klasse und Stylesheet-Abschnitt (style.css 5c).
+ */
+
+/** Vorgabe der Menüform. */
+function idt_nav_style_default() {
+	return 'band';
+}
+
+/** Auswahlliste der Menüformen (Schlüssel → Beschriftung im Customizer). */
+function idt_nav_style_choices() {
+	return array(
+		'band'    => __( 'Menüband — Punkte stehen offen nebeneinander', 'idt' ),
+		'overlay' => __( 'Aufklappbar — Punkte liegen hinter „Menü“', 'idt' ),
+	);
+}
+
+/** Nur bekannte Menüformen zulassen, sonst die Vorgabe. */
+function idt_sanitize_nav_style( $value ) {
+	return array_key_exists( $value, idt_nav_style_choices() ) ? $value : idt_nav_style_default();
+}
+
+/** Die aktuell eingestellte Menüform ('band' oder 'overlay'). */
+function idt_nav_style() {
+	return idt_sanitize_nav_style( get_theme_mod( 'idt_nav_style', idt_nav_style_default() ) );
+}
+
 /** Höhe auf einen sinnvollen Bereich begrenzen (Kopfmenü bleibt ein Menüband). */
 function idt_sanitize_header_logo_height( $value ) {
 	$value = absint( $value );
@@ -133,6 +173,22 @@ function idt_customize_register( $wp_customize ) {
 		'label'       => __( 'Logo-Höhe im Kopfmenü (px)', 'idt' ),
 		'description' => __( 'Wie hoch das Logo oben im Menüband dargestellt wird. Die Breite ergibt sich aus dem Seitenverhältnis. Vorgabe: 38.', 'idt' ),
 		'input_attrs' => array( 'min' => 20, 'max' => 120, 'step' => 1 ),
+	) );
+
+	/* ---- Website-Identität: Form des Hauptmenüs -------------------------- */
+	$wp_customize->add_setting( 'idt_nav_style', array(
+		'default'           => idt_nav_style_default(),
+		'sanitize_callback' => 'idt_sanitize_nav_style',
+		'transport'         => 'refresh', /* Markup und Skript hängen daran — kein postMessage. */
+	) );
+
+	$wp_customize->add_control( 'idt_nav_style', array(
+		'type'        => 'radio',
+		'section'     => 'title_tagline',
+		'priority'    => 10,
+		'label'       => __( 'Form des Hauptmenüs', 'idt' ),
+		'description' => __( 'Entweder stehen die Menüpunkte auf dem Desktop offen im Menüband, oder sie liegen auf jeder Breite hinter einer Schaltfläche „Menü“ und fahren beim Klick auf (auf dem Telefon als Tafel von rechts).', 'idt' ),
+		'choices'     => idt_nav_style_choices(),
 	) );
 
 	$wp_customize->add_section( 'idt_footer', array(
@@ -204,6 +260,11 @@ function idt_body_class( $classes ) {
 	if ( idt_is_verlauf_page() ) {
 		$classes[] = 'idt-verlauf';
 	}
+	/* Menüform als Klasse: style.css 5c hängt vollständig an .idt-nav-overlay,
+	   das Menüband braucht keine eigene Klasse (es ist der Normalfall). */
+	if ( 'overlay' === idt_nav_style() ) {
+		$classes[] = 'idt-nav-overlay';
+	}
 	return $classes;
 }
 add_filter( 'body_class', 'idt_body_class' );
@@ -214,6 +275,16 @@ add_filter( 'body_class', 'idt_body_class' );
 function idt_assets() {
 	wp_enqueue_style( 'idt-style', get_stylesheet_uri(), array(), IDT_VERSION );
 	wp_enqueue_script( 'idt-scale', get_template_directory_uri() . '/assets/scale.js', array(), IDT_VERSION, true );
+
+	/* Hauptmenü (Hamburger, aufklappbare Tafel) — beide Menüformen. */
+	wp_enqueue_script( 'idt-nav', get_template_directory_uri() . '/assets/nav.js', array(), IDT_VERSION, true );
+	wp_localize_script( 'idt-nav', 'idtNav', array(
+		'style' => idt_nav_style(),
+		'i18n'  => array(
+			'open'  => __( 'Menü öffnen', 'idt' ),
+			'close' => __( 'Menü schließen', 'idt' ),
+		),
+	) );
 
 	/* Such-Overlay (Lupe im Menüband) inkl. Live-Vorschau der Treffer. */
 	wp_enqueue_script( 'idt-search', get_template_directory_uri() . '/assets/search.js', array(), IDT_VERSION, true );
@@ -232,6 +303,22 @@ function idt_assets() {
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'idt_assets' );
+
+/* Kennzeichen „JavaScript läuft" früh im <head>.
+ *
+ * Das aufklappbare Menü (style.css 5c) versteckt die Menüpunkte — aufklappen
+ * kann sie nur assets/nav.js. Ohne diese Kennung bliebe das Menü bei
+ * abgeschaltetem JavaScript unerreichbar, deshalb hängt das Verstecken an
+ * .idt-js: Fehlt die Klasse, stehen die Punkte wie im Menüband offen da.
+ * Bewusst inline und nicht als Datei — die Klasse muss vor dem ersten Aufbau
+ * der Seite stehen, sonst blitzt das offene Menü kurz auf. */
+function idt_nav_js_flag() {
+	if ( 'overlay' !== idt_nav_style() ) {
+		return;
+	}
+	echo '<script>document.documentElement.classList.add("idt-js");</script>' . "\n";
+}
+add_action( 'wp_head', 'idt_nav_js_flag', 0 );
 
 /* Inline-Stilelemente (Marker, Eyebrow, Tag) als RichText-Formate im Editor. */
 function idt_editor_assets() {

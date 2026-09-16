@@ -1,43 +1,10 @@
-/* Zusammenklappbares Hauptmenü (Hamburger-Toggle).
-   In eine IIFE gekapselt, damit nichts ins globale Scope leakt. */
-(function () {
-  function ready(fn) {
-    if (document.readyState !== 'loading') { fn(); }
-    else { document.addEventListener('DOMContentLoaded', fn); }
-  }
-  ready(function () {
-    var btn = document.querySelector('.nav-toggle');
-    var nav = document.getElementById('main-nav');
-    if (!btn || !nav) { return; }
-
-    function setOpen(open) {
-      nav.classList.toggle('is-open', open);
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
-
-    btn.addEventListener('click', function () {
-      setOpen(btn.getAttribute('aria-expanded') !== 'true');
-    });
-
-    /* Auf Mobil nach Klick auf einen Link wieder schließen. */
-    nav.addEventListener('click', function (e) {
-      if (e.target.closest('a')) { setOpen(false); }
-    });
-
-    /* Mit Escape schließen. */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { setOpen(false); }
-    });
-
-    /* Beim Wechsel auf Desktop-Breite zurücksetzen. */
-    window.addEventListener('resize', function () {
-      if (window.innerWidth > 900) { setOpen(false); }
-    });
-  });
-})();
-
 /* Horizont-Splash-Bühne (Baustein [splash]): skaliert die 1280×800-Bühne
-   proportional, falls ein #idt-canvas vorhanden ist. */
+   proportional, falls ein #idt-canvas vorhanden ist.
+
+   Das Hauptmenü lag früher ebenfalls hier; es ist nach assets/nav.js
+   gezogen, seit es zwei Menüformen gibt (Menüband und aufklappbares Menü).
+
+   In eine IIFE gekapselt, damit nichts ins globale Scope leakt. */
 (function () {
   function fit() {
     var c = document.getElementById('idt-canvas');

@@ -4,6 +4,39 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Zweite Menüform: aufklappbares Menü als Vorschlag (v2.2.0).** Nach dem
+  Vorbild von patrickheypeter.net liegt das Hauptmenü wahlweise hinter einer
+  Schaltfläche „Menü" statt offen im Band. Umstellbar unter *Design →
+  Customizer → Website-Identität → Form des Hauptmenüs*; Vorgabe bleibt das
+  Menüband, bestehende Seiten ändern sich also nicht von allein.
+  - **Desktop:** Die Punkte fächern waagerecht aus dem Hamburger auf, mit 60 ms
+    Versatz je Punkt. Der Platz ist vorher reserviert (`visibility` statt
+    `display`), damit Logo und Aktionsleiste beim Öffnen nicht springen. Das
+    Wort „Menü" weicht zusammen, die Balken werden zum Kreuz.
+  - **Smartphone:** Statt der Leiste unter dem Kopf fährt eine Tafel in
+    Markentinte von rechts ein — mit Abdunkler, eigener Schließen-Schaltfläche,
+    gesperrtem Seiten-Scroll und festgehaltenem Tastaturfokus.
+  - **Drei Fehler, die erst der Browser gezeigt hat** (nachgestellt bei 320,
+    390, 768 und 1280 px):
+    - Der Abdunkler trug `display: block` im Media Query und überstimmte damit
+      die Vorgabe seines `hidden`-Attributs — er lag dauerhaft über der Seite
+      und schluckte jeden Klick. Jetzt `:not([hidden])`.
+    - Die Tafel blieb kopfhoch statt bildschirmhoch (104 px statt 844 px): Das
+      `backdrop-filter` des Menübands macht dieses zum Bezugsrahmen aller
+      `position: fixed`-Nachfahren. Auf Tafel-Breiten entfällt der Filter.
+    - Der Abdunkler lag über der Tafel, die Menüpunkte waren nicht anklickbar.
+      Grund war der Stapelkontext des `position: sticky`-Menübands; es steigt
+      jetzt über den Abdunkler, solange die Tafel offen ist.
+  - **Ohne JavaScript bleibt das Menü erreichbar.** Das Verstecken hängt an der
+    Klasse `idt-js`, die `idt_nav_js_flag()` im `<head>` setzt — fehlt sie,
+    stehen die Punkte offen da statt unerreichbar hinter einer toten
+    Schaltfläche.
+  - Die Menü-Logik ist aus `assets/scale.js` nach `assets/nav.js` gezogen;
+    `scale.js` macht jetzt nur noch, was sein Name sagt. Das Menüband ist
+    dabei unverändert geblieben (nachgemessen gegen den Stand vor der
+    Änderung: gleiche Darstellung, Hamburger weiterhin 46×42 wie die Lupe
+    daneben).
+
 - **Verlaufsseite lief auf dem Telefon seitlich aus dem Bild (v2.1.1).** Auf der
   Live-Seite stand der erste Button über den rechten Rand hinaus, und Logo wie
   Social-Leiste saßen dadurch sichtbar außermittig. Nachgestellt bei 390 px
