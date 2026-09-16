@@ -4,6 +4,30 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Aufklappbares Menü: Kopf ohne Balken (v2.2.1).** Rückmeldung aus dem
+  Verein: Wenn das Menü ohnehin hinter einer Schaltfläche liegt, braucht der
+  Kopf das Band nicht mehr — links das Logo, rechts „Menü", sonst nichts. So
+  hält es auch das Vorbild (`#header` dort: `position: fixed`, transparent,
+  ohne Rahmen). Bei der aufklappbaren Form entfallen deshalb Hintergrund,
+  Trennlinie und Mattscheibe; das Menüband als Vorgabe bleibt unberührt.
+  - **Der Haken war das Scrollen.** Der Kopf klebt oben — ohne Fläche lief die
+    Schrift mitten durch die Wortmarke (nachgestellt bei 1280×800: die
+    Überschrift „Warum das Knotenprinzip trägt" kreuzte das Logo). Ab 40 px
+    Scrollhöhe legt sich jetzt die volle Papierfläche darunter. Am
+    Seitenanfang, wo man zuerst hinsieht, bleibt der Kopf frei.
+  - **Deckendes Papier statt Mattscheibe.** Auf dem papierfarbenen Grund des
+    Themes sieht beides gleich aus, aber ein `backdrop-filter` würde das
+    Menüband zum Bezugsrahmen aller `position: fixed`-Nachfahren machen — und
+    die Menütafel auf dem Telefon wäre wieder kopfhoch statt bildschirmhoch.
+    Nachgemessen mitten auf einer gescrollten Seite: 390×844, also voll.
+  - **Ohne JavaScript behält der Kopf seinen Balken.** Die Papierfläche kann
+    nur `assets/nav.js` einblenden; sonst bliebe der Kopf dauerhaft
+    transparent und die Schrift liefe durchs Logo. Die Transparenz hängt
+    deshalb an derselben `idt-js`-Kennung wie das Verstecken der Menüpunkte.
+  - Nachgemessen bei 320×568, 390×844, 768×1024, 844×390, 901, 1024, 1280 und
+    1920 px, dazu Tastaturfokus, Esc und das Menüband als Regression (Balken,
+    Mattscheibe und Hamburger-Maße dort unverändert, keine Scroll-Klasse).
+
 - **Zweite Menüform: aufklappbares Menü als Vorschlag (v2.2.0).** Nach dem
   Vorbild von patrickheypeter.net liegt das Hauptmenü wahlweise hinter einer
   Schaltfläche „Menü" statt offen im Band. Umstellbar unter *Design →

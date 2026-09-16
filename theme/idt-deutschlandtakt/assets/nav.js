@@ -90,6 +90,34 @@
       setOpen(!isOpen());
     });
 
+    /* Beim aufklappbaren Menü trägt der Kopf keinen Balken (style.css 5c).
+       Sobald die Seite scrollt, liefe die Schrift aber durch das Logo —
+       ab hier bekommt er deshalb die Papierfläche untergelegt. Der
+       Schwellwert ist klein: Es geht nicht um „weit gescrollt", sondern
+       darum, dass überhaupt Inhalt unter den Kopf rückt. */
+    if (OVERLAY) {
+      var SCROLLED_AT = 40;
+      var ticking = false;
+
+      function syncScrolled() {
+        ticking = false;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        root.classList.toggle('idt-nav-scrolled', y > SCROLLED_AT);
+      }
+
+      window.addEventListener('scroll', function () {
+        /* Ein Scroll-Ereignis feuert je Bildaufbau mehrfach; die Klasse
+           muss aber nur einmal pro Frame gesetzt werden. */
+        if (ticking) { return; }
+        ticking = true;
+        window.requestAnimationFrame(syncScrolled);
+      }, { passive: true });
+
+      /* Beim Laden mitten auf der Seite (Anker, Zurück-Taste) stimmt der
+         Zustand sonst erst nach der ersten Scroll-Bewegung. */
+      syncScrolled();
+    }
+
     /* Nach dem Klick auf einen Menüpunkt wieder schließen. Ausgenommen sind
        Elternpunkte ohne eigenes Ziel („#"), die nur ein Untermenü aufklappen. */
     nav.addEventListener('click', function (e) {

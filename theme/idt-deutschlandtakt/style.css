@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.2.0
+Version: 2.2.1
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -635,6 +635,39 @@ html.idt-searchbox-open { overflow: hidden; }
   max-width: 0; opacity: 0; margin-left: calc(var(--space-2) * -1);
 }
 
+/* ---- Kein Balken: der Kopf trägt nur Marke und Menü ---- */
+/* Bei dieser Menüform entfällt das Band als Fläche — kein Hintergrund, keine
+   Trennlinie, keine Mattscheibe. Übrig bleiben Logo links, Lupe und „Menü"
+   rechts, frei über der Seite. Der Platz bleibt reserviert: Der Kopf steht
+   weiter im Fluss, die Seite beginnt also wie bisher darunter.
+
+   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Die Papierfläche
+   beim Scrollen kann nur assets/nav.js einblenden. Ohne JavaScript bliebe
+   der Kopf sonst dauerhaft transparent und die Schrift liefe durch das Logo
+   — dann also lieber das gewohnte Menüband aus Abschnitt 5, zu dem die Form
+   ohne JavaScript ohnehin zurückfällt. */
+.idt-js .idt-nav-overlay .site-header {
+  background: transparent; border-bottom-color: transparent;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+
+/* … bis der Inhalt darunter gerät. Der Kopf klebt oben; sobald die Seite
+   scrollt, liefe die Schrift mitten durch das Logo (nachgestellt: die
+   Überschrift „Warum das Knotenprinzip trägt" kreuzte die Wortmarke). Ab
+   40 px Scrollhöhe legt sich deshalb die volle Papierfläche darunter —
+   dort, wo man beim Öffnen der Seite hinsieht, bleibt der Kopf frei, und
+   der Balken kommt erst, wenn er gebraucht wird. Die Klasse setzt
+   assets/nav.js.
+
+   Bewusst deckendes Papier statt der Mattscheibe aus Abschnitt 5: Auf dem
+   papierfarbenen Grund des Themes sieht beides gleich aus, aber ein
+   `backdrop-filter` würde das Menüband zum Bezugsrahmen aller
+   `position: fixed`-Nachfahren machen — und genau daran wäre die Menütafel
+   auf dem Telefon wieder kopfhoch statt bildschirmhoch. */
+.idt-nav-scrolled .idt-nav-overlay .site-header {
+  background: var(--idt-paper); border-bottom-color: var(--border);
+}
+
 /* ---- Das Menüband kippt auf Markentinte ---- */
 /* Der Kopf bleibt dabei über allem: Auf dem Telefon liegt die Tafel darunter,
    Logo und Kreuz bleiben also sichtbar und an ihrem Platz — genau dort, wo
@@ -643,14 +676,12 @@ html.idt-searchbox-open { overflow: hidden; }
   transition: background var(--dur-base) var(--ease-out),
               border-color var(--dur-base) var(--ease-out);
 }
+/* Steht bewusst nach der Regel für den gescrollten Zustand: Beide haben
+   dieselbe Spezifität, die Reihenfolge entscheidet — die Tinte des offenen
+   Menüs gewinnt also auch mitten auf einer gescrollten Seite. */
 .idt-nav-open .idt-nav-overlay .site-header {
   background: var(--surface-inverse); border-bottom-color: transparent;
   z-index: calc(var(--z-overlay) + 1);
-  /* Die Mattscheibe des Menübands (Abschnitt 5) muss weg, solange das Menü
-     offen ist: Ein Element mit Filter wird zum Bezugsrahmen aller
-     `position: fixed`-Nachfahren, und die Tafel darin bliebe dann kopfhoch
-     statt bildschirmhoch. */
-  backdrop-filter: none; -webkit-backdrop-filter: none;
 }
 /* Schrift und Linien auf der Tinte in Papierfarbe. */
 .idt-nav-open .idt-nav-overlay .main-nav a,
