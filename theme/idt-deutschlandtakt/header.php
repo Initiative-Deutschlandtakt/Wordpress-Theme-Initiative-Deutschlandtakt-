@@ -27,9 +27,9 @@ $idt_no_nav = idt_page_template_is( 'page-no-nav.php' ) || idt_is_verlauf_page()
    Prinzip wie bei $idt_no_nav (Template-Slug statt aktivem Template-File). */
 $idt_no_logo = idt_page_template_is( 'page-no-logo.php' );
 /* Menüform aus dem Customizer: 'band' (Vorgabe) oder 'overlay' — s.
-   idt_nav_style() in functions.php. Das Markup ist bis auf die Schließen-
-   Schaltfläche der Tafel und den Abdunkler identisch; unterschieden wird
-   über die Body-Klasse .idt-nav-overlay (style.css 5c). */
+   idt_nav_style() in functions.php. Das Markup ist bis auf die Inverse-
+   Fassung des Logos identisch; unterschieden wird über die Body-Klasse
+   .idt-nav-overlay (style.css 5c). */
 $idt_nav_overlay = 'overlay' === idt_nav_style();
 if ( ! $idt_no_nav ) : ?>
 <header class="site-header<?php echo $idt_no_logo ? ' site-header--no-logo' : ''; ?>">
@@ -40,16 +40,16 @@ if ( ! $idt_no_nav ) : ?>
 		<?php else : /* … sonst das mitgelieferte Marken-PNG. */ ?>
 			<a class="site-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-transparent.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
+				<?php if ( $idt_nav_overlay ) : /* Beim aufklappbaren Menü kippt das Menüband auf
+				         Markentinte, sobald das Menü offen ist — die dunkle Schrift der Wortmarke
+				         verschwände darauf. Deshalb liegt die Inverse-Fassung (dieselbe, die der
+				         Footer nutzt) darüber und wird eingeblendet. Rein dekorativ, daher ohne
+				         Alternativtext: Die Marke steht schon im alt des Bildes darunter. */ ?>
+					<img class="site-header__logo-inverse" src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-inverse.png' ); ?>" alt="" aria-hidden="true">
+				<?php endif; ?>
 			</a>
 		<?php endif; ?>
 		<nav class="main-nav" id="main-nav" aria-label="<?php esc_attr_e( 'Hauptmenü', 'idt' ); ?>">
-			<?php if ( $idt_nav_overlay ) : /* Auf dem Telefon deckt die Tafel den Kopf mit ab —
-			         der Hamburger dahinter ist dann nicht mehr erreichbar, also trägt die Tafel
-			         ihre eigene Schließen-Schaltfläche (Desktop: per CSS ausgeblendet). */ ?>
-			<button type="button" class="main-nav__close" aria-label="<?php esc_attr_e( 'Menü schließen', 'idt' ); ?>">
-				<span aria-hidden="true">&times;</span>
-			</button>
-			<?php endif; ?>
 			<?php
 			wp_nav_menu( array(
 				'theme_location' => 'primary',
@@ -91,9 +91,6 @@ if ( ! $idt_no_nav ) : ?>
 		</div>
 	</div>
 </header>
-<?php if ( $idt_nav_overlay ) : /* Abdunkler hinter der Menütafel — ein Klick schließt sie. */ ?>
-<div class="nav-backdrop" hidden></div>
-<?php endif; ?>
 <?php idt_render_search_overlay(); ?>
 <?php endif; ?>
 

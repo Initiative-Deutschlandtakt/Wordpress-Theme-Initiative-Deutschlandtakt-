@@ -371,21 +371,34 @@ umstellbar unter **Design → Customizer → Website-Identität → Form des Hau
 | Einstellung | Desktop | Smartphone |
 |---|---|---|
 | **Menüband** (Vorgabe) | Die Menüpunkte stehen offen nebeneinander, Untermenüs klappen bei Hover auf. | Ab 900 px abwärts klappt der Hamburger sie als Leiste unter dem Kopf auf. |
-| **Aufklappbar** | Die Punkte liegen hinter der Schaltfläche **Menü**; ein Klick fächert sie waagerecht auf, einer nach dem anderen. Das Wort weicht dabei zusammen, die Balken werden zum Kreuz. | Statt der Leiste fährt eine Tafel in Markentinte von rechts ein, legt einen Abdunkler über die Seite und bringt ihre eigene Schließen-Schaltfläche mit. |
+| **Aufklappbar** | Die Punkte liegen hinter der Schaltfläche **Menü**; ein Klick fächert sie waagerecht auf, einer nach dem anderen. | Die Markentinte nimmt den ganzen Bildschirm ein, die Punkte stehen rechtsbündig darunter. |
+
+Das Kennzeichen der aufklappbaren Form: **Beim Öffnen kippt das Menüband auf
+Markentinte** — Logo, Punkte und Kreuz werden hell, die Seite tritt zurück. Auf
+dem Telefon wächst dieselbe Fläche über den ganzen Bildschirm; Logo und Kreuz
+bleiben dabei stehen, wo sie waren, und gehen nahtlos in sie über.
 
 Beide Formen bedienen sich gleich: Esc schließt, ein Klick auf einen Menüpunkt
-schließt, und die Tafel hält den Tastaturfokus fest, solange sie offen ist.
-Untermenüs erscheinen auf dem Desktop als Flyout, auf dem Telefon eingerückt und
-dauerhaft offen — dort gibt es kein Hover.
+schließt. Auf dem Vollbild kommt dazu, dass die Seite dahinter stillsteht und
+der Tastaturfokus im Menü bleibt, bis es geschlossen ist. Untermenüs erscheinen
+auf dem Desktop als Flyout, auf dem Telefon eingerückt und dauerhaft offen —
+dort gibt es kein Hover.
 
-Die Wahl ändert nur Body-Klasse und Stylesheet-Abschnitt, nicht das Markup: Beide
-Formen rendern dasselbe `wp_nav_menu()` aus `header.php`. Das Aussehen steht in
-`style.css` (Abschnitt 5 Menüband, 5c aufklappbar), das Verhalten in
+Die Wahl ändert nur Body-Klasse und Stylesheet-Abschnitt, nicht das Markup:
+Beide Formen rendern dasselbe `wp_nav_menu()` aus `header.php`. Das Aussehen
+steht in `style.css` (Abschnitt 5 Menüband, 5c aufklappbar), das Verhalten in
 `assets/nav.js`.
 
 Ohne JavaScript bleibt das Menü erreichbar: Die aufklappbare Form versteckt die
 Punkte nur, wenn `idt_nav_js_flag()` die Klasse `idt-js` gesetzt hat — sonst
 stehen sie offen wie im Menüband.
+
+**Ein eigenes Logo braucht eine helle Fassung.** Auf der Tinte tauscht das Theme
+das mitgelieferte Logo gegen `assets/logo-idt-inverse.png` (dieselbe Datei, die
+der Footer nutzt). Für ein eigenes Logo aus *Website-Identität* gibt es keine
+solche Zweitfassung — wer dort ein Logo mit dunkler Schrift hinterlegt, sollte
+entweder eines wählen, das auf hellem **und** dunklem Grund trägt, oder beim
+Menüband bleiben.
 
 **Zur Abwägung:** Das Menüband zeigt, was es auf der Seite gibt, ohne dass jemand
 klicken muss; die aufklappbare Form macht den Kopf ruhiger, kostet aber genau

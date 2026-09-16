@@ -9,32 +9,45 @@ _(keine offenen Aufgaben)_
   Schaltfläche „Menü" statt offen im Band. Umstellbar unter *Design →
   Customizer → Website-Identität → Form des Hauptmenüs*; Vorgabe bleibt das
   Menüband, bestehende Seiten ändern sich also nicht von allein.
+  - **Kern ist der Farbumschlag, nicht das Aufklappen.** Beim Öffnen kippt das
+    Menüband auf Markentinte: Logo (Inverse-Fassung), Punkte und Kreuz werden
+    hell, die Seite tritt zurück. Das war aus dem Stylesheet des Vorbilds nicht
+    zu sehen — es steht in einem `header::after`, das erst im laufenden Browser
+    sichtbar wird. Ein erster Entwurf ohne den Umschlag traf die Sache deshalb
+    nicht und ist verworfen.
   - **Desktop:** Die Punkte fächern waagerecht aus dem Hamburger auf, mit 60 ms
     Versatz je Punkt. Der Platz ist vorher reserviert (`visibility` statt
     `display`), damit Logo und Aktionsleiste beim Öffnen nicht springen. Das
     Wort „Menü" weicht zusammen, die Balken werden zum Kreuz.
-  - **Smartphone:** Statt der Leiste unter dem Kopf fährt eine Tafel in
-    Markentinte von rechts ein — mit Abdunkler, eigener Schließen-Schaltfläche,
-    gesperrtem Seiten-Scroll und festgehaltenem Tastaturfokus.
-  - **Drei Fehler, die erst der Browser gezeigt hat** (nachgestellt bei 320,
-    390, 768 und 1280 px):
-    - Der Abdunkler trug `display: block` im Media Query und überstimmte damit
-      die Vorgabe seines `hidden`-Attributs — er lag dauerhaft über der Seite
-      und schluckte jeden Klick. Jetzt `:not([hidden])`.
+  - **Telefon:** Dieselbe Tinte nimmt den ganzen Bildschirm ein, die Punkte
+    stehen rechtsbündig darunter. Logo und Kreuz bleiben stehen, wo sie waren.
+    Kein Seitenpanel und kein Abdunkler — die Fläche ist selbst der Grund.
+    Anders als das Vorbild stellt die Tafel die Seite dahinter still und hält
+    den Tastaturfokus fest, bis sie geschlossen ist.
+  - **Vier Fehler, die erst der Browser gezeigt hat** (nachgestellt bei 320×568,
+    390×844, 768×1024, 844×390, 901, 1024, 1280 und 1920 px):
     - Die Tafel blieb kopfhoch statt bildschirmhoch (104 px statt 844 px): Das
       `backdrop-filter` des Menübands macht dieses zum Bezugsrahmen aller
-      `position: fixed`-Nachfahren. Auf Tafel-Breiten entfällt der Filter.
-    - Der Abdunkler lag über der Tafel, die Menüpunkte waren nicht anklickbar.
-      Grund war der Stapelkontext des `position: sticky`-Menübands; es steigt
-      jetzt über den Abdunkler, solange die Tafel offen ist.
+      `position: fixed`-Nachfahren. Der Filter entfällt jetzt, solange das Menü
+      offen ist — im Menüband bleibt er unberührt.
+    - Innerhalb des Menübands lag die Tafel über Logo und Aktionsleiste und
+      deckte das Kreuz zu, mit dem man wieder herauskommt.
+    - Ein Abdunkler mit `display: block` im Media Query überstimmte die Vorgabe
+      seines `hidden`-Attributs und schluckte im Ruhezustand jeden Klick. Mit
+      der bildschirmfüllenden Tafel ist er ganz entfallen.
+    - Im Querformat und auf kleinen Displays rutschten die letzten Menüpunkte
+      unter den Rand. Zwei Größenstufen (≤ 640 px und ≤ 440 px Höhe) bringen
+      sie wieder ins Bild.
   - **Ohne JavaScript bleibt das Menü erreichbar.** Das Verstecken hängt an der
     Klasse `idt-js`, die `idt_nav_js_flag()` im `<head>` setzt — fehlt sie,
     stehen die Punkte offen da statt unerreichbar hinter einer toten
     Schaltfläche.
+  - Ein eigenes Logo aus „Website-Identität" bekommt keine Inverse-Fassung;
+    dafür gibt es in WordPress kein Gegenstück. Im README steht, was das heißt.
   - Die Menü-Logik ist aus `assets/scale.js` nach `assets/nav.js` gezogen;
     `scale.js` macht jetzt nur noch, was sein Name sagt. Das Menüband ist
-    dabei unverändert geblieben (nachgemessen gegen den Stand vor der
-    Änderung: gleiche Darstellung, Hamburger weiterhin 46×42 wie die Lupe
+    unverändert geblieben (nachgemessen gegen den Stand davor: gleiche
+    Darstellung, Mattscheibe erhalten, Hamburger weiterhin 46×42 wie die Lupe
     daneben).
 
 - **Verlaufsseite lief auf dem Telefon seitlich aus dem Bild (v2.1.1).** Auf der
