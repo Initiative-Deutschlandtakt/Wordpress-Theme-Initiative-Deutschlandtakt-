@@ -4,6 +4,36 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Mail-Link als eigener Baustein (v2.3.0).** Rückmeldung aus dem Verein: Bei
+  den Kontaktangaben („Post: … / Mail: kontakt@…") fehlte der Weg zur
+  verlinkten Adresse — `[email]…[/email]` gab es nicht, und von Hand bliebe nur
+  rohes `<a href="mailto:…">` im Editor. Neu ist deshalb der Baustein
+  **Mail-Link**: Shortcode `[email]` (kurz auch `[mail]`) und Block *Mail-Link*
+  im Inserter, beide über dieselbe `idt_sc_email()` (Konvention 2).
+  - **Die Adresse darf zwischen den Klammern stehen.** `[email]kontakt@…[/email]`
+    ist der gedachte Normalfall — genau so, wie es in der Rückmeldung getippt
+    war. Mit `address="…"` wird der Inhalt die Beschriftung, `subject="…"`
+    belegt die Betreffzeile vor, `icon="false"` lässt das Briefzeichen weg.
+  - **Verschleiert im Quelltext.** Die Adresse läuft durch `antispambot()`, steht
+    also nur als HTML-Entities in der Seite; Adress-Sammler finden dort kein
+    zusammenhängendes `name@domain`, der Browser setzt sie beim Anzeigen wieder
+    zusammen. Der `href` ist darum mit `esc_attr()` abgesichert und *nicht* mit
+    `esc_url()`: Letzteres schreibt das `&` der Entities zu `&#038;` um und
+    zerlegt den Link — nachgestellt am Prüfstand, der den `href` zurück in die
+    Klartextadresse auflöst.
+  - **Ungültige Eingabe bleibt Text.** Was `sanitize_email()` nicht durchlässt,
+    wird als Text ausgegeben statt als tauber Link — so fällt der Tippfehler in
+    der Vorschau auf, nicht erst dem Besucher.
+  - Neues Briefzeichen in `idt_icon()` ('mail'), Stil in `style.css` 7: der Link
+    bleibt ein Inline-Element (Zeichen per `vertical-align` auf der
+    Schriftlinie), damit er im Fließtext normal umbricht; unterstrichen wird beim
+    Hover nur die Adresse. Das Impressum der Demo-Inhalte und die Seite
+    „Stilelemente" nutzen jetzt den Baustein.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün) sowie einem
+    Prüfstand für die Render-Funktion (Adresse im Inhalt, eigene Beschriftung,
+    Betreff, ohne Zeichen, ungültige Eingabe). `smoke-test.sh` lief hier nicht:
+    `api.wordpress.org` ist aus dieser Umgebung nicht erreichbar.
+
 - **Aufklappbares Menü: Kopf ohne Balken (v2.2.1).** Rückmeldung aus dem
   Verein: Wenn das Menü ohnehin hinter einer Schaltfläche liegt, braucht der
   Kopf das Band nicht mehr — links das Logo, rechts „Menü", sonst nichts. So
