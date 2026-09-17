@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.3.0
+Version: 2.3.1
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1827,12 +1827,15 @@ hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
 /* Bildunterschrift — bewusst unter dem Bild statt darin: dort bleibt sie
    markierbar, durchsuchbar und für Screenreader lesbar. Die Überschrift sitzt
    umgekehrt in der Grafik, damit sie mitwandert, wenn jemand das Bild
-   weiterverwendet. */
-.idt-knotendreieck > figcaption {
+   weiterverwendet. Schriftgrad, Kursive und Farbe kommen aus der gemeinsamen
+   Regel für Bildunterschriften (Abschnitt 8) — die Figur trägt dieselbe Klasse
+   `wp-element-caption` wie der Kern-Bildblock. Hier steht nur, was abweicht:
+   mittig unter der mittigen Grafik und mit etwas mehr Luft.
+   Das `figure` im Selektor ist nicht schmückend: Ohne es wäre diese Regel
+   spezifitätsgleich mit `.entry figcaption` aus Abschnitt 8, und die steht
+   weiter unten — die Grafik bekäme im Seiteninhalt deren linksbündige Zeile. */
+figure.idt-knotendreieck > figcaption {
   margin: var(--space-4) 0 0;
-  font-size: var(--fs-sm);
-  line-height: var(--lh-normal);
-  color: var(--text-muted);
   text-align: center;
 }
 
@@ -1863,6 +1866,41 @@ hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
 .page-hero h1 { margin-left: auto; margin-right: auto; font-size: var(--fs-display-lg); max-width: 18ch; }
 .entry { max-width: var(--content-measure); margin-left: auto; margin-right: auto; }
 .entry img { border-radius: var(--radius-md); margin: var(--space-5) 0; }
+
+/* -----------------------------------------------------------------------------
+   Bildunterschriften
+   Gemeint ist die Legende des Kern-Bildblocks (<figcaption class="wp-element-
+   caption">), der Galerie und des alten [caption]-Shortcodes (.wp-caption-text,
+   möglich durch den html5-Theme-Support in functions.php). Kursiv, kleiner und
+   in gedämpfter Farbe: So liest sich die Zeile auf den ersten Blick als
+   Beschriftung des Bildes und nicht als angefangener Fließtext. Die Kursive ist
+   echt — Abschnitt 1 lädt Inter Variable auch als Italic, der Browser muss
+   nichts schrägstellen.
+   `.entry figcaption` steht mit in der Liste, damit die Regel im Frontend auch
+   dann greift, wenn WordPress für den Bildblock eine eigene Legendenregel
+   mitbringt; im Editor stellt der Präfix `.editor-styles-wrapper` das sicher.
+   -------------------------------------------------------------------------- */
+.wp-element-caption,
+.wp-caption-text,
+.entry figcaption {
+  font-style: italic;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-muted);
+  text-align: left;
+  margin: var(--space-2) 0 0;
+}
+
+/* Bild und Legende sind ein Block: Der Absatzabstand aus „.entry img" gehört um
+   die Figur herum, sonst fällt die Zeile einen ganzen Absatz tief und wirkt
+   eher wie der Anfang des folgenden Texts. Bewusst nur für die Bild-Figuren des
+   Kerns — eigene Bausteine (etwa .idt-knotendreieck) bringen ihre Maße mit. */
+.entry :is(figure.wp-block-image, figure.wp-block-gallery, figure.wp-caption) {
+  margin: var(--space-5) 0;
+}
+.entry :is(figure.wp-block-image, figure.wp-block-gallery, figure.wp-caption) img {
+  margin: 0;
+}
 
 /* Abstand zum Footer — Seiteninhalt soll nie direkt am Footer kleben,
    ohne dass im Editor manuell Abstandshalter nötig sind. */
