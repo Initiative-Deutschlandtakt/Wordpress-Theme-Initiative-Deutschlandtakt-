@@ -373,10 +373,16 @@ umstellbar unter **Design → Customizer → Website-Identität → Form des Hau
 | **Menüband** (Vorgabe) | Die Menüpunkte stehen offen nebeneinander, Untermenüs klappen bei Hover auf. | Ab 900 px abwärts klappt der Hamburger sie als Leiste unter dem Kopf auf. |
 | **Aufklappbar** | Die Punkte liegen hinter der Schaltfläche **Menü**; ein Klick fächert sie waagerecht auf, einer nach dem anderen. | Die Markentinte nimmt den ganzen Bildschirm ein, die Punkte stehen rechtsbündig darunter. |
 
-Das Kennzeichen der aufklappbaren Form: **Beim Öffnen kippt das Menüband auf
-Markentinte** — Logo, Punkte und Kreuz werden hell, die Seite tritt zurück. Auf
-dem Telefon wächst dieselbe Fläche über den ganzen Bildschirm; Logo und Kreuz
-bleiben dabei stehen, wo sie waren, und gehen nahtlos in sie über.
+Bei der aufklappbaren Form **entfällt der Balken im Kopf**: Kein Hintergrund,
+keine Trennlinie, keine Mattscheibe — nur Logo links, Lupe und „Menü" rechts,
+frei über der Seite. Sobald gescrollt wird, legt sich die Papierfläche unter den
+Kopf, sonst liefe die Schrift mitten durch das Logo; am Seitenanfang, wo man
+zuerst hinsieht, bleibt er frei.
+
+Das zweite Kennzeichen: **Beim Öffnen kippt der Kopf auf Markentinte** — Logo,
+Punkte und Kreuz werden hell, die Seite tritt zurück. Auf dem Telefon wächst
+dieselbe Fläche über den ganzen Bildschirm; Logo und Kreuz bleiben dabei stehen,
+wo sie waren, und gehen nahtlos in sie über.
 
 Beide Formen bedienen sich gleich: Esc schließt, ein Klick auf einen Menüpunkt
 schließt. Auf dem Vollbild kommt dazu, dass die Seite dahinter stillsteht und
@@ -391,7 +397,8 @@ steht in `style.css` (Abschnitt 5 Menüband, 5c aufklappbar), das Verhalten in
 
 Ohne JavaScript bleibt das Menü erreichbar: Die aufklappbare Form versteckt die
 Punkte nur, wenn `idt_nav_js_flag()` die Klasse `idt-js` gesetzt hat — sonst
-stehen sie offen wie im Menüband.
+stehen sie offen wie im Menüband, und der Kopf behält auch seinen Balken (die
+Papierfläche beim Scrollen käme sonst nie).
 
 **Ein eigenes Logo braucht eine helle Fassung.** Auf der Tinte tauscht das Theme
 das mitgelieferte Logo gegen `assets/logo-idt-inverse.png` (dieselbe Datei, die
