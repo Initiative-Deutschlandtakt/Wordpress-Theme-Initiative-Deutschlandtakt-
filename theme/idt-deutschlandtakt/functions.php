@@ -111,14 +111,17 @@ function idt_header_logo_height_default() {
  *
  *   'band'    — die bisherige Leiste: Punkte stehen auf dem Desktop offen
  *               nebeneinander, erst unter 900 px klappt ein Hamburger sie auf.
- *   'overlay' — das Menü liegt auf jeder Breite hinter einer Schaltfläche
- *               „Menü"; auf dem Desktop fächern die Punkte waagerecht aus dem
- *               Hamburger auf, auf dem Telefon fährt eine Tafel von rechts ein.
+ *   'overlay' — das Menü liegt auf jeder Breite hinter drei Strichen; auf dem
+ *               Desktop fächern die Punkte waagerecht daraus auf, auf dem
+ *               Telefon nimmt eine Tafel den ganzen Bildschirm ein. Der Kopf
+ *               trägt dabei keinen Balken, und die Suche steht als letzter
+ *               Punkt im Menü statt als Lupe daneben.
  *
  * Gewählt wird unter „Design → Customizer → Website-Identität"; Vorgabe bleibt
  * das Menüband, damit bestehende Seiten sich ohne Zutun nicht verändern.
- * Gerendert wird in beiden Fällen dasselbe Markup (header.php) — es
- * unterscheiden sich nur Body-Klasse und Stylesheet-Abschnitt (style.css 5c).
+ * Gerendert wird bis auf zwei Stellen dasselbe Markup (header.php: die
+ * Inverse-Fassung des Logos und der Platz der Suche); den Rest machen
+ * Body-Klasse und Stylesheet-Abschnitt (style.css 5c).
  */
 
 /** Vorgabe der Menüform. */
@@ -130,7 +133,7 @@ function idt_nav_style_default() {
 function idt_nav_style_choices() {
 	return array(
 		'band'    => __( 'Menüband — Punkte stehen offen nebeneinander', 'idt' ),
-		'overlay' => __( 'Aufklappbar — Punkte liegen hinter „Menü“', 'idt' ),
+		'overlay' => __( 'Aufklappbar — Punkte liegen hinter drei Strichen', 'idt' ),
 	);
 }
 
@@ -187,7 +190,7 @@ function idt_customize_register( $wp_customize ) {
 		'section'     => 'title_tagline',
 		'priority'    => 10,
 		'label'       => __( 'Form des Hauptmenüs', 'idt' ),
-		'description' => __( 'Entweder stehen die Menüpunkte auf dem Desktop offen im Menüband, oder sie liegen auf jeder Breite hinter einer Schaltfläche „Menü“ und fahren beim Klick auf (auf dem Telefon als Tafel von rechts).', 'idt' ),
+		'description' => __( 'Entweder stehen die Menüpunkte auf dem Desktop offen im Menüband, oder sie liegen auf jeder Breite hinter drei Strichen und fahren beim Klick auf (auf dem Telefon als Tafel über den ganzen Bildschirm). Bei der aufklappbaren Form trägt der Kopf keinen Balken, und die Suche steht als letzter Punkt im Menü statt als Lupe daneben.', 'idt' ),
 		'choices'     => idt_nav_style_choices(),
 	) );
 

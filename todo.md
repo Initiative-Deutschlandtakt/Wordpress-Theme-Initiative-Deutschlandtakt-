@@ -34,6 +34,62 @@ _(keine offenen Aufgaben)_
     Betreff, ohne Zeichen, ungültige Eingabe). `smoke-test.sh` lief hier nicht:
     `api.wordpress.org` ist aus dieser Umgebung nicht erreichbar.
 
+- **Aufklappbares Menü: Kopf ohne Balken, Suche ins Menü (v2.2.2).** Rückmeldung
+  aus dem Verein zum Stand v2.2.1: „Aber der Balken ist weiter da. Geht der
+  transparent? Und kann man nur die drei Striche fürs Menü machen? Lupe auch
+  weg, reicht im Menü." Genau das ist jetzt umgesetzt — nur für die
+  aufklappbare Form, das Menüband bleibt unberührt.
+  - **Der Balken verschwindet auch beim Scrollen.** Die Papierfläche unter dem
+    ganzen Kopf, die v2.2.1 gegen die durchlaufende Schrift eingeführt hatte,
+    war der Balken durch die Hintertür. Statt einer Fläche für alles trägt
+    jetzt jedes Stück seinen eigenen Grund: Striche und Logo bekommen beim
+    Scrollen je eine Papierfläche in ihrer eigenen Form. Auf dem
+    papierfarbenen Seitengrund sieht man sie nicht — sie decken nur den Text
+    dahinter ab; über einem Bild tragen sie die Marke. Bewusst ohne Haarlinie:
+    Mit Kante zeichnete die Fläche auf Papier wieder genau den Kasten, der weg
+    sollte (nachgestellt bei 390 px).
+  - **Auf dem Telefon weicht das Logo.** Dort ist der Kopf zu schmal für die
+    Fläche unter der Marke — sie reichte fast bis zu den Strichen, und der
+    Balken wäre wieder da, nur in zwei Teilen. Am Seitenanfang und im offenen
+    Menü steht die Marke wie gewohnt. Auf dem Desktop bleibt sie stehen; dort
+    genügt ihre eigene Fläche.
+  - **Nur noch die drei Striche.** Rahmen und das Wort „Menü" sind weg, das
+    Markup der Beschriftung ebenfalls. Der Rahmen bleibt in der Breite stehen
+    und wird nur durchsichtig, damit die Tippfläche ihre 46×42 px behält und
+    beim Umschalten der Menüform nichts springt.
+  - **Die Suche steht im Menü.** Als letzter Punkt unter den Menüpunkten, mit
+    Lupe und dem Wort „Suche"; sie öffnet dasselbe Overlay wie die Lupe im
+    Menüband. Bewusst ein Geschwister der Menüliste und kein Listenpunkt:
+    `wp_nav_menu()` gibt ohne zugewiesenes Menü gar nichts aus, als `<li>`
+    verschwände die Suche mit.
+  - **Vier Fehler, die erst der Browser gezeigt hat** (nachgemessen bei
+    320×568, 390×844, 768×1024, 844×390 und 1280×800, mit und ohne
+    JavaScript, dazu Tastatur, Esc und reduzierte Bewegung):
+    - Das Logo blendete auf dem Telefon nicht aus: `.idt-js .idt-nav-scrolled`
+      schreibt zwei Klassen desselben `<html>`-Elements als Verschachtelung und
+      trifft damit nichts. Richtig ist `.idt-js.idt-nav-scrolled`.
+    - Der durchsichtige Kopf fing Klicks ab, die dem Text darunter galten. Er
+      lässt sie jetzt durch (`pointer-events`), Marke, Menü und Schaltfläche
+      holen sie sich einzeln zurück — und der offene Kopf nimmt sie wieder an,
+      damit nichts durch die Tafel hindurchfällt.
+    - Auf dem Desktop lief der Fließtext mitten durch die Wortmarke, beides
+      unlesbar (nachgestellt bei 1280×800). Erst daraufhin hat auch das Logo
+      seine eigene Fläche bekommen.
+    - Die helle Fassung des Logos saß nach der neuen Polsterung des
+      Marken-Blocks um ebendiese versetzt neben der dunklen. Ihre Versatzwerte
+      müssen mit der Polsterung zusammen gepflegt werden; ein Kommentar sagt
+      das jetzt.
+  - **Ohne JavaScript tauscht die Suche zurück in den Kopf.** Das Menü lässt
+    sich dann nicht öffnen — ein Suchpunkt darin wäre auf dem Telefon gar nicht
+    mehr zu erreichen. Die Lupe steht deshalb weiter im Markup und wird nur
+    ausgeblendet, sobald `idt-js` gesetzt ist; der Punkt im Menü umgekehrt.
+    Ebenso behält die Schaltfläche ohne JavaScript ihre Kante, passend zum
+    Balken, auf den die Form dort ohnehin zurückfällt.
+  - Nach dem Schließen der Suche geht der Fokus auf die Menü-Schaltfläche,
+    wenn der Suchpunkt inzwischen im geschlossenen Menü liegt — sonst fiele er
+    auf `<body>`. Geprüft wird über `visibility`, weil ein Element in einem
+    versteckten Vorfahren weiterhin eine Breite meldet.
+
 - **Aufklappbares Menü: Kopf ohne Balken (v2.2.1).** Rückmeldung aus dem
   Verein: Wenn das Menü ohnehin hinter einer Schaltfläche liegt, braucht der
   Kopf das Band nicht mehr — links das Logo, rechts „Menü", sonst nichts. So

@@ -6,8 +6,9 @@
  *   'band'    — Menüband. Auf dem Desktop stehen die Punkte offen, unter
  *               900 px klappt der Hamburger sie als Leiste unter dem Kopf auf.
  *   'overlay' — Aufklappbares Menü. Die Punkte liegen auf jeder Breite hinter
- *               der Schaltfläche „Menü": auf dem Desktop fächern sie waagerecht
- *               auf, auf dem Telefon nimmt eine Tafel den ganzen Bildschirm.
+ *               drei Strichen: auf dem Desktop fächern sie waagerecht auf, auf
+ *               dem Telefon nimmt eine Tafel den ganzen Bildschirm. Die Suche
+ *               steht dort als letzter Punkt im Menü statt als Lupe im Kopf.
  *
  * Geöffnet wird in beiden Fällen über dieselben zwei Klassen — `.is-open` am
  * Menü und `idt-nav-open` am <html> —, das Aussehen macht style.css (5, 5c).
@@ -90,11 +91,12 @@
       setOpen(!isOpen());
     });
 
-    /* Beim aufklappbaren Menü trägt der Kopf keinen Balken (style.css 5c).
-       Sobald die Seite scrollt, liefe die Schrift aber durch das Logo —
-       ab hier bekommt er deshalb die Papierfläche untergelegt. Der
-       Schwellwert ist klein: Es geht nicht um „weit gescrollt", sondern
-       darum, dass überhaupt Inhalt unter den Kopf rückt. */
+    /* Beim aufklappbaren Menü trägt der Kopf keinen Balken — auch beim
+       Scrollen nicht (style.css 5c). Sobald Inhalt unter ihn rückt, braucht
+       aber jedes Stück darin seinen eigenen Grund: Die drei Striche bekommen
+       eine Papierfläche untergelegt, das Logo weicht auf dem Telefon. Beides
+       hängt an dieser Klasse. Der Schwellwert ist klein: Es geht nicht um
+       „weit gescrollt", sondern darum, dass überhaupt etwas darunter steht. */
     if (OVERLAY) {
       var SCROLLED_AT = 40;
       var ticking = false;

@@ -398,13 +398,26 @@ umstellbar unter **Design → Customizer → Website-Identität → Form des Hau
 | Einstellung | Desktop | Smartphone |
 |---|---|---|
 | **Menüband** (Vorgabe) | Die Menüpunkte stehen offen nebeneinander, Untermenüs klappen bei Hover auf. | Ab 900 px abwärts klappt der Hamburger sie als Leiste unter dem Kopf auf. |
-| **Aufklappbar** | Die Punkte liegen hinter der Schaltfläche **Menü**; ein Klick fächert sie waagerecht auf, einer nach dem anderen. | Die Markentinte nimmt den ganzen Bildschirm ein, die Punkte stehen rechtsbündig darunter. |
+| **Aufklappbar** | Die Punkte liegen hinter **drei Strichen**; ein Klick fächert sie waagerecht auf, einer nach dem anderen. | Die Markentinte nimmt den ganzen Bildschirm ein, die Punkte stehen rechtsbündig darunter. |
 
-Bei der aufklappbaren Form **entfällt der Balken im Kopf**: Kein Hintergrund,
-keine Trennlinie, keine Mattscheibe — nur Logo links, Lupe und „Menü" rechts,
-frei über der Seite. Sobald gescrollt wird, legt sich die Papierfläche unter den
-Kopf, sonst liefe die Schrift mitten durch das Logo; am Seitenanfang, wo man
-zuerst hinsieht, bleibt er frei.
+Bei der aufklappbaren Form **entfällt der Balken im Kopf** — auch beim Scrollen.
+Kein Hintergrund, keine Trennlinie, keine Mattscheibe: nur das Logo links und
+drei Striche rechts, frei über der Seite. Vom Menüband bleibt damit nichts
+stehen, was nach Leiste aussieht.
+
+Damit Schrift und Kopf sich trotzdem nicht ins Gehege kommen, trägt beim
+Scrollen **jedes Stück seinen eigenen Grund**: Die Striche bekommen eine
+Papierfläche untergelegt, das Logo ebenso. Auf dem papierfarbenen Grund des
+Themes sieht man diese Flächen nicht — sie decken nur den Text dahinter ab;
+über einem Bild tragen sie. Auf dem Telefon ist der Kopf zu schmal dafür:
+Dort **weicht das Logo beim Scrollen ganz**, sonst reichte seine Fläche fast
+bis zu den Strichen und der Balken wäre wieder da, nur in zwei Teilen. Am
+Seitenanfang und im offenen Menü steht die Marke wie gewohnt.
+
+Die **Suche steht bei dieser Form im Menü**, nicht im Kopf: als letzter Punkt
+unter den Menüpunkten, mit Lupe und dem Wort „Suche". Sie öffnet dasselbe
+Such-Overlay wie die Lupe im Menüband (s. Abschnitt *Suche*). Ohne JavaScript
+tauschen die beiden zurück — dazu unten mehr.
 
 Das zweite Kennzeichen: **Beim Öffnen kippt der Kopf auf Markentinte** — Logo,
 Punkte und Kreuz werden hell, die Seite tritt zurück. Auf dem Telefon wächst
@@ -424,8 +437,11 @@ steht in `style.css` (Abschnitt 5 Menüband, 5c aufklappbar), das Verhalten in
 
 Ohne JavaScript bleibt das Menü erreichbar: Die aufklappbare Form versteckt die
 Punkte nur, wenn `idt_nav_js_flag()` die Klasse `idt-js` gesetzt hat — sonst
-stehen sie offen wie im Menüband, und der Kopf behält auch seinen Balken (die
-Papierfläche beim Scrollen käme sonst nie).
+stehen sie offen wie im Menüband, der Kopf behält seinen Balken und die
+Schaltfläche ihre Kante. Auch die **Suche wandert dann zurück in den Kopf**:
+Der Punkt im Menü entfällt, die Lupe neben den Strichen erscheint. Ein
+Suchpunkt in einem Menü, das sich ohne JavaScript nicht öffnen lässt, wäre
+sonst auf dem Telefon gar nicht mehr zu erreichen.
 
 **Ein eigenes Logo braucht eine helle Fassung.** Auf der Tinte tauscht das Theme
 das mitgelieferte Logo gegen `assets/logo-idt-inverse.png` (dieselbe Datei, die
@@ -477,8 +493,10 @@ demselben Verlauf; im Frontend passiert das nicht.
 
 ## Suche
 
-In der Kopfleiste steht rechts nur eine **Lupe**. Ein Klick öffnet die Suche als
-Ebene **über der ganzen Seite** (Markup: `idt_render_search_overlay()` in
+Die Suche hat genau einen Einstieg: im Menüband die **Lupe** rechts in der
+Kopfleiste, beim aufklappbaren Menü der **Suchpunkt im Menü** (s. Abschnitt
+*Form des Hauptmenüs*). Ein Klick öffnet die Suche als Ebene **über der ganzen
+Seite** (Markup: `idt_render_search_overlay()` in
 `theme/idt-deutschlandtakt/inc/search.php`, Verhalten: `assets/search.js`).
 Schon während des Tippens erscheinen die Treffer als Karten; Schließen per ×,
 `Esc` oder Klick daneben.
@@ -490,9 +508,10 @@ Ergebnisseite `search.php` nutzt, sodass Vorschau und Ergebnisseite nicht
 auseinanderlaufen können. Die Eingabetaste führt jederzeit auf die vollständige
 Ergebnisseite mit Trefferzahl, Suchfeld zum Nachschärfen und Blätterfunktion.
 
-Ohne JavaScript verlinkt die Lupe auf `#idt-searchbox`; eine `:target`-Regel in
-`style.css` klappt das Overlay auch dann auf, das Formular darin führt regulär
-zur Ergebnisseite. Das kompakte `searchform.php` bleibt für alles erhalten, was
+Ohne JavaScript verlinkt der Einstieg auf `#idt-searchbox`; eine `:target`-Regel
+in `style.css` klappt das Overlay auch dann auf, das Formular darin führt regulär
+zur Ergebnisseite. In der aufklappbaren Form steht dafür wieder die Lupe im Kopf
+(s. oben). Das kompakte `searchform.php` bleibt für alles erhalten, was
 WordPress selbst ausgibt (Widgets, Suchblock).
 
 ## Lizenz
