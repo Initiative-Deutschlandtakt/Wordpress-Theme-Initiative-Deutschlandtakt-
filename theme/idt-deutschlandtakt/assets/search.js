@@ -1,6 +1,8 @@
-/* Such-Overlay: Die Kopfleiste zeigt nur eine Lupe — ein Klick öffnet das
-   Suchfeld als Ebene über der ganzen Seite (Markup: idt_render_search_overlay()
-   in inc/search.php) und zeigt die Treffer schon beim Tippen. Die Vorschau
+/* Such-Overlay: Die Suche ist auf einen einzigen Auslöser reduziert — die Lupe
+   im Menüband, beim aufklappbaren Menü der Suchpunkt im Menü selbst. Ein Klick
+   öffnet das Suchfeld als Ebene über der ganzen Seite (Markup:
+   idt_render_search_overlay() in inc/search.php) und zeigt die Treffer schon
+   beim Tippen. Die Vorschau
    holt fertiges Markup vom REST-Endpunkt idt/v1/suche, damit sie exakt so
    aussieht wie die vollständige Ergebnisseite (search.php).
 
@@ -19,6 +21,8 @@
 
   ready(function () {
     var box = document.getElementById('idt-searchbox');
+    /* Alle Auslöser der Suche: die Lupe im Menüband und — bei der
+       aufklappbaren Menüform — der Suchpunkt im Menü (header.php). */
     var toggles = document.querySelectorAll('.idt-searchtoggle');
     if (!box || !toggles.length) { return; }
 
@@ -64,7 +68,24 @@
       /* Nach der Ausblend-Transition wieder aus Tab-Reihenfolge und
          Screenreader-Baum nehmen. */
       hideTimer = window.setTimeout(function () { box.hidden = true; }, ANIM);
-      if (lastFocus && typeof lastFocus.focus === 'function') { lastFocus.focus(); }
+
+      /* Zurück auf das Element, das die Suche geöffnet hat — es sei denn, es
+         ist inzwischen nicht mehr zu sehen. Beim aufklappbaren Menü steht die
+         Suche als Punkt im Menü, und das schließt sich, während die Suche
+         aufgeht; ein focus() darauf ginge ins Leere und der Fokus fiele auf
+         <body>. Dann übernimmt die Schaltfläche, hinter der der Punkt wieder
+         zu finden ist. */
+      var back = focusable(lastFocus) ? lastFocus : document.querySelector('.nav-toggle');
+      if (focusable(back)) { back.focus(); }
+    }
+
+    /* Sichtbar genug, um den Fokus anzunehmen? `visibility` wird vererbt —
+       die Abfrage erwischt damit auch einen Link, dessen Vorfahr (das
+       geschlossene Menü) versteckt ist, während offsetWidth dort noch eine
+       Breite meldet. */
+    function focusable(el) {
+      if (!el || typeof el.focus !== 'function' || !el.isConnected) { return false; }
+      return window.getComputedStyle(el).visibility !== 'hidden';
     }
 
     Array.prototype.forEach.call(toggles, function (t) {

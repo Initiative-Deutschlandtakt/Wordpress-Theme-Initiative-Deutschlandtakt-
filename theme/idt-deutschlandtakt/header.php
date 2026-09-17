@@ -62,31 +62,52 @@ if ( ! $idt_no_nav ) : ?>
 				'depth'          => 2,
 			) );
 			?>
+			<?php if ( $idt_nav_overlay ) : /* Beim aufklappbaren Menü steht die Suche im
+			         Menü statt im Kopf — dort bleiben nur die drei Striche. Der Link trägt
+			         dieselbe Klasse wie die Lupe im Menüband und öffnet dasselbe Overlay
+			         (assets/search.js nimmt alles mit .idt-searchtoggle). Bewusst ein
+			         Geschwister der Menüliste und kein <li> darin: Ohne zugewiesenes
+			         WP-Menü gibt wp_nav_menu() gar nichts aus (fallback_cb => false) —
+			         als Listenpunkt verschwände die Suche mit. */ ?>
+				<a class="idt-searchtoggle idt-navsearch" href="#idt-searchbox" aria-expanded="false" aria-controls="idt-searchbox">
+					<span class="idt-navsearch__icon" aria-hidden="true"><?php echo idt_icon( 'search', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+					<span class="idt-navsearch__label"><?php esc_html_e( 'Suche', 'idt' ); ?></span>
+				</a>
+			<?php endif; ?>
 		</nav>
 
-		<?php /* Rechte Aktionsleiste: die Suche ist auf eine reine Lupe
-		         reduziert (das Feld selbst öffnet sich als Overlay über der
-		         ganzen Seite, s. idt_render_search_overlay()), daneben der
-		         Hamburger für das Menüband auf schmalen Viewports. */ ?>
+		<?php /* Rechte Aktionsleiste. Im Menüband stehen hier die Lupe (das Suchfeld
+		         selbst öffnet sich als Overlay über der ganzen Seite, s.
+		         idt_render_search_overlay()) und daneben der Hamburger für schmale
+		         Viewports. Beim aufklappbaren Menü bleiben nur die drei Striche übrig:
+		         Die Suche ist dort in das Menü gewandert (s. oben), und ein Kopf, der
+		         ohnehin keinen Balken mehr trägt, soll auch nicht zwei Schaltflächen
+		         über der Seite schweben lassen. */ ?>
 		<div class="site-header__actions">
 			<?php /* Bewusst ein Link statt eines Buttons: Ohne JavaScript klappt das
 			         Overlay per :target-Regel auf (siehe style.css), das Formular
 			         darin führt ganz normal zur Ergebnisseite. Mit JavaScript
-			         fängt search.js den Klick ab und blendet es ein. */ ?>
+			         fängt search.js den Klick ab und blendet es ein.
+
+			         Steht auch beim aufklappbaren Menü im Markup, wird dort aber
+			         ausgeblendet, sobald JavaScript läuft (style.css 5c) — dann
+			         übernimmt der Suchpunkt im Menü. Ohne JavaScript bliebe der
+			         sonst hinter einem Menü liegen, das sich nicht öffnen lässt,
+			         und die Suche wäre auf dem Telefon gar nicht mehr zu
+			         erreichen. */ ?>
 			<a class="idt-searchtoggle" href="#idt-searchbox" aria-expanded="false" aria-controls="idt-searchbox" aria-label="<?php esc_attr_e( 'Suche öffnen', 'idt' ); ?>">
 				<?php echo idt_icon( 'search', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</a>
-			<?php /* Beim aufklappbaren Menü steht neben den Balken das Wort „Menü" —
-			         es macht die Schaltfläche auch auf dem Desktop als Menü lesbar und
-			         weicht beim Öffnen zusammen (style.css 5c). Im Menüband bleibt die
-			         Beschriftung ausgeblendet, dort trägt das aria-label die Bedeutung. */ ?>
+			<?php /* Nur das Symbol, keine Beschriftung: Die Bedeutung trägt das
+			         aria-label. Beim aufklappbaren Menü liegen die Striche ohne Rahmen
+			         frei über der Seite und bekommen erst beim Scrollen eine
+			         Papierfläche untergelegt (style.css 5c). */ ?>
 			<button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="<?php esc_attr_e( 'Menü öffnen', 'idt' ); ?>">
 				<span class="nav-toggle__icon" aria-hidden="true">
 					<span class="nav-toggle__bar"></span>
 					<span class="nav-toggle__bar"></span>
 					<span class="nav-toggle__bar"></span>
 				</span>
-				<span class="nav-toggle__label" aria-hidden="true"><?php esc_html_e( 'Menü', 'idt' ); ?></span>
 			</button>
 		</div>
 	</div>
