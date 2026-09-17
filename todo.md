@@ -4,7 +4,7 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
-- **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.1).**
+- **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
   Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche
   ähnlich groß machen wie die anderen?" Bisher stand die Suche unter der
   Haarlinie in Lesegröße (`--fs-body`, normal, gemischte Schreibung), während
@@ -24,6 +24,40 @@ _(keine offenen Aufgaben)_
   - Betrifft nur die Menüform „aufklappbar" (`.idt-nav-overlay`); im Menüband
     sitzt die Suche als Lupe im Kopf und ist unberührt. Geprüft mit
     `check-theme.sh` und `check-zip.sh`.
+
+- **Bildunterschriften kursiv (v2.3.1).** Rückmeldung: „Die Darstellung ist nicht
+  schön, das setzt sich nicht vom regulären Text ab." Stimmt — das Theme hatte
+  für die Legende des Kern-Bildblocks gar keine Regel. Ohne `theme.json` blieb
+  nur, was WordPress selbst mitbringt: Fließtextgröße in Textfarbe, dazu der
+  volle Absatzabstand aus `.entry img` zwischen Bild und Zeile. Die Unterschrift
+  las sich dadurch wie der Anfang des nächsten Absatzes.
+  - **Eine Regel für alle Bildunterschriften** in `style.css` Abschnitt 8:
+    kursiv, `--fs-sm`, `--text-muted`, linksbündig, `--space-2` unter dem Bild.
+    Sie trifft `.wp-element-caption` (Bildblock und Galerie), `.wp-caption-text`
+    (der alte `[caption]`-Shortcode, den der html5-Theme-Support zulässt) und
+    `.entry figcaption` — Letzteres, damit die Regel im Frontend auch dann
+    gewinnt, wenn der Kern für den Bildblock eine eigene Legendenregel mitbringt.
+    Im Editor sorgt der Präfix `.editor-styles-wrapper` von `add_editor_style()`
+    ohnehin dafür; die Zeile steht dort also genauso wie auf der Seite.
+  - **Echte Kursive, keine schräggestellte.** Abschnitt 1 lädt Inter Variable
+    schon seit dem Umzug auf selbst gehostete Schriften auch als Italic
+    (`assets/fonts/InterVariable-Italic.woff2`) — der Browser muss nichts
+    synthetisieren.
+  - **Bild und Legende sind ein Block.** Der Abstand aus `.entry img` wandert für
+    `figure.wp-block-image`, `figure.wp-block-gallery` und `figure.wp-caption` um
+    die Figur herum, das Bild darin steht ohne eigenen Rand. Bewusst nur für
+    diese drei: Eigene Bausteine wie `.idt-knotendreieck` bringen ihre Maße mit,
+    eine allgemeine `.entry figure`-Regel hätte deren `margin` überschrieben.
+  - **Knotendreieck hängt jetzt an derselben Regel.** Seine `figcaption` trug die
+    Klasse `wp-element-caption` schon immer; die eigene Regel in Abschnitt 7
+    nennt darum nur noch, was abweicht (mittig, etwas mehr Luft). Größe, Farbe
+    und Kursive stehen an einer Stelle statt an zweien. Dabei aufgefallen und
+    gleich mit erledigt: `.idt-knotendreieck > figcaption` war spezifitätsgleich
+    mit der neuen Regel `.entry figcaption`, die weiter unten steht — die Grafik
+    hätte im Seiteninhalt eine linksbündige Legende bekommen. Der Selektor heißt
+    deshalb jetzt `figure.idt-knotendreieck > figcaption`.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün). `smoke-test.sh`
+    lief hier nicht: `api.wordpress.org` ist aus dieser Umgebung nicht erreichbar.
 
 - **Mail-Link als eigener Baustein (v2.3.0).** Rückmeldung aus dem Verein: Bei
   den Kontaktangaben („Post: … / Mail: kontakt@…") fehlte der Weg zur
