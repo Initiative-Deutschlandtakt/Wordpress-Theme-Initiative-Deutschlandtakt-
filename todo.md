@@ -4,7 +4,7 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
-- **Menü-Schaltfläche durchsichtig, Fokus ohne Kasten (v2.3.2).** Zwei
+- **Menü-Schaltfläche durchsichtig, Fokus ohne Kasten (v2.3.3).** Zwei
   Rückmeldungen zum aufklappbaren Menü: „Mach das Menü beim Scrollen komplett
   durchsichtig" und „beim Mobil kriegt das manchmal einen violetten Rahmen,
   wenn ich einen Menüpunkt auswähle — das Cyan ist gut, das so lassen."
@@ -44,6 +44,27 @@ _(keine offenen Aufgaben)_
   - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün).
     `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus dieser
     Umgebung nicht erreichbar.
+
+- **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
+  Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche
+  ähnlich groß machen wie die anderen?" Bisher stand die Suche unter der
+  Haarlinie in Lesegröße (`--fs-body`, normal, gemischte Schreibung), während
+  die Menüpunkte darüber überschriftengroß und versal sind — das las sich wie
+  eine Fußnote und war mit dem Daumen schlechter zu treffen. Jetzt trägt sie in
+  `style.css` 5c dieselbe Stufe wie die Punkte: `--fs-h2`, fett, versal,
+  `--ls-wide`.
+  - **Gedämpft bleibt sie trotzdem.** Farbe (`--text-on-inverse-muted`) und die
+    trennende Haarlinie sind unverändert — die Suche ist ein Werkzeug, kein
+    weiterer Ort auf der Seite. Die Größe macht sie erreichbar, die Farbe hält
+    sie in zweiter Reihe.
+  - **Die Lupe misst jetzt in `em`** statt in festen 18 px und läuft damit in
+    allen drei Größenstufen mit der Schrift mit.
+  - **Beide Flachstufen nachgezogen** (`max-height: 640px` bzw. `440px`): Die
+    Suche folgt den Menüpunkten auf `--fs-lead` bzw. `--fs-body`, damit das Menü
+    im Querformat weiterhin ohne Scrollen vollständig sichtbar bleibt.
+  - Betrifft nur die Menüform „aufklappbar" (`.idt-nav-overlay`); im Menüband
+    sitzt die Suche als Lupe im Kopf und ist unberührt. Geprüft mit
+    `check-theme.sh` und `check-zip.sh`.
 
 - **Bildunterschriften kursiv (v2.3.1).** Rückmeldung: „Die Darstellung ist nicht
   schön, das setzt sich nicht vom regulären Text ab." Stimmt — das Theme hatte

@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.3.2
+Version: 2.3.3
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -700,7 +700,7 @@ html.idt-searchbox-open { overflow: hidden; }
    Bis v2.2.1 legte sich beim Scrollen die volle Papierfläche darunter, damit
    die Schrift nicht durch das Logo läuft. Das war der Balken durch die
    Hintertür — und genau so hat ihn der Verein auch gesehen. Danach trug
-   jedes Stück seinen eigenen Grund statt der Fläche für alles; seit v2.3.2
+   jedes Stück seinen eigenen Grund statt der Fläche für alles; seit v2.3.3
    ist auch davon nichts mehr übrig: Striche und Marke stehen frei über der
    Seite (oben), auf dem Telefon weicht die Marke beim Scrollen ganz (unten).
    Der Kopf selbst ist in jedem Scrollzustand durchsichtig.
@@ -802,7 +802,7 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-overlay .site-header__brand,
 .idt-nav-overlay .site-header__actions { position: relative; z-index: 2; }
 .idt-nav-overlay .main-nav { z-index: 1; }
-/* Deckungsgleich über dem Logo darunter: Der Marken-Block trägt seit v2.3.2
+/* Deckungsgleich über dem Logo darunter: Der Marken-Block trägt seit v2.3.3
    keine Polsterung mehr (s. oben), die helle Fassung sitzt also bündig in
    seiner Ecke. Kommt dort wieder ein Versatz dazu, muss er hier mit. */
 .idt-nav-overlay .site-header__logo-inverse {
@@ -930,17 +930,25 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-js .idt-nav-overlay .main-nav > ul > li { transform: translateX(12px); }
   .idt-nav-open .idt-nav-overlay .main-nav > ul > li { transform: none; }
 
-  /* Der Suchpunkt steht unter den Menüpunkten, rechtsbündig wie sie, aber
-     ruhiger: Er ist kein Ort auf der Seite, sondern ein Werkzeug. Eine
-     Haarlinie darüber trennt ihn von der Liste. */
+  /* Der Suchpunkt steht unter den Menüpunkten, rechtsbündig wie sie — und in
+     ihrer Größe: Auf dem Telefon füllen die Punkte die halbe Höhe, ein
+     kleingesetzter Suchpunkt darunter sah aus wie eine Fußnote und war mit dem
+     Daumen schlechter zu treffen (Rückmeldung aus dem Verein). Er liest sich
+     trotzdem nicht als weiterer Ort auf der Seite, sondern als Werkzeug: Die
+     Haarlinie darüber trennt ihn von der Liste, und seine Farbe bleibt die
+     gedämpfte (s. Regel darunter). */
   .idt-nav-overlay .main-nav .idt-navsearch {
     align-self: stretch; justify-content: flex-end;
-    margin-top: var(--space-5); padding: var(--space-4) 0 0;
+    margin-top: var(--space-5); padding: var(--space-4) 0 var(--space-3);
+    gap: var(--space-3);
     border-bottom: none;
     border-top: var(--bw-hair) solid color-mix(in srgb, var(--idt-paper) 20%, transparent);
-    font-size: var(--fs-body); font-weight: var(--fw-regular);
-    text-transform: none; letter-spacing: normal;
+    font-size: var(--fs-h2); font-weight: var(--fw-bold);
+    text-transform: uppercase; letter-spacing: var(--ls-wide);
   }
+  /* Lupe in em statt in Pixeln: So bleibt sie in jeder der drei Größenstufen
+     (hier, ab 640 px und ab 440 px Höhe) im Verhältnis zur Schrift. */
+  .idt-nav-overlay .main-nav .idt-navsearch svg { width: .9em; height: .9em; }
   .idt-nav-overlay .main-nav .idt-navsearch,
   .idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch { color: var(--text-on-inverse-muted); }
   .idt-nav-overlay .main-nav .idt-navsearch:hover,
@@ -974,7 +982,8 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-nav-overlay .main-nav .sub-menu a,
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-sm); padding: var(--space-1) 0; }
   .idt-nav-overlay .main-nav .idt-navsearch {
-    font-size: var(--fs-sm); margin-top: var(--space-4); padding-top: var(--space-3);
+    font-size: var(--fs-lead); margin-top: var(--space-4);
+    padding-top: var(--space-3); padding-bottom: var(--space-2);
   }
 }
 /* Zweite Stufe für das Querformat auf dem Telefon (gemessen bei 844×390):
@@ -989,7 +998,8 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-nav-overlay .main-nav .sub-menu a,
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-xs); padding: 2px 0; }
   .idt-nav-overlay .main-nav .idt-navsearch {
-    font-size: var(--fs-xs); margin-top: var(--space-3); padding-top: var(--space-2);
+    font-size: var(--fs-body); margin-top: var(--space-3);
+    padding-top: var(--space-2); padding-bottom: var(--space-1);
   }
 }
 
