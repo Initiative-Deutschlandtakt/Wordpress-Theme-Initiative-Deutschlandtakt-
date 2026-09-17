@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.2.1
+Version: 2.2.2
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -336,8 +336,13 @@ blockquote {
 .site-header__actions { display: flex; align-items: center; gap: var(--space-3); flex: 0 0 auto; }
 
 /* Suche in der Kopfleiste = nur die Lupe. Das Suchfeld selbst öffnet sich
-   als Overlay über der ganzen Seite (siehe .idt-searchbox weiter unten). */
-.idt-searchtoggle {
+   als Overlay über der ganzen Seite (siehe .idt-searchbox weiter unten).
+
+   Bewusst auf die Aktionsleiste eingegrenzt: Beim aufklappbaren Menü steht die
+   Suche nicht im Kopf, sondern als letzter Punkt im Menü (5c). Sie trägt
+   dieselbe Klasse — assets/search.js greift alles mit .idt-searchtoggle —,
+   liest sich dort aber als Menüpunkt und nicht als Schaltfläche. */
+.site-header__actions .idt-searchtoggle {
   display: inline-flex; align-items: center; justify-content: center;
   /* Maße und Radius wie beim Hamburger daneben — die beiden Schaltflächen
      lesen sich so als ein Paar. */
@@ -347,9 +352,9 @@ blockquote {
   cursor: pointer; text-decoration: none; -webkit-appearance: none; appearance: none;
   transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
 }
-.idt-searchtoggle:hover { color: var(--idt-paper); background: var(--accent-primary); border-color: var(--accent-primary); text-decoration: none; }
-.idt-searchtoggle[aria-expanded="true"] { color: var(--idt-paper); background: var(--idt-ink); }
-.idt-searchtoggle svg { width: 20px; height: 20px; }
+.site-header__actions .idt-searchtoggle:hover { color: var(--idt-paper); background: var(--accent-primary); border-color: var(--accent-primary); text-decoration: none; }
+.site-header__actions .idt-searchtoggle[aria-expanded="true"] { color: var(--idt-paper); background: var(--idt-ink); }
+.site-header__actions .idt-searchtoggle svg { width: 20px; height: 20px; }
 
 /* ---- Kompaktes Suchformular (searchform.php / get_search_form) ----
    Nicht mehr im Menüband — dort steht nur noch die Lupe —, aber weiterhin
@@ -410,23 +415,20 @@ blockquote {
 
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
-  display: none; align-items: center; gap: var(--space-2);
+  display: none; align-items: center;
   height: 42px; padding: 9px 8px; margin: 0;
   background: transparent; border: var(--bw-frame) solid var(--idt-ink);
   border-radius: var(--radius-sm); cursor: pointer; -webkit-appearance: none; appearance: none;
   color: var(--idt-ink);
 }
-/* Die Breite steht jetzt am Balkenpaket statt an der Schaltfläche — nur so
-   kann daneben noch die Beschriftung „Menü" Platz finden (aufklappbares Menü,
-   s. 5c). 26 px ist dabei genau der Inhaltskasten der früheren Angabe
-   `width: 46px`: 46 abzüglich 2×2 px Rahmen und 2×8 px Polsterung (alles
-   border-box). Die Schaltfläche bleibt damit 46×42 groß und liest sich
-   weiterhin als Paar mit der Lupe daneben. */
+/* Die Breite steht am Balkenpaket statt an der Schaltfläche. 26 px ist dabei
+   genau der Inhaltskasten der früheren Angabe `width: 46px`: 46 abzüglich
+   2×2 px Rahmen und 2×8 px Polsterung (alles border-box). Die Schaltfläche
+   bleibt damit 46×42 groß und liest sich weiterhin als Paar mit der Lupe
+   daneben. */
 .nav-toggle__icon { display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 26px; height: 100%; }
 .nav-toggle__bar { display: block; width: 100%; height: 2.5px; background: currentColor;
   transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out); }
-/* Im Menüband bleibt das Wort stumm — dort trägt das aria-label die Bedeutung. */
-.nav-toggle__label { display: none; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
@@ -593,16 +595,21 @@ html.idt-searchbox-open { overflow: hidden; }
    5c) AUFKLAPPBARES MENÜ — zweite Menüform, wählbar im Customizer
    =============================================================================
    Gegenentwurf zum Menüband aus Abschnitt 5: Die Menüpunkte stehen nicht
-   offen im Kopf, sondern liegen auf jeder Breite hinter der Schaltfläche
-   „Menü". Beim Öffnen kippt das Menüband auf Markentinte — das ist der
-   Kern der Sache und nicht Zierde: Die Seite tritt zurück, das Menü ist
-   für den Moment der Ort, an dem man sich befindet.
+   offen im Kopf, sondern liegen auf jeder Breite hinter drei Strichen. Beim
+   Öffnen kippt das Menüband auf Markentinte — das ist der Kern der Sache und
+   nicht Zierde: Die Seite tritt zurück, das Menü ist für den Moment der Ort,
+   an dem man sich befindet.
 
-     Desktop (> 900 px) — die Punkte fächern waagerecht aus dem Hamburger auf,
+   Vom Kopf bleibt dabei so wenig stehen wie möglich: kein Band, keine
+   Beschriftung, keine zweite Schaltfläche. Die Suche ist in das Menü
+   gewandert (header.php gibt sie dort als letzten Punkt aus), übrig sind
+   Logo links und drei Striche rechts.
+
+     Desktop (> 900 px) — die Punkte fächern waagerecht aus den Strichen auf,
        einer nach dem anderen, und fallen dabei leicht von oben ein. Der Platz
        ist schon vorher reserviert (`visibility` statt `display`), damit Logo
-       und Aktionsleiste beim Öffnen nicht springen. Das Wort „Menü" weicht
-       zusammen, die Balken werden zum Kreuz.
+       und Schaltfläche beim Öffnen nicht springen. Die Striche werden zum
+       Kreuz.
      Telefon (≤ 900 px) — die Tinte nimmt den ganzen Bildschirm ein. Logo und
        Kreuz bleiben stehen, wo sie waren, die Punkte stehen rechtsbündig
        darunter. Kein Seitenpanel, kein Abdunkler: Die Fläche selbst ist der
@@ -615,57 +622,115 @@ html.idt-searchbox-open { overflow: hidden; }
    unerreichbar hinter einer toten Schaltfläche zu liegen (idt_nav_js_flag()).
    ============================================================================= */
 
-/* ---- Schaltfläche „Menü" ---- */
+/* ---- Schaltfläche: nur die drei Striche ---- */
 /* Anders als im Menüband auf jeder Breite sichtbar — sie ist hier der einzige
-   Weg ins Menü. */
-.idt-nav-overlay .nav-toggle { display: inline-flex; }
-.idt-nav-overlay .nav-toggle__label {
-  display: block; overflow: hidden; white-space: nowrap;
-  max-width: 8em; /* großzügig: begrenzt nichts, ist nur der Startwert der Animation */
-  font-size: var(--fs-xs); font-weight: var(--fw-bold);
-  text-transform: uppercase; letter-spacing: var(--ls-label); line-height: 1;
-  transition: max-width var(--dur-base) var(--ease-out),
-              opacity var(--dur-fast) var(--ease-out),
-              margin-left var(--dur-base) var(--ease-out);
+   Weg ins Menü.
+
+   Ohne Rahmen und ohne Beschriftung: Der Kopf trägt bei dieser Form keine
+   Fläche mehr (s. unten), und ein gerahmter Kasten über der freien Seite
+   sähe aus wie der letzte Rest eines Menübands, das sonst verschwunden ist.
+   Der Rahmen bleibt in der Breite stehen und wird nur durchsichtig — so
+   behält die Schaltfläche ihre 46×42 px Tippfläche und nichts springt beim
+   Umschalten der Menüform. */
+.idt-nav-overlay .nav-toggle { display: inline-flex; justify-content: center; }
+/* Rahmenlos nur mit JavaScript — wie alles andere hier. Ohne JavaScript fällt
+   die Form auf das Menüband zurück: Dort steht der Kopf auf seinem Balken, und
+   auf dem trägt die Schaltfläche wie gewohnt ihre Kante. */
+.idt-js .idt-nav-overlay .nav-toggle {
+  background: transparent; border-color: transparent; box-shadow: none;
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
 }
-.idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
-/* Offen: Das Wort weicht zusammen (der negative Rand schluckt auch die Lücke
-   zum Balkenpaket), übrig bleibt das Kreuz. */
-.idt-nav-overlay .nav-toggle[aria-expanded="true"] .nav-toggle__label {
-  max-width: 0; opacity: 0; margin-left: calc(var(--space-2) * -1);
+.idt-js .idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: transparent; }
+
+/* Gescrollt bekommen die Striche eine eigene Papierfläche untergelegt — nicht
+   der ganze Kopf, sondern nur sie. Drei 2,5 px dünne Linien über laufendem
+   Text sind sonst schlicht nicht zu finden. Eckig wie alles im Auftritt
+   (--radius-sm ist 0). Die Klasse setzt assets/nav.js ab 40 px Scrollhöhe.
+
+   Bewusst ohne Kante: Eine Haarlinie zeichnete auf dem papierfarbenen Grund
+   des Themes wieder genau den Kasten, der hier weg sollte (nachgestellt bei
+   390 px) — und über einem Bild braucht es sie nicht, dort trägt schon die
+   Papierfläche selbst. Bleibt der flache Schatten, damit die Fläche auf
+   mittleren Tönen nicht wie ein Schnitt im Bild wirkt. */
+.idt-nav-scrolled .idt-nav-overlay .nav-toggle {
+  background: var(--idt-paper); box-shadow: var(--shadow-sm);
 }
 
-/* ---- Kein Balken: der Kopf trägt nur Marke und Menü ---- */
+/* ---- Kein Balken, auch nicht beim Scrollen ---- */
 /* Bei dieser Menüform entfällt das Band als Fläche — kein Hintergrund, keine
-   Trennlinie, keine Mattscheibe. Übrig bleiben Logo links, Lupe und „Menü"
+   Trennlinie, keine Mattscheibe. Übrig bleiben Logo links und die Striche
    rechts, frei über der Seite. Der Platz bleibt reserviert: Der Kopf steht
    weiter im Fluss, die Seite beginnt also wie bisher darunter.
 
-   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Die Papierfläche
-   beim Scrollen kann nur assets/nav.js einblenden. Ohne JavaScript bliebe
-   der Kopf sonst dauerhaft transparent und die Schrift liefe durch das Logo
-   — dann also lieber das gewohnte Menüband aus Abschnitt 5, zu dem die Form
-   ohne JavaScript ohnehin zurückfällt. */
+   Bis v2.2.1 legte sich beim Scrollen die volle Papierfläche darunter, damit
+   die Schrift nicht durch das Logo läuft. Das war der Balken durch die
+   Hintertür — und genau so hat ihn der Verein auch gesehen. Statt der Fläche
+   für alles trägt jetzt jedes Stück seinen eigenen Grund: die Striche eine
+   Papierfläche (oben), das Logo weicht auf dem Telefon (unten). Der Kopf
+   selbst bleibt in jedem Scrollzustand durchsichtig.
+
+   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Nur mit
+   assets/nav.js gibt es überhaupt einen Scrollzustand und ein erreichbares
+   Menü. Ohne JavaScript bliebe der Kopf sonst dauerhaft transparent, ohne
+   dass irgendetwas das auffinge — dann also lieber das gewohnte Menüband
+   aus Abschnitt 5, zu dem die Form ohne JavaScript ohnehin zurückfällt. */
 .idt-js .idt-nav-overlay .site-header {
   background: transparent; border-bottom-color: transparent;
   backdrop-filter: none; -webkit-backdrop-filter: none;
+  /* Der Kopf ist jetzt über seine ganze Breite durchsichtig. Ohne diese
+     Ausnahme finge der leere Streifen Klicks ab, die dem Text darunter
+     gelten — sichtbar ist dort schließlich nichts. Marke, Menü und
+     Schaltfläche holen sich die Klicks einzeln zurück. */
+  pointer-events: none;
+}
+.idt-js .idt-nav-overlay .site-header__brand,
+.idt-js .idt-nav-overlay .site-header__actions,
+.idt-js .idt-nav-overlay .main-nav { pointer-events: auto; }
+
+/* Auch die Marke bekommt beim Scrollen ihren eigenen Grund — dieselbe
+   Papierfläche wie die Striche, nur in ihrer Form. Ohne sie läuft der Text
+   mitten durch die Wortmarke, und beides wird unlesbar (nachgestellt bei
+   1280×800: Der Fließtext kreuzt das Logo auf halber Höhe). Auf dem
+   papierfarbenen Grund des Themes sieht man die Fläche nicht, sie deckt aber
+   den Text dahinter ab; über einem Bild trägt sie die Marke.
+
+   Die Polsterung steht dauerhaft und wird durch negative Ränder wieder
+   aufgehoben: So sitzt das Logo an genau derselben Stelle wie vorher und
+   springt nicht, wenn die Fläche beim Scrollen dazukommt. */
+.idt-nav-overlay .site-header__brand {
+  padding: var(--space-2) var(--space-3);
+  margin: calc(var(--space-2) * -1) calc(var(--space-3) * -1);
+  background: transparent; box-shadow: none;
+  transition: background var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              opacity var(--dur-base) var(--ease-out);
+}
+.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
+  background: var(--idt-paper); box-shadow: var(--shadow-sm);
 }
 
-/* … bis der Inhalt darunter gerät. Der Kopf klebt oben; sobald die Seite
-   scrollt, liefe die Schrift mitten durch das Logo (nachgestellt: die
-   Überschrift „Warum das Knotenprinzip trägt" kreuzte die Wortmarke). Ab
-   40 px Scrollhöhe legt sich deshalb die volle Papierfläche darunter —
-   dort, wo man beim Öffnen der Seite hinsieht, bleibt der Kopf frei, und
-   der Balken kommt erst, wenn er gebraucht wird. Die Klasse setzt
-   assets/nav.js.
-
-   Bewusst deckendes Papier statt der Mattscheibe aus Abschnitt 5: Auf dem
-   papierfarbenen Grund des Themes sieht beides gleich aus, aber ein
-   `backdrop-filter` würde das Menüband zum Bezugsrahmen aller
-   `position: fixed`-Nachfahren machen — und genau daran wäre die Menütafel
-   auf dem Telefon wieder kopfhoch statt bildschirmhoch. */
-.idt-nav-scrolled .idt-nav-overlay .site-header {
-  background: var(--idt-paper); border-bottom-color: var(--border);
+/* Auf dem Telefon weicht die Marke stattdessen ganz. Dort ist der Kopf so
+   schmal, dass die Papierfläche unter dem Logo fast bis zu den Strichen
+   reichte — und damit wäre der Balken wieder da, nur in zwei Teilen. Die
+   Marke ist ohnehin gleich wieder zu sehen: am Seitenanfang und, sobald man
+   das Menü öffnet (s. unten). */
+@media (max-width: 900px) {
+  .idt-js .idt-nav-overlay .site-header__brand {
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
+  }
+  .idt-js.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
+  }
+  /* Offen ist die Marke wieder da: Die Tafel ist die Tinte des Kopfes, und auf
+     die gehört sie — auch mitten auf einer gescrollten Seite. */
+  .idt-js.idt-nav-scrolled.idt-nav-open .idt-nav-overlay .site-header__brand {
+    opacity: 1; visibility: visible;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
+  }
 }
 
 /* ---- Das Menüband kippt auf Markentinte ---- */
@@ -682,17 +747,22 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-open .idt-nav-overlay .site-header {
   background: var(--surface-inverse); border-bottom-color: transparent;
   z-index: calc(var(--z-overlay) + 1);
+  /* Offen ist der Kopf eine Fläche und keine Lücke mehr: Klicks auf die Tinte
+     dürfen nicht auf die Seite unter der Tafel durchfallen. Hebt das
+     `pointer-events: none` von oben für diesen Zustand auf. */
+  pointer-events: auto;
 }
 /* Schrift und Linien auf der Tinte in Papierfarbe. */
 .idt-nav-open .idt-nav-overlay .main-nav a,
+.idt-nav-open .idt-nav-overlay .nav-toggle { color: var(--text-on-inverse); }
+/* Steht nach der Papierfläche des gescrollten Zustands (oben) und nimmt sie
+   wieder weg: Ein weißes Kästchen um das Kreuz wäre auf der Tinte ein Fleck.
+   Offen trägt das Kreuz die Fläche des ganzen Kopfes. */
 .idt-nav-open .idt-nav-overlay .nav-toggle,
-.idt-nav-open .idt-nav-overlay .idt-searchtoggle { color: var(--text-on-inverse); }
-.idt-nav-open .idt-nav-overlay .nav-toggle,
-.idt-nav-open .idt-nav-overlay .idt-searchtoggle { border-color: color-mix(in srgb, var(--idt-paper) 30%, transparent); }
-.idt-nav-open .idt-nav-overlay .nav-toggle:hover,
-.idt-nav-open .idt-nav-overlay .idt-searchtoggle:hover {
-  color: var(--idt-ink); background: var(--idt-cyan); border-color: var(--idt-cyan);
+.idt-nav-open .idt-nav-overlay .site-header__brand {
+  background: transparent; border-color: transparent; box-shadow: none;
 }
+.idt-nav-open .idt-nav-overlay .nav-toggle:hover { color: var(--idt-cyan); border-color: transparent; }
 .idt-nav-open .idt-nav-overlay .main-nav a:hover { color: var(--accent-secondary); border-bottom-color: var(--accent-secondary); }
 .idt-nav-open .idt-nav-overlay .main-nav .current-menu-item > a { border-bottom-color: var(--idt-cyan); }
 
@@ -707,8 +777,13 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-overlay .site-header__brand,
 .idt-nav-overlay .site-header__actions { position: relative; z-index: 2; }
 .idt-nav-overlay .main-nav { z-index: 1; }
+/* Deckungsgleich über dem Logo darunter: Die Versatzwerte sind genau die
+   Polsterung des Marken-Blocks (s. oben, Papierfläche beim Scrollen) — sie
+   müssen mit ihr zusammen geändert werden, sonst rutscht die helle Fassung
+   neben die dunkle. */
 .idt-nav-overlay .site-header__logo-inverse {
-  position: absolute; top: 0; left: 0; height: var(--header-logo-h); width: auto;
+  position: absolute; top: var(--space-2); left: var(--space-3);
+  height: var(--header-logo-h); width: auto;
   opacity: 0; transition: opacity var(--dur-base) var(--ease-out); pointer-events: none;
 }
 .idt-nav-open .idt-nav-overlay .site-header__logo-inverse { opacity: 1; }
@@ -733,6 +808,54 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(6) { transition-delay: 300ms; }
 .idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(7) { transition-delay: 360ms; }
 .idt-nav-open .idt-nav-overlay .main-nav > ul > li:nth-child(n+8) { transition-delay: 420ms; }
+
+/* ---- Die Suche als letzter Menüpunkt ---- */
+/* Im Menüband sitzt die Lupe als Schaltfläche im Kopf (Abschnitt 5). Hier
+   wäre sie die zweite Schaltfläche über einer Seite, die sonst nichts mehr
+   trägt — deshalb steht die Suche im Menü, dort, wo man ohnehin hinsieht,
+   wenn man etwas sucht. Geöffnet wird dasselbe Overlay (5b); der Link trägt
+   nur zusätzlich .idt-navsearch, damit er sich als Punkt liest und nicht als
+   Kasten.
+
+   Alle Regeln nennen `.main-nav` mit: `.idt-nav-overlay .main-nav a` färbt
+   und misst sonst mit und macht den Punkt auf dem Telefon überschriftengroß. */
+/* Der Tausch hängt an `.idt-js`: Ohne JavaScript lässt sich das Menü nicht
+   öffnen, ein Suchpunkt darin wäre also unerreichbar. Dann bleibt die Lupe
+   im Kopf stehen, wo sie im Menüband steht, und der Punkt im Menü entfällt —
+   die Form fällt ohnehin auf das Menüband zurück. */
+.idt-nav-overlay .main-nav .idt-navsearch { display: none; }
+.idt-js .idt-nav-overlay .site-header__actions .idt-searchtoggle { display: none; }
+.idt-js .idt-nav-overlay .main-nav .idt-navsearch { display: inline-flex; }
+
+.idt-nav-overlay .main-nav .idt-navsearch {
+  align-items: center; gap: var(--space-2);
+  color: var(--text-strong); font-weight: var(--fw-medium); font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide); text-transform: uppercase;
+  padding: 6px 2px; border-bottom: 2px solid transparent; text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.idt-nav-overlay .main-nav .idt-navsearch__icon { display: inline-flex; flex: 0 0 auto; }
+.idt-nav-overlay .main-nav .idt-navsearch svg { width: 18px; height: 18px; }
+.idt-nav-overlay .main-nav .idt-navsearch:hover {
+  color: var(--accent-primary); border-bottom-color: var(--accent-primary); text-decoration: none;
+}
+/* Auf der Tinte wie die Punkte daneben. */
+.idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch { color: var(--text-on-inverse); }
+.idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch:hover {
+  color: var(--accent-secondary); border-bottom-color: var(--accent-secondary);
+}
+/* Läuft in der Treppe mit, kommt aber zuletzt. Fester Versatz statt einer
+   weiteren nth-child-Stufe: Der Punkt hängt nicht an der Zahl der
+   Menüpunkte, und 300 ms ist bei drei wie bei acht Punkten nah genug am
+   Ende der Reihe. */
+.idt-js .idt-nav-overlay .main-nav .idt-navsearch {
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out),
+              color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch {
+  opacity: 1; transform: none; transition-delay: 300ms;
+}
 
 /* Untermenüs auf dem Desktop: Das Flyout aus Abschnitt 5 steht auf heller
    Karte — auf der Tinte darüber wirkt es sonst wie ein Fremdkörper. */
@@ -783,6 +906,26 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-js .idt-nav-overlay .main-nav > ul > li { transform: translateX(12px); }
   .idt-nav-open .idt-nav-overlay .main-nav > ul > li { transform: none; }
 
+  /* Der Suchpunkt steht unter den Menüpunkten, rechtsbündig wie sie, aber
+     ruhiger: Er ist kein Ort auf der Seite, sondern ein Werkzeug. Eine
+     Haarlinie darüber trennt ihn von der Liste. */
+  .idt-nav-overlay .main-nav .idt-navsearch {
+    align-self: stretch; justify-content: flex-end;
+    margin-top: var(--space-5); padding: var(--space-4) 0 0;
+    border-bottom: none;
+    border-top: var(--bw-hair) solid color-mix(in srgb, var(--idt-paper) 20%, transparent);
+    font-size: var(--fs-body); font-weight: var(--fw-regular);
+    text-transform: none; letter-spacing: normal;
+  }
+  .idt-nav-overlay .main-nav .idt-navsearch,
+  .idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch { color: var(--text-on-inverse-muted); }
+  .idt-nav-overlay .main-nav .idt-navsearch:hover,
+  .idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch:hover {
+    color: var(--accent-secondary); border-bottom: none;
+  }
+  /* Die Treppe läuft hier von rechts (s. oben) — auch für den Suchpunkt. */
+  .idt-js .idt-nav-overlay .main-nav .idt-navsearch { transform: translateX(12px); }
+
   /* Untermenüs: eingerückt und dauerhaft offen (kein Hover auf Touch),
      kleiner und ruhiger als die Hauptpunkte. */
   .idt-nav-overlay .main-nav .sub-menu {
@@ -806,6 +949,9 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-nav-overlay .main-nav a { font-size: var(--fs-lead); padding: var(--space-2) 0; }
   .idt-nav-overlay .main-nav .sub-menu a,
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-sm); padding: var(--space-1) 0; }
+  .idt-nav-overlay .main-nav .idt-navsearch {
+    font-size: var(--fs-sm); margin-top: var(--space-4); padding-top: var(--space-3);
+  }
 }
 /* Zweite Stufe für das Querformat auf dem Telefon (gemessen bei 844×390):
    Dort bleiben unter dem Menüband nur gut 300 px, und auch die Lesegröße
@@ -818,6 +964,9 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu { padding-bottom: var(--space-1); }
   .idt-nav-overlay .main-nav .sub-menu a,
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-xs); padding: 2px 0; }
+  .idt-nav-overlay .main-nav .idt-navsearch {
+    font-size: var(--fs-xs); margin-top: var(--space-3); padding-top: var(--space-2);
+  }
 }
 
 /* Seite hinter der Tafel stillstellen (Klasse von assets/nav.js, nur im
@@ -829,10 +978,12 @@ html.idt-nav-lock { overflow: hidden; }
    Die Tafel ist da oder nicht, die Punkte stehen sofort. */
 @media (prefers-reduced-motion: reduce) {
   .idt-nav-overlay .site-header,
+  .idt-nav-overlay .site-header__brand,
   .idt-nav-overlay .site-header__logo-inverse,
   .idt-nav-overlay .main-nav,
   .idt-nav-overlay .main-nav > ul > li,
-  .idt-nav-overlay .nav-toggle__label,
+  .idt-nav-overlay .main-nav .idt-navsearch,
+  .idt-nav-overlay .nav-toggle,
   .idt-nav-overlay .nav-toggle__bar {
     transition-duration: 1ms !important;
     transition-delay: 0s !important;
