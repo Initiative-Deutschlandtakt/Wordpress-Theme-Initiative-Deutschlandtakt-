@@ -4,6 +4,36 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Menü-Schaltfläche durchsichtig, Fokus ohne Kasten (v2.3.2).** Zwei
+  Rückmeldungen zum aufklappbaren Menü: „Mach das Menü beim Scrollen komplett
+  durchsichtig" und „beim Mobil kriegt das manchmal einen violetten Rahmen,
+  wenn ich einen Menüpunkt auswähle — das Cyan ist gut, das so lassen."
+  - **Keine Papierfläche mehr unter den drei Strichen** (`style.css` 5c). Seit
+    v2.2.1 legte sich beim Scrollen ein weißes Kästchen unter die Schaltfläche,
+    damit die 2,5 px dünnen Linien über laufendem Text zu finden bleiben. Über
+    einem Bild war das der letzte sichtbare Rest des Menübands — genau das, was
+    bei dieser Menüform weg soll. Die Schaltfläche ist jetzt in jedem
+    Scrollzustand durchsichtig; der Kommentar an der Stelle nennt den
+    Schlagschatten an `.nav-toggle__bar` als Weg, falls die Striche über einem
+    unruhigen Bild verschwinden. Die Papierfläche unter der Wortmarke bleibt:
+    Dort läuft sonst der Fließtext mitten durch das Logo, und auf dem Telefon
+    weicht die Marke ohnehin ganz.
+  - **Fokus im Menü als Linie statt als Rahmen** (`style.css` 5, neuer Block
+    hinter den Untermenü-Regeln). Der violette Kasten kam aus dem globalen
+    `:focus-visible` in Abschnitt 3 — und stand öfter, als jemand die Tastatur
+    anfasste: `assets/nav.js` setzt den Fokus beim Öffnen auf den ersten Punkt
+    und beim Schließen zurück auf die Schaltfläche, auf dem Telefon also mitten
+    im Antippen. Der Fokus ist nicht weg, er sieht jetzt aus wie der
+    Mauszeiger-Zustand: Schrift und Linie im Markenton, auf der Tinte des
+    offenen Menüs in Cyan — das bleibt damit unverändert. Dazu
+    `-webkit-tap-highlight-color: transparent` für Menüpunkte und
+    Schaltfläche: Mobile Browser legen beim Antippen eine eigene, teils aus der
+    Linkfarbe eingefärbte Fläche darüber, die auch ohne Fokus als violetter
+    Kasten erscheint.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün).
+    `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus dieser
+    Umgebung nicht erreichbar.
+
 - **Bildunterschriften kursiv (v2.3.1).** Rückmeldung: „Die Darstellung ist nicht
   schön, das setzt sich nicht vom regulären Text ab." Stimmt — das Theme hatte
   für die Legende des Kern-Bildblocks gar keine Regel. Ohne `theme.json` blieb

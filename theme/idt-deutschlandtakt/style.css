@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.3.1
+Version: 2.3.2
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -413,6 +413,32 @@ blockquote {
 }
 .main-nav .sub-menu .current-menu-item > a { color: var(--accent-primary); }
 
+/* ---- Fokus im Menü: Linie statt Kasten ---- */
+/* Abschnitt 3 legt um jedes fokussierte Element einen violetten Rahmen. Im
+   Menü steht der öfter, als jemand die Tastatur anfasst: assets/nav.js setzt
+   den Fokus beim Öffnen auf den ersten Punkt und beim Schließen zurück auf
+   die Schaltfläche — auf dem Telefon also mitten im Antippen. Der Kasten
+   wirkt dort wie ein Fehler und nicht wie ein Hinweis.
+
+   Der Fokus verschwindet deshalb nicht, er wechselt die Form: dieselbe
+   Rückmeldung wie unter dem Mauszeiger — Schrift und Linie im Markenton,
+   auf der Tinte des offenen Menüs in Cyan. Wer mit der Tabulatortaste geht,
+   sieht seinen Punkt also weiterhin, nur ohne Rahmen darum.
+
+   Die Regel steht bewusst nach den Untermenü-Regeln darüber: Sie ist
+   spezifitätsgleich mit `.main-nav .sub-menu a`, die Reihenfolge entscheidet.
+   Dazu der abgeschaltete Tipp-Schimmer: Mobile Browser legen beim Antippen
+   eine eigene Fläche über den Link, teils eingefärbt aus der Linkfarbe — das
+   ist der violette Kasten, der auch ohne Fokus erscheint. */
+.main-nav a { -webkit-tap-highlight-color: transparent; }
+.main-nav a:focus-visible {
+  outline: none;
+  color: var(--accent-primary); border-bottom-color: var(--accent-primary);
+}
+.idt-nav-open .idt-nav-overlay .main-nav a:focus-visible {
+  color: var(--accent-secondary); border-bottom-color: var(--accent-secondary);
+}
+
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
   display: none; align-items: center;
@@ -432,6 +458,14 @@ blockquote {
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+/* Fokus wie oben bei den Menüpunkten: Die Schaltfläche bekommt ihn zurück,
+   sobald das Menü zugeht (assets/nav.js) — der violette Rahmen aus Abschnitt 3
+   stünde also nach jedem Schließen da. Die drei Striche färben sich
+   stattdessen um, wie beim Überfahren. */
+.nav-toggle { -webkit-tap-highlight-color: transparent; }
+.nav-toggle:focus-visible { outline: none; color: var(--accent-primary); }
+.idt-nav-open .idt-nav-overlay .nav-toggle:focus-visible { color: var(--idt-cyan); }
 
 @media (max-width: 900px) {
   .nav-toggle { display: flex; }
@@ -645,19 +679,17 @@ html.idt-searchbox-open { overflow: hidden; }
 }
 .idt-js .idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: transparent; }
 
-/* Gescrollt bekommen die Striche eine eigene Papierfläche untergelegt — nicht
-   der ganze Kopf, sondern nur sie. Drei 2,5 px dünne Linien über laufendem
-   Text sind sonst schlicht nicht zu finden. Eckig wie alles im Auftritt
-   (--radius-sm ist 0). Die Klasse setzt assets/nav.js ab 40 px Scrollhöhe.
+/* Hier stand bis v2.3.1 eine Papierfläche, die sich beim Scrollen unter die
+   drei Striche legte, damit die dünnen Linien über laufendem Text zu finden
+   bleiben. Sie ist bewusst entfernt: Das weiße Kästchen war über einem Bild
+   der letzte sichtbare Rest des Menübands — genau das, was bei dieser
+   Menüform weg sollte. Die Schaltfläche bleibt in jedem Scrollzustand
+   durchsichtig, es trägt sie nur noch ihre eigene Tintenfarbe.
 
-   Bewusst ohne Kante: Eine Haarlinie zeichnete auf dem papierfarbenen Grund
-   des Themes wieder genau den Kasten, der hier weg sollte (nachgestellt bei
-   390 px) — und über einem Bild braucht es sie nicht, dort trägt schon die
-   Papierfläche selbst. Bleibt der flache Schatten, damit die Fläche auf
-   mittleren Tönen nicht wie ein Schnitt im Bild wirkt. */
-.idt-nav-scrolled .idt-nav-overlay .nav-toggle {
-  background: var(--idt-paper); box-shadow: var(--shadow-sm);
-}
+   Also nicht versehentlich wieder einsetzen. Wenn die Striche über einem
+   unruhigen Bild verschwinden, ist der Weg ein Schlagschatten an den Linien
+   (`filter: drop-shadow(...)` an `.nav-toggle__bar`) — der trägt sie, ohne
+   wieder eine Fläche aufzuziehen. */
 
 /* ---- Kein Balken, auch nicht beim Scrollen ---- */
 /* Bei dieser Menüform entfällt das Band als Fläche — kein Hintergrund, keine
@@ -667,10 +699,11 @@ html.idt-searchbox-open { overflow: hidden; }
 
    Bis v2.2.1 legte sich beim Scrollen die volle Papierfläche darunter, damit
    die Schrift nicht durch das Logo läuft. Das war der Balken durch die
-   Hintertür — und genau so hat ihn der Verein auch gesehen. Statt der Fläche
-   für alles trägt jetzt jedes Stück seinen eigenen Grund: die Striche eine
-   Papierfläche (oben), das Logo weicht auf dem Telefon (unten). Der Kopf
-   selbst bleibt in jedem Scrollzustand durchsichtig.
+   Hintertür — und genau so hat ihn der Verein auch gesehen. Seither trägt
+   jedes Stück seinen eigenen Grund statt der Fläche für alles, und seit
+   v2.3.2 ist auch davon nur noch die Marke übrig: Die Striche bleiben
+   durchsichtig (oben), das Logo weicht auf dem Telefon (unten). Der Kopf
+   selbst ist in jedem Scrollzustand durchsichtig.
 
    An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Nur mit
    assets/nav.js gibt es überhaupt einen Scrollzustand und ein erreichbares
@@ -756,8 +789,9 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-open .idt-nav-overlay .main-nav a,
 .idt-nav-open .idt-nav-overlay .nav-toggle { color: var(--text-on-inverse); }
 /* Steht nach der Papierfläche des gescrollten Zustands (oben) und nimmt sie
-   wieder weg: Ein weißes Kästchen um das Kreuz wäre auf der Tinte ein Fleck.
-   Offen trägt das Kreuz die Fläche des ganzen Kopfes. */
+   wieder weg: Die Marke trüge sonst mitten auf der Tinte ein weißes Kästchen.
+   Offen trägt beides die Fläche des ganzen Kopfes. Das Kreuz steht nur der
+   Vollständigkeit halber mit dabei — es ist ohnehin durchsichtig. */
 .idt-nav-open .idt-nav-overlay .nav-toggle,
 .idt-nav-open .idt-nav-overlay .site-header__brand {
   background: transparent; border-color: transparent; box-shadow: none;
