@@ -318,6 +318,26 @@ normale Adresse. Soll der Kontaktweg eine Schaltfläche sein statt ein Link im
 Text, nimmt auch der Button eine Mailadresse:
 `[btn href="mailto:kontakt@…" variant="primary"]Schreib uns[/btn]`.
 
+### Bildunterschriften
+
+Bilder im Text kommen aus dem WordPress-Bildblock; eine eigene Fassung braucht
+das Theme dafür nicht. Die Beschreibung schreibt man in das Feld **Bildunterschrift**
+direkt unter dem Bild im Editor — daraus wird ein `figcaption` innerhalb der
+Abbildung, also Text, der markierbar und durchsuchbar bleibt und den
+Screenreader im Zusammenhang mit dem Bild vorliest.
+
+Das Theme setzt diese Zeile **kursiv**, eine Stufe kleiner und in gedämpftem
+Grau, links auf die Textkante, mit engem Abstand zum Bild: So gehört sie sichtbar
+zum Bild und wird nicht als Anfang des nächsten Absatzes gelesen. Für die
+Bildunterschrift des Knotendreiecks gilt dieselbe Optik, dort nur mittig unter
+der mittigen Grafik. Geregelt ist das in `style.css` Abschnitt 8; wer es ändert,
+ändert es dort einmal für alle Bausteine.
+
+Davon zu unterscheiden ist der **Alternativtext** in der Mediathek: Er beschreibt
+das Bild für alle, die es nicht sehen, und *ersetzt* es — er erscheint nicht auf
+der Seite. Beide Felder gehören gefüllt, mit verschiedenen Texten: Der
+Alternativtext sagt, was zu sehen ist, die Bildunterschrift sagt, was es bedeutet.
+
 ### Knotendreieck (bewegte Grafik zum Knotenprinzip)
 
 Der Block **Knotendreieck** (Inserter, Kategorie *Deutschlandtakt*) zeigt drei
