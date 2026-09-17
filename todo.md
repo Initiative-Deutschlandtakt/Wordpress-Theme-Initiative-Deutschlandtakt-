@@ -4,6 +4,52 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Das Logo muss nicht links oben stehen (v2.4.0).** Bis hierher kannte der Kopf
+  genau zwei Zustände: Marke links oder — mit der Vorlage „Menü ohne Logo" — gar
+  keine Marke. Dazwischen fehlte der Fall, den Plakat-Seiten brauchen: Die Marke
+  ist da, nur eben nicht in der linken oberen Ecke. Neu sind deshalb eine
+  Customizer-Einstellung für den ganzen Auftritt und eine Seitenvorlage für die
+  einzelne Seite.
+  - **„Stellung des Logos im Kopf"** steht unter *Design → Customizer →
+    Website-Identität*, direkt hinter der Logo-Höhe und vor der Menüform:
+    **Links** (Vorgabe, unverändert), **Mittig** — Marke zentriert, das Menü
+    zentriert in einer zweiten Zeile darunter — und **Rechts**, das Spiegelbild
+    von Links (Aktionsleiste und Menü links, Marke am rechten Rand).
+  - **Seitenvorlage „Logo mittig"** (`page-logo-mitte.php`) für die einzelne
+    Seite. Sie schlägt die Customizer-Einstellung und ändert sonst nichts:
+    Überschrift und Inhalt stehen wie in `page.php`. Wie bei den übrigen
+    Sondervorlagen hängt das am Template-Slug und nicht am aktiven
+    Template-File — so greift es auch für die statische Startseite, die
+    `front-page.php` rendert.
+  - **Ein Markup, drei Stellungen.** `header.php` blieb unberührt; den
+    Unterschied machen die Body-Klassen `.idt-logo-mitte` / `.idt-logo-rechts`
+    aus `idt_logo_pos()` und der neue Stylesheet-Abschnitt **5d**. Dort schaltet
+    `.site-header__inner` von Flex auf Grid, und alle drei Kinder werden
+    ausdrücklich platziert — nichts wird automatisch verteilt, damit keine Regel
+    aus 5/5c die Anordnung von hinten wieder verschiebt. Die äußeren Spalten
+    sind `minmax(0, 1fr)`: Ohne die Null als Minimum wüchse die Spalte mit der
+    Aktionsleiste über ihren Anteil und schöbe die Marke aus der Mitte
+    (nachgemessen: Markenmitte liegt bei 1280 px exakt auf 640).
+  - **Unter 900 px bleibt der Kopf einzeilig.** Das Menü steht dort ohnehin
+    außerhalb des Flusses — im Menüband absolut unter dem Kopf, beim
+    aufklappbaren Menü als Tafel über der Seite —, die zweite Zeile entsteht
+    also gar nicht erst. Eine eigene Media Query braucht es dafür nicht; nur die
+    Zentrierung der Menüpunkte wird zurückgenommen, weil sie dort untereinander
+    stehen.
+  - **Beim aufklappbaren Menü bleibt die zweite Zeile reserviert.** Das ist
+    dieselbe Überlegung wie in 5c („Der Platz ist schon vorher reserviert, damit
+    Logo und Schaltfläche beim Öffnen nicht springen"): Ein Kopf, der die
+    Menüzeile erst beim Öffnen aufklappt, ließe die zentrierte Marke hüpfen.
+  - **Ohne Marke keine Stellung.** Auf Seiten mit „Menü ohne Logo" fällt
+    `idt_logo_pos()` auf *Links* zurück — sonst trüge der Kopf bei *Mittig* eine
+    leere erste Zeile über dem Menü.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün) sowie im
+    Browser (Chromium/Playwright) gegen das echte Stylesheet: alle drei
+    Stellungen mal mit Menüband, mal mit aufklappbarem Menü, bei 1280 und
+    700 px — Kopfhöhe, Markenmitte und die Lage von Menü und Aktionsleiste
+    nachgemessen. `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus
+    dieser Umgebung nicht erreichbar.
+
 - **Mail-Link als eigener Baustein (v2.3.0).** Rückmeldung aus dem Verein: Bei
   den Kontaktangaben („Post: … / Mail: kontakt@…") fehlte der Weg zur
   verlinkten Adresse — `[email]…[/email]` gab es nicht, und von Hand bliebe nur

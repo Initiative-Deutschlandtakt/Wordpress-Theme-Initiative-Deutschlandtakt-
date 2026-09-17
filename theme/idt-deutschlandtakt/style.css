@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.3.0
+Version: 2.4.0
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -989,6 +989,75 @@ html.idt-nav-lock { overflow: hidden; }
     transition-delay: 0s !important;
   }
 }
+
+/* =============================================================================
+   5d) STELLUNG DES LOGOS IM KOPF — Customizer / Seitenvorlage „Logo mittig"
+   =============================================================================
+   Der Kopf aus Abschnitt 5 setzt die Marke links, Menü und Aktionsleiste
+   rechts — der Normalfall und deshalb klassenlos. Zwei Abweichungen hängen an
+   einer Body-Klasse (idt_body_class() aus idt_logo_pos()):
+
+     .idt-logo-mitte  — die Marke steht mittig im Kopf, das Menü zentriert in
+       einer zweiten Zeile darunter. Für Seiten, die wie ein Plakat auftreten.
+     .idt-logo-rechts — die gespiegelte Fassung: Aktionsleiste und Menü links,
+       die Marke am rechten Rand.
+
+   Beide schalten `.site-header__inner` von Flex auf Grid und setzen die drei
+   Kinder ausdrücklich — nichts wird automatisch platziert, damit keine Regel
+   aus Abschnitt 5/5c die Anordnung von hinten wieder verschiebt. Das Markup
+   ist in allen drei Stellungen dasselbe (header.php).
+
+   Unterhalb von 900 px steht das Menü ohnehin außerhalb des Flusses (im
+   Menüband absolut unter dem Kopf, beim aufklappbaren Menü als Tafel über der
+   Seite) — die zweite Zeile entsteht dort also gar nicht erst, und der Kopf
+   bleibt einzeilig. Eine eigene Media Query braucht es dafür nicht.
+   ============================================================================= */
+
+/* ---- Marke mittig, Menü darunter ---- */
+/* Die beiden 1fr-Spalten außen sind gleich breit, die Marke steht damit
+   tatsächlich in der Mitte des Kopfes und nicht nur zwischen ihren Nachbarn.
+   `minmax(0, 1fr)` statt `1fr`: Ohne die Null als Minimum wüchse die Spalte
+   mit der Aktionsleiste über ihren Anteil hinaus und schöbe die Marke aus
+   der Mitte. */
+.idt-logo-mitte .site-header__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-5);
+  row-gap: var(--space-2);
+  /* Zwei Zeilen brauchen etwas Luft nach oben und unten; die 68 px Mindesthöhe
+     aus Abschnitt 5 tragen nur eine. */
+  padding-top: var(--space-2); padding-bottom: var(--space-2);
+}
+.idt-logo-mitte .site-header__brand { grid-column: 2; grid-row: 1; }
+.idt-logo-mitte .site-header__actions { grid-column: 3; grid-row: 1; justify-self: end; }
+/* Das Menü nimmt die ganze Breite der zweiten Zeile ein und zentriert seine
+   Punkte darin; `margin-left: auto` aus Abschnitt 5 zöge sie sonst nach
+   rechts. Auch beim aufklappbaren Menü bleibt die Zeile reserviert — dort ist
+   das Menü nur unsichtbar (5c), und ein einklappender Kopf ließe die Marke
+   beim Öffnen springen. */
+.idt-logo-mitte .main-nav {
+  grid-column: 1 / -1; grid-row: 2;
+  justify-content: center; margin-left: 0;
+}
+@media (max-width: 900px) {
+  /* Aufgeklappt ist das Menü eine Leiste bzw. Tafel und keine Kopfzeile mehr —
+     die Punkte stehen dort untereinander und beginnen oben. */
+  .idt-logo-mitte .main-nav { justify-content: flex-start; }
+}
+
+/* ---- Marke rechts ---- */
+/* Spiegelbild von Abschnitt 5: Aktionsleiste und Menü bleiben beieinander,
+   nur stehen sie jetzt links und die Marke am gegenüberliegenden Rand. */
+.idt-logo-rechts .site-header__inner {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-5);
+}
+.idt-logo-rechts .site-header__actions { grid-column: 1; grid-row: 1; }
+.idt-logo-rechts .main-nav { grid-column: 2; grid-row: 1; margin-left: 0; }
+.idt-logo-rechts .site-header__brand { grid-column: 3; grid-row: 1; justify-self: end; }
 
 /* =============================================================================
    6) HORIZONT-SPLASH (Front-Page-Hero) — fixe 1280×800-Bühne, skaliert
