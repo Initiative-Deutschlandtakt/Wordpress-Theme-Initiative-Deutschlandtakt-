@@ -701,15 +701,15 @@ html.idt-searchbox-open { overflow: hidden; }
    die Schrift nicht durch das Logo läuft. Das war der Balken durch die
    Hintertür — und genau so hat ihn der Verein auch gesehen. Danach trug
    jedes Stück seinen eigenen Grund statt der Fläche für alles; seit v2.3.3
-   ist auch davon nichts mehr übrig: Striche und Marke stehen frei über der
-   Seite (oben), auf dem Telefon weicht die Marke beim Scrollen ganz (unten).
-   Der Kopf selbst ist in jedem Scrollzustand durchsichtig.
+   ist auch davon nichts mehr übrig: Marke und Striche stehen frei über der
+   Seite, auf jeder Breite und durchgehend. Der Kopf ändert sich beim
+   Scrollen überhaupt nicht mehr — es gibt keinen Scrollzustand.
 
-   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Nur mit
-   assets/nav.js gibt es überhaupt einen Scrollzustand und ein erreichbares
-   Menü. Ohne JavaScript bliebe der Kopf sonst dauerhaft transparent, ohne
-   dass irgendetwas das auffinge — dann also lieber das gewohnte Menüband
-   aus Abschnitt 5, zu dem die Form ohne JavaScript ohnehin zurückfällt. */
+   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Ohne
+   assets/nav.js gibt es kein erreichbares Menü. Der Kopf bliebe sonst
+   dauerhaft transparent, ohne dass irgendetwas das auffinge — dann also
+   lieber das gewohnte Menüband aus Abschnitt 5, zu dem die Form ohne
+   JavaScript ohnehin zurückfällt. */
 .idt-js .idt-nav-overlay .site-header {
   background: transparent; border-bottom-color: transparent;
   backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -723,43 +723,20 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-js .idt-nav-overlay .site-header__actions,
 .idt-js .idt-nav-overlay .main-nav { pointer-events: auto; }
 
-/* Auch die Marke stand beim Scrollen bis v2.3.1 auf einer Papierfläche —
-   derselben wie die Striche, nur in ihrer Form —, damit der Fließtext nicht
-   mitten durch die Wortmarke läuft. Sie ist mit der Fläche unter den Strichen
-   zusammen entfernt worden: Auf dem Desktop steht die Marke für sich, ohne
-   abgesetztes Kästchen. Übrig bleibt der Übergang für das Ausblenden auf dem
-   Telefon (s. unten) — dort weicht die Marke beim Scrollen weiterhin ganz.
+/* Die Marke steht immer da — auf jeder Breite und in jedem Scrollzustand,
+   und weiterhin ohne Fläche darunter. Zwei Vorgänger hatte diese Stelle:
+   bis v2.2.1 die volle Papierfläche über den ganzen Kopf, danach ein
+   Kästchen nur unter dem Logo, dazu das Ausblenden auf dem Telefon. Beides
+   ist weg. Der Gedanke dahinter war, dass der Fließtext sonst durch die
+   Wortmarke läuft; entschieden ist er gegen die Lesbarkeit an dieser einen
+   Stelle und für einen Kopf, der immer derselbe ist.
 
-   Mit der Fläche ist auch ihre Polsterung weg: Sie stand nur, damit das
-   Kästchen etwas Luft um das Logo hatte, und wurde durch gleich große
-   negative Ränder wieder aufgehoben, damit das Logo beim Scrollen nicht
-   springt. Wer sie zurückholt, rückt die Inverse-Fassung des Logos mit
-   (deren `top`/`left` weiter unten sind genau diese Werte). */
-.idt-nav-overlay .site-header__brand {
-  transition: opacity var(--dur-base) var(--ease-out);
-}
-
-/* Auf dem Telefon weicht die Marke stattdessen ganz. Ohne Fläche darunter
-   steht sie frei über der Seite — auf dem Desktop trägt sie das, dort ist
-   rechts neben ihr genug Leere. Auf dem schmalen Telefon dagegen kreuzt der
-   Fließtext die Wortmarke über ihre ganze Breite, und beides wird unlesbar.
-   Die Marke ist ohnehin gleich wieder zu sehen: am Seitenanfang und, sobald
-   man das Menü öffnet (s. unten). */
-@media (max-width: 900px) {
-  .idt-js .idt-nav-overlay .site-header__brand {
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
-  }
-  .idt-js.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
-  }
-  /* Offen ist die Marke wieder da: Die Tafel ist die Tinte des Kopfes, und auf
-     die gehört sie — auch mitten auf einer gescrollten Seite. */
-  .idt-js.idt-nav-scrolled.idt-nav-open .idt-nav-overlay .site-header__brand {
-    opacity: 1; visibility: visible;
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
-  }
-}
+   Damit hat die Marke hier gar keine eigene Regel mehr: Sie sitzt auf der
+   allgemeinen aus Abschnitt 5, dazu kommt weiter unten nur noch
+   `position: relative` samt z-index, damit sie über der Tafel liegt.
+   Keine Fläche, kein Übergang, kein Zustand. Mit ihr ist der Scrollzustand
+   des Kopfes insgesamt entfallen — `assets/nav.js` setzt seit v2.3.3 keine
+   Klasse `.idt-nav-scrolled` mehr, weil nichts mehr daran hing. */
 
 /* ---- Das Menüband kippt auf Markentinte ---- */
 /* Der Kopf bleibt dabei über allem: Auf dem Telefon liegt die Tafel darunter,
@@ -1012,7 +989,6 @@ html.idt-nav-lock { overflow: hidden; }
    Die Tafel ist da oder nicht, die Punkte stehen sofort. */
 @media (prefers-reduced-motion: reduce) {
   .idt-nav-overlay .site-header,
-  .idt-nav-overlay .site-header__brand,
   .idt-nav-overlay .site-header__logo-inverse,
   .idt-nav-overlay .main-nav,
   .idt-nav-overlay .main-nav > ul > li,

@@ -91,35 +91,13 @@
       setOpen(!isOpen());
     });
 
-    /* Beim aufklappbaren Menü trägt der Kopf keinen Balken — auch beim
-       Scrollen nicht (style.css 5c). Marke und Striche stehen seit v2.3.3
-       frei über der Seite, ohne Fläche darunter; übrig bleibt an dieser
-       Klasse eine einzige Regel: Auf dem Telefon weicht die Marke, sobald
-       Inhalt unter den Kopf rückt. Der Schwellwert ist klein: Es geht nicht
-       um „weit gescrollt", sondern darum, dass überhaupt etwas darunter
-       steht. */
-    if (OVERLAY) {
-      var SCROLLED_AT = 40;
-      var ticking = false;
-
-      function syncScrolled() {
-        ticking = false;
-        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-        root.classList.toggle('idt-nav-scrolled', y > SCROLLED_AT);
-      }
-
-      window.addEventListener('scroll', function () {
-        /* Ein Scroll-Ereignis feuert je Bildaufbau mehrfach; die Klasse
-           muss aber nur einmal pro Frame gesetzt werden. */
-        if (ticking) { return; }
-        ticking = true;
-        window.requestAnimationFrame(syncScrolled);
-      }, { passive: true });
-
-      /* Beim Laden mitten auf der Seite (Anker, Zurück-Taste) stimmt der
-         Zustand sonst erst nach der ersten Scroll-Bewegung. */
-      syncScrolled();
-    }
+    /* Hier hing bis v2.3.2 ein Scroll-Beobachter, der ab 40 px die Klasse
+       `.idt-nav-scrolled` setzte. Daran hingen zuletzt nur noch die
+       Papierflächen unter Marke und Strichen und das Ausblenden der Marke
+       auf dem Telefon — alles drei ist weg (style.css 5c): Der Kopf sieht
+       beim aufklappbaren Menü gescrollt aus wie am Seitenanfang. Ohne
+       Abnehmer ist auch der Beobachter entfallen, mitsamt seinem
+       Scroll-Listener. */
 
     /* Nach dem Klick auf einen Menüpunkt wieder schließen. Ausgenommen sind
        Elternpunkte ohne eigenes Ziel („#"), die nur ein Untermenü aufklappen. */

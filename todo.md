@@ -24,11 +24,20 @@ _(keine offenen Aufgaben)_
     eingeblendet wird) hing an genau diesen Werten und sitzt jetzt auf
     `top: 0; left: 0`. Ebenfalls gegenstandslos und entfernt: die Gegenregel,
     die beide Flächen im offenen Zustand wieder wegnahm.
-  - **Auf dem Telefon weicht die Marke weiter.** Dort kreuzt der Fließtext die
-    Wortmarke über ihre ganze Breite; auf dem Desktop ist rechts daneben genug
-    Leere, die Marke trägt sich dort selbst. Damit bleibt `.idt-nav-scrolled`
-    (aus `assets/nav.js`) für eine einzige Regel übrig — der Kommentar dort
-    sagt das jetzt auch.
+  - **Nachgereicht: Die Marke bleibt auch auf dem Telefon stehen.** „Das Logo
+    bitte jetzt immer da lassen, aber weiterhin ohne Hintergrundquadrat."
+    Bisher wich sie dort beim Scrollen ganz — das war die Antwort darauf, dass
+    der Fließtext die Wortmarke auf schmalem Kopf über ihre ganze Breite
+    kreuzt. Entschieden ist es gegen die Lesbarkeit an dieser einen Stelle und
+    für einen Kopf, der immer derselbe ist.
+  - **Damit ist der Scrollzustand des Kopfes ganz entfallen.** An
+    `.idt-nav-scrolled` hingen zuletzt die beiden Papierflächen und das
+    Ausblenden der Marke; ohne Abnehmer setzt `assets/nav.js` die Klasse nicht
+    mehr und braucht auch seinen Scroll-Listener (rAF-gedrosselt, 40 px
+    Schwelle) nicht länger. Die Marke hat in `style.css` 5c jetzt gar keine
+    eigene Regel mehr, nur noch `position: relative` samt z-index weiter
+    unten. Kommentare in beiden Dateien und der Abschnitt „Form des
+    Hauptmenüs" in der `README.md` sind nachgezogen.
   - **Fokus im Menü als Linie statt als Rahmen** (`style.css` 5, neuer Block
     hinter den Untermenü-Regeln). Der violette Kasten kam aus dem globalen
     `:focus-visible` in Abschnitt 3 — und stand öfter, als jemand die Tastatur
