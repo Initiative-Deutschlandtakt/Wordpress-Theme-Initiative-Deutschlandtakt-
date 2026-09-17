@@ -92,12 +92,12 @@
     });
 
     /* Beim aufklappbaren Menü trägt der Kopf keinen Balken — auch beim
-       Scrollen nicht (style.css 5c). Sobald Inhalt unter ihn rückt, muss sich
-       nur noch die Marke behaupten: Sie bekommt eine Papierfläche untergelegt
-       und weicht auf dem Telefon ganz. Die drei Striche bleiben seit v2.3.2
-       auch gescrollt durchsichtig. Beides hängt an dieser Klasse. Der
-       Schwellwert ist klein: Es geht nicht um „weit gescrollt", sondern
-       darum, dass überhaupt etwas darunter steht. */
+       Scrollen nicht (style.css 5c). Marke und Striche stehen seit v2.3.2
+       frei über der Seite, ohne Fläche darunter; übrig bleibt an dieser
+       Klasse eine einzige Regel: Auf dem Telefon weicht die Marke, sobald
+       Inhalt unter den Kopf rückt. Der Schwellwert ist klein: Es geht nicht
+       um „weit gescrollt", sondern darum, dass überhaupt etwas darunter
+       steht. */
     if (OVERLAY) {
       var SCROLLED_AT = 40;
       var ticking = false;

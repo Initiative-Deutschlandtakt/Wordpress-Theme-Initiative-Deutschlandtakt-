@@ -699,11 +699,11 @@ html.idt-searchbox-open { overflow: hidden; }
 
    Bis v2.2.1 legte sich beim Scrollen die volle Papierfläche darunter, damit
    die Schrift nicht durch das Logo läuft. Das war der Balken durch die
-   Hintertür — und genau so hat ihn der Verein auch gesehen. Seither trägt
-   jedes Stück seinen eigenen Grund statt der Fläche für alles, und seit
-   v2.3.2 ist auch davon nur noch die Marke übrig: Die Striche bleiben
-   durchsichtig (oben), das Logo weicht auf dem Telefon (unten). Der Kopf
-   selbst ist in jedem Scrollzustand durchsichtig.
+   Hintertür — und genau so hat ihn der Verein auch gesehen. Danach trug
+   jedes Stück seinen eigenen Grund statt der Fläche für alles; seit v2.3.2
+   ist auch davon nichts mehr übrig: Striche und Marke stehen frei über der
+   Seite (oben), auf dem Telefon weicht die Marke beim Scrollen ganz (unten).
+   Der Kopf selbst ist in jedem Scrollzustand durchsichtig.
 
    An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Nur mit
    assets/nav.js gibt es überhaupt einen Scrollzustand und ein erreichbares
@@ -723,33 +723,28 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-js .idt-nav-overlay .site-header__actions,
 .idt-js .idt-nav-overlay .main-nav { pointer-events: auto; }
 
-/* Auch die Marke bekommt beim Scrollen ihren eigenen Grund — dieselbe
-   Papierfläche wie die Striche, nur in ihrer Form. Ohne sie läuft der Text
-   mitten durch die Wortmarke, und beides wird unlesbar (nachgestellt bei
-   1280×800: Der Fließtext kreuzt das Logo auf halber Höhe). Auf dem
-   papierfarbenen Grund des Themes sieht man die Fläche nicht, sie deckt aber
-   den Text dahinter ab; über einem Bild trägt sie die Marke.
+/* Auch die Marke stand beim Scrollen bis v2.3.1 auf einer Papierfläche —
+   derselben wie die Striche, nur in ihrer Form —, damit der Fließtext nicht
+   mitten durch die Wortmarke läuft. Sie ist mit der Fläche unter den Strichen
+   zusammen entfernt worden: Auf dem Desktop steht die Marke für sich, ohne
+   abgesetztes Kästchen. Übrig bleibt der Übergang für das Ausblenden auf dem
+   Telefon (s. unten) — dort weicht die Marke beim Scrollen weiterhin ganz.
 
-   Die Polsterung steht dauerhaft und wird durch negative Ränder wieder
-   aufgehoben: So sitzt das Logo an genau derselben Stelle wie vorher und
-   springt nicht, wenn die Fläche beim Scrollen dazukommt. */
+   Mit der Fläche ist auch ihre Polsterung weg: Sie stand nur, damit das
+   Kästchen etwas Luft um das Logo hatte, und wurde durch gleich große
+   negative Ränder wieder aufgehoben, damit das Logo beim Scrollen nicht
+   springt. Wer sie zurückholt, rückt die Inverse-Fassung des Logos mit
+   (deren `top`/`left` weiter unten sind genau diese Werte). */
 .idt-nav-overlay .site-header__brand {
-  padding: var(--space-2) var(--space-3);
-  margin: calc(var(--space-2) * -1) calc(var(--space-3) * -1);
-  background: transparent; box-shadow: none;
-  transition: background var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out),
-              opacity var(--dur-base) var(--ease-out);
-}
-.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
-  background: var(--idt-paper); box-shadow: var(--shadow-sm);
+  transition: opacity var(--dur-base) var(--ease-out);
 }
 
-/* Auf dem Telefon weicht die Marke stattdessen ganz. Dort ist der Kopf so
-   schmal, dass die Papierfläche unter dem Logo fast bis zu den Strichen
-   reichte — und damit wäre der Balken wieder da, nur in zwei Teilen. Die
-   Marke ist ohnehin gleich wieder zu sehen: am Seitenanfang und, sobald man
-   das Menü öffnet (s. unten). */
+/* Auf dem Telefon weicht die Marke stattdessen ganz. Ohne Fläche darunter
+   steht sie frei über der Seite — auf dem Desktop trägt sie das, dort ist
+   rechts neben ihr genug Leere. Auf dem schmalen Telefon dagegen kreuzt der
+   Fließtext die Wortmarke über ihre ganze Breite, und beides wird unlesbar.
+   Die Marke ist ohnehin gleich wieder zu sehen: am Seitenanfang und, sobald
+   man das Menü öffnet (s. unten). */
 @media (max-width: 900px) {
   .idt-js .idt-nav-overlay .site-header__brand {
     transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
@@ -788,14 +783,10 @@ html.idt-searchbox-open { overflow: hidden; }
 /* Schrift und Linien auf der Tinte in Papierfarbe. */
 .idt-nav-open .idt-nav-overlay .main-nav a,
 .idt-nav-open .idt-nav-overlay .nav-toggle { color: var(--text-on-inverse); }
-/* Steht nach der Papierfläche des gescrollten Zustands (oben) und nimmt sie
-   wieder weg: Die Marke trüge sonst mitten auf der Tinte ein weißes Kästchen.
-   Offen trägt beides die Fläche des ganzen Kopfes. Das Kreuz steht nur der
-   Vollständigkeit halber mit dabei — es ist ohnehin durchsichtig. */
-.idt-nav-open .idt-nav-overlay .nav-toggle,
-.idt-nav-open .idt-nav-overlay .site-header__brand {
-  background: transparent; border-color: transparent; box-shadow: none;
-}
+/* Hier stand die Gegenregel zu den Papierflächen des gescrollten Zustands:
+   Kreuz und Marke hätten auf der Tinte sonst je ein weißes Kästchen getragen.
+   Seit beide Flächen weg sind (s. oben), gibt es nichts mehr zurückzunehmen —
+   offen wie geschlossen trägt allein der Kopf die Fläche. */
 .idt-nav-open .idt-nav-overlay .nav-toggle:hover { color: var(--idt-cyan); border-color: transparent; }
 .idt-nav-open .idt-nav-overlay .main-nav a:hover { color: var(--accent-secondary); border-bottom-color: var(--accent-secondary); }
 .idt-nav-open .idt-nav-overlay .main-nav .current-menu-item > a { border-bottom-color: var(--idt-cyan); }
@@ -811,12 +802,11 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-overlay .site-header__brand,
 .idt-nav-overlay .site-header__actions { position: relative; z-index: 2; }
 .idt-nav-overlay .main-nav { z-index: 1; }
-/* Deckungsgleich über dem Logo darunter: Die Versatzwerte sind genau die
-   Polsterung des Marken-Blocks (s. oben, Papierfläche beim Scrollen) — sie
-   müssen mit ihr zusammen geändert werden, sonst rutscht die helle Fassung
-   neben die dunkle. */
+/* Deckungsgleich über dem Logo darunter: Der Marken-Block trägt seit v2.3.2
+   keine Polsterung mehr (s. oben), die helle Fassung sitzt also bündig in
+   seiner Ecke. Kommt dort wieder ein Versatz dazu, muss er hier mit. */
 .idt-nav-overlay .site-header__logo-inverse {
-  position: absolute; top: var(--space-2); left: var(--space-3);
+  position: absolute; top: 0; left: 0;
   height: var(--header-logo-h); width: auto;
   opacity: 0; transition: opacity var(--dur-base) var(--ease-out); pointer-events: none;
 }

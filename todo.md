@@ -8,16 +8,27 @@ _(keine offenen Aufgaben)_
   Rückmeldungen zum aufklappbaren Menü: „Mach das Menü beim Scrollen komplett
   durchsichtig" und „beim Mobil kriegt das manchmal einen violetten Rahmen,
   wenn ich einen Menüpunkt auswähle — das Cyan ist gut, das so lassen."
-  - **Keine Papierfläche mehr unter den drei Strichen** (`style.css` 5c). Seit
-    v2.2.1 legte sich beim Scrollen ein weißes Kästchen unter die Schaltfläche,
-    damit die 2,5 px dünnen Linien über laufendem Text zu finden bleiben. Über
-    einem Bild war das der letzte sichtbare Rest des Menübands — genau das, was
-    bei dieser Menüform weg soll. Die Schaltfläche ist jetzt in jedem
-    Scrollzustand durchsichtig; der Kommentar an der Stelle nennt den
+  - **Keine Papierflächen mehr im Kopf** (`style.css` 5c). Seit v2.2.1 legte
+    sich beim Scrollen je ein weißes Kästchen unter die drei Striche und unter
+    die Wortmarke, damit die 2,5 px dünnen Linien und das Logo über laufendem
+    Text zu finden bleiben. Über einem Bild war das der letzte sichtbare Rest
+    des Menübands — genau das, was bei dieser Menüform weg soll. Beide sind
+    entfernt; Striche und Marke stehen frei über der Seite, der Kopf ist
+    vollständig durchsichtig. Der Kommentar an der Stelle nennt den
     Schlagschatten an `.nav-toggle__bar` als Weg, falls die Striche über einem
-    unruhigen Bild verschwinden. Die Papierfläche unter der Wortmarke bleibt:
-    Dort läuft sonst der Fließtext mitten durch das Logo, und auf dem Telefon
-    weicht die Marke ohnehin ganz.
+    unruhigen Bild verschwinden.
+  - **Mit der Fläche unter der Marke fällt ihre Polsterung weg.** Sie stand nur,
+    damit das Kästchen Luft um das Logo hatte, und wurde durch gleich große
+    negative Ränder wieder aufgehoben, damit nichts springt. Die absolut
+    gesetzte Inverse-Fassung des Logos (die auf der Tinte des offenen Menüs
+    eingeblendet wird) hing an genau diesen Werten und sitzt jetzt auf
+    `top: 0; left: 0`. Ebenfalls gegenstandslos und entfernt: die Gegenregel,
+    die beide Flächen im offenen Zustand wieder wegnahm.
+  - **Auf dem Telefon weicht die Marke weiter.** Dort kreuzt der Fließtext die
+    Wortmarke über ihre ganze Breite; auf dem Desktop ist rechts daneben genug
+    Leere, die Marke trägt sich dort selbst. Damit bleibt `.idt-nav-scrolled`
+    (aus `assets/nav.js`) für eine einzige Regel übrig — der Kommentar dort
+    sagt das jetzt auch.
   - **Fokus im Menü als Linie statt als Rahmen** (`style.css` 5, neuer Block
     hinter den Untermenü-Regeln). Der violette Kasten kam aus dem globalen
     `:focus-visible` in Abschnitt 3 — und stand öfter, als jemand die Tastatur
