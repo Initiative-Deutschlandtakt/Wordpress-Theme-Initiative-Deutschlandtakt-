@@ -420,6 +420,11 @@ function idt_content_stilelemente() {
 <!-- wp:shortcode -->[btn href="#" variant="primary" arrow="true"]Mitglied werden[/btn] [btn href="#" variant="outline"]Mehr erfahren[/btn] [btn href="#" variant="secondary" arrow="true"]Alle Neuigkeiten[/btn]<!-- /wp:shortcode -->
 <!-- wp:paragraph --><p>[tag color="violet"]Stellungnahme[/tag] [tag color="cyan"]Gesetzgebung[/tag] [tag color="yellow"]Prognose[/tag]</p><!-- /wp:paragraph -->
 <!-- wp:paragraph --><p><code>[btn variant="primary" arrow="true"]…[/btn]</code> · <code>[tag color="cyan"]…[/tag]</code></p><!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":2} --><h2>Mail-Link</h2><!-- /wp:heading -->
+<!-- wp:paragraph --><p>Post: Initiative Deutschlandtakt e. V., [Straße Hausnummer], [PLZ Ort]<br>Mail: [email]mail@initiative-deutschlandtakt.de[/email]</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>Mit eigener Beschriftung und vorbelegtem Betreff: [email address="mail@initiative-deutschlandtakt.de" subject="Mitgliedschaft"]Schreib uns zur Mitgliedschaft[/email]</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p><code>[email]adresse@example.org[/email]</code> · <code>[email address="…" subject="…" icon="false"]Beschriftung[/email]</code> — die Adresse steht im Quelltext nur verschlüsselt, Adress-Sammler finden sie dort nicht.</p><!-- /wp:paragraph -->
 HTML;
 }
 
@@ -439,7 +444,7 @@ function idt_content_impressum() {
 <!-- wp:paragraph --><p>[Vorname Name, Funktion]</p><!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":2} --><h2>Kontakt</h2><!-- /wp:heading -->
-<!-- wp:paragraph --><p>E-Mail: <a href="mailto:mail@initiative-deutschlandtakt.de">mail@initiative-deutschlandtakt.de</a><br>[Telefon, optional]</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>Mail: [email]mail@initiative-deutschlandtakt.de[/email]<br>[Telefon, optional]</p><!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":2} --><h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2><!-- /wp:heading -->
 <!-- wp:paragraph --><p>[Vorname Name, Anschrift wie oben]</p><!-- /wp:paragraph -->

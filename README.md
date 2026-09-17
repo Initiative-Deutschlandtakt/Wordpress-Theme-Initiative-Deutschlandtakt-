@@ -176,6 +176,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[buttonstack bg="ink"]…[/buttonstack]` | Button-Stack: derselbe Baustein nur mit den Linkzeilen — ohne Eyebrow, Überschrift und Vortext; `bg` wie beim Themenblock |
 | `[beitragsliste count="3"]` | dynamische Beitragsliste im Zeilen-Layout (Datum + Chip links, Titel und Anriss rechts) |
 | `[socialrow style="beige" align="center"]…[/socialrow]` | Social-Leiste, eine Zeile je Icon („Plattform \| Link"); `style="beige"` für farbige Flächen |
+| `[email]adresse@example.org[/email]` | Mail-Link: baut aus der Adresse den `mailto:`-Link und zeigt sie an; `address="…"` plus Inhalt für eine eigene Beschriftung, `subject="…"` belegt die Betreffzeile vor, `icon="false"` lässt das Briefzeichen weg |
 | `[logo size="120" color="paper"]` | Logo-Sperrsatz: dreizeilige Wortmarke, rechts daneben das Signet (s. u.) |
 
 ### Im Editor bearbeiten statt tippen
@@ -186,7 +187,7 @@ Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 
 **Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
 Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
-Button-Stack, News-Karte, Social-Leiste, Beiträge-Übersicht, Beitragsliste): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
+Button-Stack, News-Karte, Social-Leiste, Mail-Link, Beiträge-Übersicht, Beitragsliste): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
 in der Seitenleiste (Text, Auswahl, Schalter, Schieberegler) mit **Live-Vorschau**.
@@ -290,6 +291,32 @@ beim Trenner als *Hintergrund* ab, zeichnet den Strich selbst aber als Rahmen �
 ohne die Regeln in `style.css` (Abschnitt 7d) bleibt ein gewählter Verlauf
 deshalb unsichtbar und der Trenner grau. Registriert sind die Stile in
 `inc/blocks.php` (`idt_register_core_block_styles()`).
+
+### Mail-Link (Kontaktangaben)
+
+Für Kontaktwege in Impressum, Kontaktseite oder Fließtext gibt es den Baustein
+**Mail-Link** — Block *Mail-Link* im Inserter (Kategorie *Deutschlandtakt*) bzw.
+`[email]…[/email]`. Er baut aus der Adresse den `mailto:`-Link, den man sonst von
+Hand als HTML einsetzen müsste:
+
+```
+Post: Initiative Deutschlandtakt e. V., Schützengasse 18, 01067 Dresden
+Mail: [email]kontakt@initiative-deutschlandtakt.de[/email]
+```
+
+| Feld / Attribut | Wirkung |
+|---|---|
+| **E-Mail-Adresse** (`address`) | die Adresse; im Shortcode darf sie auch einfach zwischen den Klammern stehen |
+| **Beschriftung** (Inhalt) | leer = die Adresse wird angezeigt; sonst der eingegebene Text (z. B. „Schreib uns") |
+| **Betreff vorbelegen** (`subject`) | füllt die Betreffzeile im Mailprogramm des Besuchers vor |
+| **Briefzeichen anzeigen** (`icon="false"`) | Schalter für das Briefumschlag-Zeichen vor der Adresse — aus, wenn der Link mitten im Satz steht |
+
+`[mail]…[/mail]` ist dieselbe Schreibweise mit kürzerem Namen. Die Adresse steht
+im Quelltext nur als HTML-Entities (`antispambot()`), sodass Adress-Sammler dort
+kein zusammenhängendes `name@domain` finden; im Browser sieht und klickt man die
+normale Adresse. Soll der Kontaktweg eine Schaltfläche sein statt ein Link im
+Text, nimmt auch der Button eine Mailadresse:
+`[btn href="mailto:kontakt@…" variant="primary"]Schreib uns[/btn]`.
 
 ### Knotendreieck (bewegte Grafik zum Knotenprinzip)
 

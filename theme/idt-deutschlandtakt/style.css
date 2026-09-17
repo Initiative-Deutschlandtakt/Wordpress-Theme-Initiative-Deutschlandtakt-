@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.2.2
+Version: 2.3.0
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1337,6 +1337,24 @@ body.idt-verlauf {
 .idt-socialrow--left   { justify-content: flex-start; }
 .idt-socialrow--center { justify-content: center; }
 .idt-socialrow--right  { justify-content: flex-end; }
+
+/* Mail-Link — Briefzeichen vor der Adresse ([email] / Block „Mail-Link").
+   Der Link bleibt ein Inline-Element, damit er sich im Fließtext genauso
+   umbricht wie jeder andere: das Zeichen steht per vertical-align auf der
+   Schriftlinie, nicht in einer eigenen Flex-Zeile. Es läuft in der Farbe des
+   Links mit (currentColor) — so stimmt es auch auf dunklen Flächen, wo die
+   Schrift papierfarben ist. */
+.idt-email svg {
+  width: 1.05em; height: 1.05em; vertical-align: -0.16em; margin-right: 6px;
+  flex: none; /* falls der Link in einer Flex-Zeile steht (z. B. im Fuß) */
+}
+/* Unterstrichen wird beim Hover nur die Adresse, nicht das Briefzeichen. */
+.idt-email:hover { text-decoration: none; }
+.idt-email:hover span { text-decoration: underline; text-underline-offset: 0.18em; }
+.idt-email:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+/* Lange Adressen dürfen auf schmalen Bildschirmen brechen, statt aus der
+   Textspalte zu laufen. */
+.idt-email span { overflow-wrap: anywhere; }
 
 /* Eyebrow — Mono-Label über Überschriften */
 .eyebrow, .idt-eyebrow {

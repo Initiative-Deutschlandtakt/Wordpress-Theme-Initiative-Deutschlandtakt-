@@ -342,6 +342,18 @@ function idt_blocks_config() {
 			),
 			'render'   => function ( $a ) { return idt_sc_socialrow( array( 'style' => $a['style'], 'align' => $a['align'] ), $a['links'] ); },
 		),
+		'email' => array(
+			'title'    => __( 'Mail-Link', 'idt' ),
+			'icon'     => 'email-alt',
+			'keywords' => array( 'email', 'e-mail', 'mail', 'mailto', 'kontakt', 'adresse', 'dt' ),
+			'fields'   => array(
+				array( 'key' => 'address', 'label' => __( 'E-Mail-Adresse', 'idt' ), 'type' => 'text', 'default' => 'mail@initiative-deutschlandtakt.de' ),
+				array( 'key' => 'text', 'label' => __( 'Beschriftung (leer = Adresse anzeigen)', 'idt' ), 'type' => 'text', 'default' => '' ),
+				array( 'key' => 'subject', 'label' => __( 'Betreff vorbelegen (optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
+				array( 'key' => 'icon', 'label' => __( 'Briefzeichen anzeigen', 'idt' ), 'type' => 'toggle', 'default' => true ),
+			),
+			'render'   => function ( $a ) { return idt_sc_email( array( 'address' => $a['address'], 'subject' => $a['subject'], 'icon' => $a['icon'] ? 'true' : 'false' ), $a['text'] ); },
+		),
 		'logo' => array(
 			'title'    => __( 'Logo (Wortmarke + Signet)', 'idt' ),
 			'icon'     => 'admin-site-alt3',
