@@ -4,6 +4,56 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Menü-Schaltfläche durchsichtig, Fokus ohne Kasten (v2.3.3).** Zwei
+  Rückmeldungen zum aufklappbaren Menü: „Mach das Menü beim Scrollen komplett
+  durchsichtig" und „beim Mobil kriegt das manchmal einen violetten Rahmen,
+  wenn ich einen Menüpunkt auswähle — das Cyan ist gut, das so lassen."
+  - **Keine Papierflächen mehr im Kopf** (`style.css` 5c). Seit v2.2.1 legte
+    sich beim Scrollen je ein weißes Kästchen unter die drei Striche und unter
+    die Wortmarke, damit die 2,5 px dünnen Linien und das Logo über laufendem
+    Text zu finden bleiben. Über einem Bild war das der letzte sichtbare Rest
+    des Menübands — genau das, was bei dieser Menüform weg soll. Beide sind
+    entfernt; Striche und Marke stehen frei über der Seite, der Kopf ist
+    vollständig durchsichtig. Der Kommentar an der Stelle nennt den
+    Schlagschatten an `.nav-toggle__bar` als Weg, falls die Striche über einem
+    unruhigen Bild verschwinden.
+  - **Mit der Fläche unter der Marke fällt ihre Polsterung weg.** Sie stand nur,
+    damit das Kästchen Luft um das Logo hatte, und wurde durch gleich große
+    negative Ränder wieder aufgehoben, damit nichts springt. Die absolut
+    gesetzte Inverse-Fassung des Logos (die auf der Tinte des offenen Menüs
+    eingeblendet wird) hing an genau diesen Werten und sitzt jetzt auf
+    `top: 0; left: 0`. Ebenfalls gegenstandslos und entfernt: die Gegenregel,
+    die beide Flächen im offenen Zustand wieder wegnahm.
+  - **Nachgereicht: Die Marke bleibt auch auf dem Telefon stehen.** „Das Logo
+    bitte jetzt immer da lassen, aber weiterhin ohne Hintergrundquadrat."
+    Bisher wich sie dort beim Scrollen ganz — das war die Antwort darauf, dass
+    der Fließtext die Wortmarke auf schmalem Kopf über ihre ganze Breite
+    kreuzt. Entschieden ist es gegen die Lesbarkeit an dieser einen Stelle und
+    für einen Kopf, der immer derselbe ist.
+  - **Damit ist der Scrollzustand des Kopfes ganz entfallen.** An
+    `.idt-nav-scrolled` hingen zuletzt die beiden Papierflächen und das
+    Ausblenden der Marke; ohne Abnehmer setzt `assets/nav.js` die Klasse nicht
+    mehr und braucht auch seinen Scroll-Listener (rAF-gedrosselt, 40 px
+    Schwelle) nicht länger. Die Marke hat in `style.css` 5c jetzt gar keine
+    eigene Regel mehr, nur noch `position: relative` samt z-index weiter
+    unten. Kommentare in beiden Dateien und der Abschnitt „Form des
+    Hauptmenüs" in der `README.md` sind nachgezogen.
+  - **Fokus im Menü als Linie statt als Rahmen** (`style.css` 5, neuer Block
+    hinter den Untermenü-Regeln). Der violette Kasten kam aus dem globalen
+    `:focus-visible` in Abschnitt 3 — und stand öfter, als jemand die Tastatur
+    anfasste: `assets/nav.js` setzt den Fokus beim Öffnen auf den ersten Punkt
+    und beim Schließen zurück auf die Schaltfläche, auf dem Telefon also mitten
+    im Antippen. Der Fokus ist nicht weg, er sieht jetzt aus wie der
+    Mauszeiger-Zustand: Schrift und Linie im Markenton, auf der Tinte des
+    offenen Menüs in Cyan — das bleibt damit unverändert. Dazu
+    `-webkit-tap-highlight-color: transparent` für Menüpunkte und
+    Schaltfläche: Mobile Browser legen beim Antippen eine eigene, teils aus der
+    Linkfarbe eingefärbte Fläche darüber, die auch ohne Fokus als violetter
+    Kasten erscheint.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün).
+    `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus dieser
+    Umgebung nicht erreichbar.
+
 - **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
   Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche
   ähnlich groß machen wie die anderen?" Bisher stand die Suche unter der
