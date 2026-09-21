@@ -50,6 +50,111 @@ _(keine offenen Aufgaben)_
     nachgemessen. `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus
     dieser Umgebung nicht erreichbar.
 
+- **Menü-Schaltfläche durchsichtig, Fokus ohne Kasten (v2.3.3).** Zwei
+  Rückmeldungen zum aufklappbaren Menü: „Mach das Menü beim Scrollen komplett
+  durchsichtig" und „beim Mobil kriegt das manchmal einen violetten Rahmen,
+  wenn ich einen Menüpunkt auswähle — das Cyan ist gut, das so lassen."
+  - **Keine Papierflächen mehr im Kopf** (`style.css` 5c). Seit v2.2.1 legte
+    sich beim Scrollen je ein weißes Kästchen unter die drei Striche und unter
+    die Wortmarke, damit die 2,5 px dünnen Linien und das Logo über laufendem
+    Text zu finden bleiben. Über einem Bild war das der letzte sichtbare Rest
+    des Menübands — genau das, was bei dieser Menüform weg soll. Beide sind
+    entfernt; Striche und Marke stehen frei über der Seite, der Kopf ist
+    vollständig durchsichtig. Der Kommentar an der Stelle nennt den
+    Schlagschatten an `.nav-toggle__bar` als Weg, falls die Striche über einem
+    unruhigen Bild verschwinden.
+  - **Mit der Fläche unter der Marke fällt ihre Polsterung weg.** Sie stand nur,
+    damit das Kästchen Luft um das Logo hatte, und wurde durch gleich große
+    negative Ränder wieder aufgehoben, damit nichts springt. Die absolut
+    gesetzte Inverse-Fassung des Logos (die auf der Tinte des offenen Menüs
+    eingeblendet wird) hing an genau diesen Werten und sitzt jetzt auf
+    `top: 0; left: 0`. Ebenfalls gegenstandslos und entfernt: die Gegenregel,
+    die beide Flächen im offenen Zustand wieder wegnahm.
+  - **Nachgereicht: Die Marke bleibt auch auf dem Telefon stehen.** „Das Logo
+    bitte jetzt immer da lassen, aber weiterhin ohne Hintergrundquadrat."
+    Bisher wich sie dort beim Scrollen ganz — das war die Antwort darauf, dass
+    der Fließtext die Wortmarke auf schmalem Kopf über ihre ganze Breite
+    kreuzt. Entschieden ist es gegen die Lesbarkeit an dieser einen Stelle und
+    für einen Kopf, der immer derselbe ist.
+  - **Damit ist der Scrollzustand des Kopfes ganz entfallen.** An
+    `.idt-nav-scrolled` hingen zuletzt die beiden Papierflächen und das
+    Ausblenden der Marke; ohne Abnehmer setzt `assets/nav.js` die Klasse nicht
+    mehr und braucht auch seinen Scroll-Listener (rAF-gedrosselt, 40 px
+    Schwelle) nicht länger. Die Marke hat in `style.css` 5c jetzt gar keine
+    eigene Regel mehr, nur noch `position: relative` samt z-index weiter
+    unten. Kommentare in beiden Dateien und der Abschnitt „Form des
+    Hauptmenüs" in der `README.md` sind nachgezogen.
+  - **Fokus im Menü als Linie statt als Rahmen** (`style.css` 5, neuer Block
+    hinter den Untermenü-Regeln). Der violette Kasten kam aus dem globalen
+    `:focus-visible` in Abschnitt 3 — und stand öfter, als jemand die Tastatur
+    anfasste: `assets/nav.js` setzt den Fokus beim Öffnen auf den ersten Punkt
+    und beim Schließen zurück auf die Schaltfläche, auf dem Telefon also mitten
+    im Antippen. Der Fokus ist nicht weg, er sieht jetzt aus wie der
+    Mauszeiger-Zustand: Schrift und Linie im Markenton, auf der Tinte des
+    offenen Menüs in Cyan — das bleibt damit unverändert. Dazu
+    `-webkit-tap-highlight-color: transparent` für Menüpunkte und
+    Schaltfläche: Mobile Browser legen beim Antippen eine eigene, teils aus der
+    Linkfarbe eingefärbte Fläche darüber, die auch ohne Fokus als violetter
+    Kasten erscheint.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün).
+    `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus dieser
+    Umgebung nicht erreichbar.
+
+- **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
+  Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche
+  ähnlich groß machen wie die anderen?" Bisher stand die Suche unter der
+  Haarlinie in Lesegröße (`--fs-body`, normal, gemischte Schreibung), während
+  die Menüpunkte darüber überschriftengroß und versal sind — das las sich wie
+  eine Fußnote und war mit dem Daumen schlechter zu treffen. Jetzt trägt sie in
+  `style.css` 5c dieselbe Stufe wie die Punkte: `--fs-h2`, fett, versal,
+  `--ls-wide`.
+  - **Gedämpft bleibt sie trotzdem.** Farbe (`--text-on-inverse-muted`) und die
+    trennende Haarlinie sind unverändert — die Suche ist ein Werkzeug, kein
+    weiterer Ort auf der Seite. Die Größe macht sie erreichbar, die Farbe hält
+    sie in zweiter Reihe.
+  - **Die Lupe misst jetzt in `em`** statt in festen 18 px und läuft damit in
+    allen drei Größenstufen mit der Schrift mit.
+  - **Beide Flachstufen nachgezogen** (`max-height: 640px` bzw. `440px`): Die
+    Suche folgt den Menüpunkten auf `--fs-lead` bzw. `--fs-body`, damit das Menü
+    im Querformat weiterhin ohne Scrollen vollständig sichtbar bleibt.
+  - Betrifft nur die Menüform „aufklappbar" (`.idt-nav-overlay`); im Menüband
+    sitzt die Suche als Lupe im Kopf und ist unberührt. Geprüft mit
+    `check-theme.sh` und `check-zip.sh`.
+
+- **Bildunterschriften kursiv (v2.3.1).** Rückmeldung: „Die Darstellung ist nicht
+  schön, das setzt sich nicht vom regulären Text ab." Stimmt — das Theme hatte
+  für die Legende des Kern-Bildblocks gar keine Regel. Ohne `theme.json` blieb
+  nur, was WordPress selbst mitbringt: Fließtextgröße in Textfarbe, dazu der
+  volle Absatzabstand aus `.entry img` zwischen Bild und Zeile. Die Unterschrift
+  las sich dadurch wie der Anfang des nächsten Absatzes.
+  - **Eine Regel für alle Bildunterschriften** in `style.css` Abschnitt 8:
+    kursiv, `--fs-sm`, `--text-muted`, linksbündig, `--space-2` unter dem Bild.
+    Sie trifft `.wp-element-caption` (Bildblock und Galerie), `.wp-caption-text`
+    (der alte `[caption]`-Shortcode, den der html5-Theme-Support zulässt) und
+    `.entry figcaption` — Letzteres, damit die Regel im Frontend auch dann
+    gewinnt, wenn der Kern für den Bildblock eine eigene Legendenregel mitbringt.
+    Im Editor sorgt der Präfix `.editor-styles-wrapper` von `add_editor_style()`
+    ohnehin dafür; die Zeile steht dort also genauso wie auf der Seite.
+  - **Echte Kursive, keine schräggestellte.** Abschnitt 1 lädt Inter Variable
+    schon seit dem Umzug auf selbst gehostete Schriften auch als Italic
+    (`assets/fonts/InterVariable-Italic.woff2`) — der Browser muss nichts
+    synthetisieren.
+  - **Bild und Legende sind ein Block.** Der Abstand aus `.entry img` wandert für
+    `figure.wp-block-image`, `figure.wp-block-gallery` und `figure.wp-caption` um
+    die Figur herum, das Bild darin steht ohne eigenen Rand. Bewusst nur für
+    diese drei: Eigene Bausteine wie `.idt-knotendreieck` bringen ihre Maße mit,
+    eine allgemeine `.entry figure`-Regel hätte deren `margin` überschrieben.
+  - **Knotendreieck hängt jetzt an derselben Regel.** Seine `figcaption` trug die
+    Klasse `wp-element-caption` schon immer; die eigene Regel in Abschnitt 7
+    nennt darum nur noch, was abweicht (mittig, etwas mehr Luft). Größe, Farbe
+    und Kursive stehen an einer Stelle statt an zweien. Dabei aufgefallen und
+    gleich mit erledigt: `.idt-knotendreieck > figcaption` war spezifitätsgleich
+    mit der neuen Regel `.entry figcaption`, die weiter unten steht — die Grafik
+    hätte im Seiteninhalt eine linksbündige Legende bekommen. Der Selektor heißt
+    deshalb jetzt `figure.idt-knotendreieck > figcaption`.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün). `smoke-test.sh`
+    lief hier nicht: `api.wordpress.org` ist aus dieser Umgebung nicht erreichbar.
+
 - **Mail-Link als eigener Baustein (v2.3.0).** Rückmeldung aus dem Verein: Bei
   den Kontaktangaben („Post: … / Mail: kontakt@…") fehlte der Weg zur
   verlinkten Adresse — `[email]…[/email]` gab es nicht, und von Hand bliebe nur

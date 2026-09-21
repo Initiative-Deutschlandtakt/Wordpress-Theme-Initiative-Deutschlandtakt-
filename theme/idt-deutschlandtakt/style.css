@@ -413,6 +413,32 @@ blockquote {
 }
 .main-nav .sub-menu .current-menu-item > a { color: var(--accent-primary); }
 
+/* ---- Fokus im Menü: Linie statt Kasten ---- */
+/* Abschnitt 3 legt um jedes fokussierte Element einen violetten Rahmen. Im
+   Menü steht der öfter, als jemand die Tastatur anfasst: assets/nav.js setzt
+   den Fokus beim Öffnen auf den ersten Punkt und beim Schließen zurück auf
+   die Schaltfläche — auf dem Telefon also mitten im Antippen. Der Kasten
+   wirkt dort wie ein Fehler und nicht wie ein Hinweis.
+
+   Der Fokus verschwindet deshalb nicht, er wechselt die Form: dieselbe
+   Rückmeldung wie unter dem Mauszeiger — Schrift und Linie im Markenton,
+   auf der Tinte des offenen Menüs in Cyan. Wer mit der Tabulatortaste geht,
+   sieht seinen Punkt also weiterhin, nur ohne Rahmen darum.
+
+   Die Regel steht bewusst nach den Untermenü-Regeln darüber: Sie ist
+   spezifitätsgleich mit `.main-nav .sub-menu a`, die Reihenfolge entscheidet.
+   Dazu der abgeschaltete Tipp-Schimmer: Mobile Browser legen beim Antippen
+   eine eigene Fläche über den Link, teils eingefärbt aus der Linkfarbe — das
+   ist der violette Kasten, der auch ohne Fokus erscheint. */
+.main-nav a { -webkit-tap-highlight-color: transparent; }
+.main-nav a:focus-visible {
+  outline: none;
+  color: var(--accent-primary); border-bottom-color: var(--accent-primary);
+}
+.idt-nav-open .idt-nav-overlay .main-nav a:focus-visible {
+  color: var(--accent-secondary); border-bottom-color: var(--accent-secondary);
+}
+
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
   display: none; align-items: center;
@@ -432,6 +458,14 @@ blockquote {
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+/* Fokus wie oben bei den Menüpunkten: Die Schaltfläche bekommt ihn zurück,
+   sobald das Menü zugeht (assets/nav.js) — der violette Rahmen aus Abschnitt 3
+   stünde also nach jedem Schließen da. Die drei Striche färben sich
+   stattdessen um, wie beim Überfahren. */
+.nav-toggle { -webkit-tap-highlight-color: transparent; }
+.nav-toggle:focus-visible { outline: none; color: var(--accent-primary); }
+.idt-nav-open .idt-nav-overlay .nav-toggle:focus-visible { color: var(--idt-cyan); }
 
 @media (max-width: 900px) {
   .nav-toggle { display: flex; }
@@ -645,19 +679,17 @@ html.idt-searchbox-open { overflow: hidden; }
 }
 .idt-js .idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: transparent; }
 
-/* Gescrollt bekommen die Striche eine eigene Papierfläche untergelegt — nicht
-   der ganze Kopf, sondern nur sie. Drei 2,5 px dünne Linien über laufendem
-   Text sind sonst schlicht nicht zu finden. Eckig wie alles im Auftritt
-   (--radius-sm ist 0). Die Klasse setzt assets/nav.js ab 40 px Scrollhöhe.
+/* Hier stand bis v2.3.1 eine Papierfläche, die sich beim Scrollen unter die
+   drei Striche legte, damit die dünnen Linien über laufendem Text zu finden
+   bleiben. Sie ist bewusst entfernt: Das weiße Kästchen war über einem Bild
+   der letzte sichtbare Rest des Menübands — genau das, was bei dieser
+   Menüform weg sollte. Die Schaltfläche bleibt in jedem Scrollzustand
+   durchsichtig, es trägt sie nur noch ihre eigene Tintenfarbe.
 
-   Bewusst ohne Kante: Eine Haarlinie zeichnete auf dem papierfarbenen Grund
-   des Themes wieder genau den Kasten, der hier weg sollte (nachgestellt bei
-   390 px) — und über einem Bild braucht es sie nicht, dort trägt schon die
-   Papierfläche selbst. Bleibt der flache Schatten, damit die Fläche auf
-   mittleren Tönen nicht wie ein Schnitt im Bild wirkt. */
-.idt-nav-scrolled .idt-nav-overlay .nav-toggle {
-  background: var(--idt-paper); box-shadow: var(--shadow-sm);
-}
+   Also nicht versehentlich wieder einsetzen. Wenn die Striche über einem
+   unruhigen Bild verschwinden, ist der Weg ein Schlagschatten an den Linien
+   (`filter: drop-shadow(...)` an `.nav-toggle__bar`) — der trägt sie, ohne
+   wieder eine Fläche aufzuziehen. */
 
 /* ---- Kein Balken, auch nicht beim Scrollen ---- */
 /* Bei dieser Menüform entfällt das Band als Fläche — kein Hintergrund, keine
@@ -667,16 +699,17 @@ html.idt-searchbox-open { overflow: hidden; }
 
    Bis v2.2.1 legte sich beim Scrollen die volle Papierfläche darunter, damit
    die Schrift nicht durch das Logo läuft. Das war der Balken durch die
-   Hintertür — und genau so hat ihn der Verein auch gesehen. Statt der Fläche
-   für alles trägt jetzt jedes Stück seinen eigenen Grund: die Striche eine
-   Papierfläche (oben), das Logo weicht auf dem Telefon (unten). Der Kopf
-   selbst bleibt in jedem Scrollzustand durchsichtig.
+   Hintertür — und genau so hat ihn der Verein auch gesehen. Danach trug
+   jedes Stück seinen eigenen Grund statt der Fläche für alles; seit v2.3.3
+   ist auch davon nichts mehr übrig: Marke und Striche stehen frei über der
+   Seite, auf jeder Breite und durchgehend. Der Kopf ändert sich beim
+   Scrollen überhaupt nicht mehr — es gibt keinen Scrollzustand.
 
-   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Nur mit
-   assets/nav.js gibt es überhaupt einen Scrollzustand und ein erreichbares
-   Menü. Ohne JavaScript bliebe der Kopf sonst dauerhaft transparent, ohne
-   dass irgendetwas das auffinge — dann also lieber das gewohnte Menüband
-   aus Abschnitt 5, zu dem die Form ohne JavaScript ohnehin zurückfällt. */
+   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Ohne
+   assets/nav.js gibt es kein erreichbares Menü. Der Kopf bliebe sonst
+   dauerhaft transparent, ohne dass irgendetwas das auffinge — dann also
+   lieber das gewohnte Menüband aus Abschnitt 5, zu dem die Form ohne
+   JavaScript ohnehin zurückfällt. */
 .idt-js .idt-nav-overlay .site-header {
   background: transparent; border-bottom-color: transparent;
   backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -690,48 +723,20 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-js .idt-nav-overlay .site-header__actions,
 .idt-js .idt-nav-overlay .main-nav { pointer-events: auto; }
 
-/* Auch die Marke bekommt beim Scrollen ihren eigenen Grund — dieselbe
-   Papierfläche wie die Striche, nur in ihrer Form. Ohne sie läuft der Text
-   mitten durch die Wortmarke, und beides wird unlesbar (nachgestellt bei
-   1280×800: Der Fließtext kreuzt das Logo auf halber Höhe). Auf dem
-   papierfarbenen Grund des Themes sieht man die Fläche nicht, sie deckt aber
-   den Text dahinter ab; über einem Bild trägt sie die Marke.
+/* Die Marke steht immer da — auf jeder Breite und in jedem Scrollzustand,
+   und weiterhin ohne Fläche darunter. Zwei Vorgänger hatte diese Stelle:
+   bis v2.2.1 die volle Papierfläche über den ganzen Kopf, danach ein
+   Kästchen nur unter dem Logo, dazu das Ausblenden auf dem Telefon. Beides
+   ist weg. Der Gedanke dahinter war, dass der Fließtext sonst durch die
+   Wortmarke läuft; entschieden ist er gegen die Lesbarkeit an dieser einen
+   Stelle und für einen Kopf, der immer derselbe ist.
 
-   Die Polsterung steht dauerhaft und wird durch negative Ränder wieder
-   aufgehoben: So sitzt das Logo an genau derselben Stelle wie vorher und
-   springt nicht, wenn die Fläche beim Scrollen dazukommt. */
-.idt-nav-overlay .site-header__brand {
-  padding: var(--space-2) var(--space-3);
-  margin: calc(var(--space-2) * -1) calc(var(--space-3) * -1);
-  background: transparent; box-shadow: none;
-  transition: background var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out),
-              opacity var(--dur-base) var(--ease-out);
-}
-.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
-  background: var(--idt-paper); box-shadow: var(--shadow-sm);
-}
-
-/* Auf dem Telefon weicht die Marke stattdessen ganz. Dort ist der Kopf so
-   schmal, dass die Papierfläche unter dem Logo fast bis zu den Strichen
-   reichte — und damit wäre der Balken wieder da, nur in zwei Teilen. Die
-   Marke ist ohnehin gleich wieder zu sehen: am Seitenanfang und, sobald man
-   das Menü öffnet (s. unten). */
-@media (max-width: 900px) {
-  .idt-js .idt-nav-overlay .site-header__brand {
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
-  }
-  .idt-js.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
-  }
-  /* Offen ist die Marke wieder da: Die Tafel ist die Tinte des Kopfes, und auf
-     die gehört sie — auch mitten auf einer gescrollten Seite. */
-  .idt-js.idt-nav-scrolled.idt-nav-open .idt-nav-overlay .site-header__brand {
-    opacity: 1; visibility: visible;
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
-  }
-}
+   Damit hat die Marke hier gar keine eigene Regel mehr: Sie sitzt auf der
+   allgemeinen aus Abschnitt 5, dazu kommt weiter unten nur noch
+   `position: relative` samt z-index, damit sie über der Tafel liegt.
+   Keine Fläche, kein Übergang, kein Zustand. Mit ihr ist der Scrollzustand
+   des Kopfes insgesamt entfallen — `assets/nav.js` setzt seit v2.3.3 keine
+   Klasse `.idt-nav-scrolled` mehr, weil nichts mehr daran hing. */
 
 /* ---- Das Menüband kippt auf Markentinte ---- */
 /* Der Kopf bleibt dabei über allem: Auf dem Telefon liegt die Tafel darunter,
@@ -755,13 +760,10 @@ html.idt-searchbox-open { overflow: hidden; }
 /* Schrift und Linien auf der Tinte in Papierfarbe. */
 .idt-nav-open .idt-nav-overlay .main-nav a,
 .idt-nav-open .idt-nav-overlay .nav-toggle { color: var(--text-on-inverse); }
-/* Steht nach der Papierfläche des gescrollten Zustands (oben) und nimmt sie
-   wieder weg: Ein weißes Kästchen um das Kreuz wäre auf der Tinte ein Fleck.
-   Offen trägt das Kreuz die Fläche des ganzen Kopfes. */
-.idt-nav-open .idt-nav-overlay .nav-toggle,
-.idt-nav-open .idt-nav-overlay .site-header__brand {
-  background: transparent; border-color: transparent; box-shadow: none;
-}
+/* Hier stand die Gegenregel zu den Papierflächen des gescrollten Zustands:
+   Kreuz und Marke hätten auf der Tinte sonst je ein weißes Kästchen getragen.
+   Seit beide Flächen weg sind (s. oben), gibt es nichts mehr zurückzunehmen —
+   offen wie geschlossen trägt allein der Kopf die Fläche. */
 .idt-nav-open .idt-nav-overlay .nav-toggle:hover { color: var(--idt-cyan); border-color: transparent; }
 .idt-nav-open .idt-nav-overlay .main-nav a:hover { color: var(--accent-secondary); border-bottom-color: var(--accent-secondary); }
 .idt-nav-open .idt-nav-overlay .main-nav .current-menu-item > a { border-bottom-color: var(--idt-cyan); }
@@ -777,12 +779,11 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-overlay .site-header__brand,
 .idt-nav-overlay .site-header__actions { position: relative; z-index: 2; }
 .idt-nav-overlay .main-nav { z-index: 1; }
-/* Deckungsgleich über dem Logo darunter: Die Versatzwerte sind genau die
-   Polsterung des Marken-Blocks (s. oben, Papierfläche beim Scrollen) — sie
-   müssen mit ihr zusammen geändert werden, sonst rutscht die helle Fassung
-   neben die dunkle. */
+/* Deckungsgleich über dem Logo darunter: Der Marken-Block trägt seit v2.3.3
+   keine Polsterung mehr (s. oben), die helle Fassung sitzt also bündig in
+   seiner Ecke. Kommt dort wieder ein Versatz dazu, muss er hier mit. */
 .idt-nav-overlay .site-header__logo-inverse {
-  position: absolute; top: var(--space-2); left: var(--space-3);
+  position: absolute; top: 0; left: 0;
   height: var(--header-logo-h); width: auto;
   opacity: 0; transition: opacity var(--dur-base) var(--ease-out); pointer-events: none;
 }
@@ -906,17 +907,25 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-js .idt-nav-overlay .main-nav > ul > li { transform: translateX(12px); }
   .idt-nav-open .idt-nav-overlay .main-nav > ul > li { transform: none; }
 
-  /* Der Suchpunkt steht unter den Menüpunkten, rechtsbündig wie sie, aber
-     ruhiger: Er ist kein Ort auf der Seite, sondern ein Werkzeug. Eine
-     Haarlinie darüber trennt ihn von der Liste. */
+  /* Der Suchpunkt steht unter den Menüpunkten, rechtsbündig wie sie — und in
+     ihrer Größe: Auf dem Telefon füllen die Punkte die halbe Höhe, ein
+     kleingesetzter Suchpunkt darunter sah aus wie eine Fußnote und war mit dem
+     Daumen schlechter zu treffen (Rückmeldung aus dem Verein). Er liest sich
+     trotzdem nicht als weiterer Ort auf der Seite, sondern als Werkzeug: Die
+     Haarlinie darüber trennt ihn von der Liste, und seine Farbe bleibt die
+     gedämpfte (s. Regel darunter). */
   .idt-nav-overlay .main-nav .idt-navsearch {
     align-self: stretch; justify-content: flex-end;
-    margin-top: var(--space-5); padding: var(--space-4) 0 0;
+    margin-top: var(--space-5); padding: var(--space-4) 0 var(--space-3);
+    gap: var(--space-3);
     border-bottom: none;
     border-top: var(--bw-hair) solid color-mix(in srgb, var(--idt-paper) 20%, transparent);
-    font-size: var(--fs-body); font-weight: var(--fw-regular);
-    text-transform: none; letter-spacing: normal;
+    font-size: var(--fs-h2); font-weight: var(--fw-bold);
+    text-transform: uppercase; letter-spacing: var(--ls-wide);
   }
+  /* Lupe in em statt in Pixeln: So bleibt sie in jeder der drei Größenstufen
+     (hier, ab 640 px und ab 440 px Höhe) im Verhältnis zur Schrift. */
+  .idt-nav-overlay .main-nav .idt-navsearch svg { width: .9em; height: .9em; }
   .idt-nav-overlay .main-nav .idt-navsearch,
   .idt-nav-open .idt-nav-overlay .main-nav .idt-navsearch { color: var(--text-on-inverse-muted); }
   .idt-nav-overlay .main-nav .idt-navsearch:hover,
@@ -950,7 +959,8 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-nav-overlay .main-nav .sub-menu a,
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-sm); padding: var(--space-1) 0; }
   .idt-nav-overlay .main-nav .idt-navsearch {
-    font-size: var(--fs-sm); margin-top: var(--space-4); padding-top: var(--space-3);
+    font-size: var(--fs-lead); margin-top: var(--space-4);
+    padding-top: var(--space-3); padding-bottom: var(--space-2);
   }
 }
 /* Zweite Stufe für das Querformat auf dem Telefon (gemessen bei 844×390):
@@ -965,7 +975,8 @@ html.idt-searchbox-open { overflow: hidden; }
   .idt-nav-overlay .main-nav .sub-menu a,
   .idt-nav-open .idt-nav-overlay .main-nav .sub-menu a { font-size: var(--fs-xs); padding: 2px 0; }
   .idt-nav-overlay .main-nav .idt-navsearch {
-    font-size: var(--fs-xs); margin-top: var(--space-3); padding-top: var(--space-2);
+    font-size: var(--fs-body); margin-top: var(--space-3);
+    padding-top: var(--space-2); padding-bottom: var(--space-1);
   }
 }
 
@@ -978,7 +989,6 @@ html.idt-nav-lock { overflow: hidden; }
    Die Tafel ist da oder nicht, die Punkte stehen sofort. */
 @media (prefers-reduced-motion: reduce) {
   .idt-nav-overlay .site-header,
-  .idt-nav-overlay .site-header__brand,
   .idt-nav-overlay .site-header__logo-inverse,
   .idt-nav-overlay .main-nav,
   .idt-nav-overlay .main-nav > ul > li,
@@ -1058,6 +1068,7 @@ html.idt-nav-lock { overflow: hidden; }
 .idt-logo-rechts .site-header__actions { grid-column: 1; grid-row: 1; }
 .idt-logo-rechts .main-nav { grid-column: 2; grid-row: 1; margin-left: 0; }
 .idt-logo-rechts .site-header__brand { grid-column: 3; grid-row: 1; justify-self: end; }
+}
 
 /* =============================================================================
    6) HORIZONT-SPLASH (Front-Page-Hero) — fixe 1280×800-Bühne, skaliert
@@ -1896,12 +1907,15 @@ hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
 /* Bildunterschrift — bewusst unter dem Bild statt darin: dort bleibt sie
    markierbar, durchsuchbar und für Screenreader lesbar. Die Überschrift sitzt
    umgekehrt in der Grafik, damit sie mitwandert, wenn jemand das Bild
-   weiterverwendet. */
-.idt-knotendreieck > figcaption {
+   weiterverwendet. Schriftgrad, Kursive und Farbe kommen aus der gemeinsamen
+   Regel für Bildunterschriften (Abschnitt 8) — die Figur trägt dieselbe Klasse
+   `wp-element-caption` wie der Kern-Bildblock. Hier steht nur, was abweicht:
+   mittig unter der mittigen Grafik und mit etwas mehr Luft.
+   Das `figure` im Selektor ist nicht schmückend: Ohne es wäre diese Regel
+   spezifitätsgleich mit `.entry figcaption` aus Abschnitt 8, und die steht
+   weiter unten — die Grafik bekäme im Seiteninhalt deren linksbündige Zeile. */
+figure.idt-knotendreieck > figcaption {
   margin: var(--space-4) 0 0;
-  font-size: var(--fs-sm);
-  line-height: var(--lh-normal);
-  color: var(--text-muted);
   text-align: center;
 }
 
@@ -1932,6 +1946,41 @@ hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
 .page-hero h1 { margin-left: auto; margin-right: auto; font-size: var(--fs-display-lg); max-width: 18ch; }
 .entry { max-width: var(--content-measure); margin-left: auto; margin-right: auto; }
 .entry img { border-radius: var(--radius-md); margin: var(--space-5) 0; }
+
+/* -----------------------------------------------------------------------------
+   Bildunterschriften
+   Gemeint ist die Legende des Kern-Bildblocks (<figcaption class="wp-element-
+   caption">), der Galerie und des alten [caption]-Shortcodes (.wp-caption-text,
+   möglich durch den html5-Theme-Support in functions.php). Kursiv, kleiner und
+   in gedämpfter Farbe: So liest sich die Zeile auf den ersten Blick als
+   Beschriftung des Bildes und nicht als angefangener Fließtext. Die Kursive ist
+   echt — Abschnitt 1 lädt Inter Variable auch als Italic, der Browser muss
+   nichts schrägstellen.
+   `.entry figcaption` steht mit in der Liste, damit die Regel im Frontend auch
+   dann greift, wenn WordPress für den Bildblock eine eigene Legendenregel
+   mitbringt; im Editor stellt der Präfix `.editor-styles-wrapper` das sicher.
+   -------------------------------------------------------------------------- */
+.wp-element-caption,
+.wp-caption-text,
+.entry figcaption {
+  font-style: italic;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-muted);
+  text-align: left;
+  margin: var(--space-2) 0 0;
+}
+
+/* Bild und Legende sind ein Block: Der Absatzabstand aus „.entry img" gehört um
+   die Figur herum, sonst fällt die Zeile einen ganzen Absatz tief und wirkt
+   eher wie der Anfang des folgenden Texts. Bewusst nur für die Bild-Figuren des
+   Kerns — eigene Bausteine (etwa .idt-knotendreieck) bringen ihre Maße mit. */
+.entry :is(figure.wp-block-image, figure.wp-block-gallery, figure.wp-caption) {
+  margin: var(--space-5) 0;
+}
+.entry :is(figure.wp-block-image, figure.wp-block-gallery, figure.wp-caption) img {
+  margin: 0;
+}
 
 /* Abstand zum Footer — Seiteninhalt soll nie direkt am Footer kleben,
    ohne dass im Editor manuell Abstandshalter nötig sind. */

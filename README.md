@@ -318,6 +318,26 @@ normale Adresse. Soll der Kontaktweg eine Schaltfläche sein statt ein Link im
 Text, nimmt auch der Button eine Mailadresse:
 `[btn href="mailto:kontakt@…" variant="primary"]Schreib uns[/btn]`.
 
+### Bildunterschriften
+
+Bilder im Text kommen aus dem WordPress-Bildblock; eine eigene Fassung braucht
+das Theme dafür nicht. Die Beschreibung schreibt man in das Feld **Bildunterschrift**
+direkt unter dem Bild im Editor — daraus wird ein `figcaption` innerhalb der
+Abbildung, also Text, der markierbar und durchsuchbar bleibt und den
+Screenreader im Zusammenhang mit dem Bild vorliest.
+
+Das Theme setzt diese Zeile **kursiv**, eine Stufe kleiner und in gedämpftem
+Grau, links auf die Textkante, mit engem Abstand zum Bild: So gehört sie sichtbar
+zum Bild und wird nicht als Anfang des nächsten Absatzes gelesen. Für die
+Bildunterschrift des Knotendreiecks gilt dieselbe Optik, dort nur mittig unter
+der mittigen Grafik. Geregelt ist das in `style.css` Abschnitt 8; wer es ändert,
+ändert es dort einmal für alle Bausteine.
+
+Davon zu unterscheiden ist der **Alternativtext** in der Mediathek: Er beschreibt
+das Bild für alle, die es nicht sehen, und *ersetzt* es — er erscheint nicht auf
+der Seite. Beide Felder gehören gefüllt, mit verschiedenen Texten: Der
+Alternativtext sagt, was zu sehen ist, die Bildunterschrift sagt, was es bedeutet.
+
 ### Knotendreieck (bewegte Grafik zum Knotenprinzip)
 
 Der Block **Knotendreieck** (Inserter, Kategorie *Deutschlandtakt*) zeigt drei
@@ -440,14 +460,13 @@ Kein Hintergrund, keine Trennlinie, keine Mattscheibe: nur das Logo links und
 drei Striche rechts, frei über der Seite. Vom Menüband bleibt damit nichts
 stehen, was nach Leiste aussieht.
 
-Damit Schrift und Kopf sich trotzdem nicht ins Gehege kommen, trägt beim
-Scrollen **jedes Stück seinen eigenen Grund**: Die Striche bekommen eine
-Papierfläche untergelegt, das Logo ebenso. Auf dem papierfarbenen Grund des
-Themes sieht man diese Flächen nicht — sie decken nur den Text dahinter ab;
-über einem Bild tragen sie. Auf dem Telefon ist der Kopf zu schmal dafür:
-Dort **weicht das Logo beim Scrollen ganz**, sonst reichte seine Fläche fast
-bis zu den Strichen und der Balken wäre wieder da, nur in zwei Teilen. Am
-Seitenanfang und im offenen Menü steht die Marke wie gewohnt.
+Der Kopf **ändert sich beim Scrollen überhaupt nicht**: Marke und Striche
+stehen durchgehend da, auf jeder Breite, und ohne Fläche darunter. Bis v2.3.2
+bekam jedes der beiden beim Scrollen ein Kästchen in Papierfarbe untergelegt,
+damit der Fließtext nicht hindurchläuft, und auf dem Telefon wich das Logo
+sogar ganz. Beides ist entfernt — über einem Bild las sich das Kästchen als
+letzter Rest der Leiste. Wo Text und Marke sich kreuzen, gewinnt jetzt der
+gleichbleibende Kopf.
 
 Die **Suche steht bei dieser Form im Menü**, nicht im Kopf: als letzter Punkt
 unter den Menüpunkten, mit Lupe und dem Wort „Suche". Sie öffnet dasselbe
