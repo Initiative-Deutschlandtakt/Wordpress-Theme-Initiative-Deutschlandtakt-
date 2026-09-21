@@ -4,6 +4,45 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Social-Media-Menü im Footer (v2.4.0).** Wunsch aus dem Verein: „Ich möchte im
+  Footer eine Social-Media-Menü drin haben." Die Icons gab es im Theme längst
+  (Block „Social-Leiste" / `[socialrow]`), aber nur für den Seiteninhalt — im
+  Footer standen die Profile nirgends.
+  - **Ein vierter Menü-Standort** in `functions.php`: „Social-Media-Menü
+    (Footer)" (`social`), neben Hauptmenü und den beiden Footer-Spalten. Damit
+    pflegt die Redaktion die Profile dort, wo sie auch alle anderen Links
+    pflegt (Design → Menüs, „Individueller Link") — kein Customizer-Feld, in das
+    man acht URLs tippt, und kein Shortcode im Footer-Template.
+  - **Gerendert als Kachelreihe unter dem Slogan**, im Marken-Block links.
+    `idt_render_social_menu()` (`inc/shortcodes.php`) schickt jeden Menüpunkt
+    der ersten Ebene durch dieselbe `idt_sc_social()`-Funktion wie Shortcode
+    und Block — Konvention 2, ein Baustein, eine Render-Funktion. Sie bekam
+    dafür zwei Attribute: `label` (Vorlesetext, sonst der Plattformname) und
+    `target` (für „Link in neuem Tab öffnen"); die bisherigen Aufrufe ändern
+    sich nicht.
+  - **Das Zeichen leitet sich aus der Adresse ab** (`idt_social_platform()`),
+    statt ein weiteres Feld zu verlangen: X samt alter `twitter.com`-Adressen,
+    Facebook, Instagram, LinkedIn, YouTube, Bluesky, Mastodon, `…/feed/` und
+    `mailto:`. Mastodon läuft auf beliebigen Servern und wird deshalb
+    zusätzlich an „mastodon" im Hostnamen und an der Endung `.social` erkannt —
+    Bluesky steht vorher fest in der Liste, sonst bliebe `bsky.social` hier
+    hängen. Unerkanntes bekommt den Pfeil für externe Links; wer ein bestimmtes
+    Zeichen will (etwa für `troet.cafe`), schreibt dem Menüpunkt das Kürzel
+    unter „CSS-Klassen" hin, das gewinnt dann.
+  - **Ohne zugewiesenes Menü bleibt die Reihe weg.** Anders als die Spalte
+    „Mitmachen" hat das Social-Menü bewusst keine Vorgabe-Links: Erfundene
+    Profil-Adressen wären schlimmer als gar keine. Aus demselben Grund seedet
+    `inc/demo-content.php` hier nichts.
+  - **Style** in `style.css` Abschnitt 9: `.site-footer .fsocial` als
+    umbrechende Reihe, die Kacheln etwas kleiner (40 px) als im Seiteninhalt,
+    damit sie neben dem Logo nicht zur zweiten Marke werden. Farbe und
+    Hover-Verlauf kommen aus der bestehenden Regel in Abschnitt 7 — der
+    Selektor für dunkle Flächen nennt jetzt auch `.site-footer`, statt die
+    Werte ein zweites Mal hinzuschreiben.
+  - Doku: neuer README-Abschnitt „Footer" mit der Tabelle der drei
+    Footer-Standorte und dem Pflegeweg. Geprüft mit `check-theme.sh` und
+    `check-zip.sh`.
+
 - **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
   Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche
   ähnlich groß machen wie die anderen?" Bisher stand die Suche unter der

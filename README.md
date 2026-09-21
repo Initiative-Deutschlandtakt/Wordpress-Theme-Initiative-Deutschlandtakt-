@@ -475,6 +475,48 @@ klicken muss; die aufklappbare Form macht den Kopf ruhiger, kostet aber genau
 diese Sichtbarkeit. Für eine Vereinsseite, auf der Besucher etwas *suchen*, ist
 das Menüband deshalb die Vorgabe geblieben.
 
+## Footer
+
+Die dunkle Fußleiste besteht aus dem Marken-Block links (Logo, Slogan aus
+*Design → Customizer → Footer*, darunter das Social-Media-Menü) und zwei
+Linkspalten; jedes Widget im Bereich *Footer* wird eine weitere Spalte.
+
+Drei der vier Menü-Standorte des Themes liegen hier (*Design → Menüs*):
+
+| Standort | Zeigt sich als |
+| --- | --- |
+| **Footer-Menü** | Spalte „Themen" |
+| **Footer-Menü „Mitmachen"** | Spalte „Mitmachen" — ohne zugewiesenes Menü stehen dort drei Vorgabe-Links (Mitglied werden, Pressekontakt, Downloads) |
+| **Social-Media-Menü (Footer)** | Reihe von Icon-Kacheln unter dem Slogan |
+
+### Social-Media-Menü
+
+Ein ganz gewöhnliches WordPress-Menü: *Design → Menüs → Menü erstellen*, die
+Profile als **„Individueller Link"** eintragen (URL + Beschriftung) und das Menü
+dem Standort **„Social-Media-Menü (Footer)"** zuweisen. Ist dort kein Menü
+zugewiesen, bleibt die Reihe weg — das Theme erfindet keine Profil-Links.
+
+**Das Zeichen ergibt sich aus der Adresse.** Ein zusätzliches Feld gibt es
+nicht; erkannt werden X (auch alte `twitter.com`-Adressen), Facebook, Instagram,
+LinkedIn, YouTube, Bluesky, Mastodon, RSS-Feeds (`…/feed/`) und `mailto:`.
+Mastodon läuft auf beliebigen Servern und wird deshalb zusätzlich an „mastodon"
+im Hostnamen und an der Endung `.social` erkannt.
+
+**Unerkannte Adressen** bekommen den Pfeil für externe Links. Wer stattdessen
+ein bestimmtes Zeichen will (etwa für eine Mastodon-Instanz wie `troet.cafe`),
+schreibt dem Menüpunkt das Kürzel unter **„CSS-Klassen"** hin — `x`, `facebook`,
+`instagram`, `linkedin`, `youtube`, `mastodon`, `bluesky`, `rss`, `mail` oder
+`extern`. Das Feld blendet man oben rechts unter *Ansicht anpassen* ein.
+
+Die **Beschriftung** des Menüpunkts erscheint nicht auf der Seite, sondern als
+Vorlesetext für Screenreader — also „Mastodon" oder „Uns auf Mastodon folgen",
+nicht die URL. „Link in neuem Tab öffnen" wird übernommen.
+
+Dieselben Icons stehen auch im Seiteninhalt zur Verfügung: der Block
+**„Social-Leiste"** (Shortcode `[socialrow]`) für eine Reihe, **„Social-Icon"**
+(`[social]`) für ein einzelnes. Menü und Block rendern durch dieselbe Funktion —
+sie sehen überall gleich aus.
+
 ## Startseite
 
 Die Homepage wird **nicht** mehr fest in `front-page.php` verdrahtet: Die Vorlage

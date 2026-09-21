@@ -851,16 +851,129 @@ add_shortcode( 'newscard', 'idt_sc_newscard' );
  * Plattformen: x | facebook | instagram | linkedin | youtube | mastodon | bluesky | rss
  * Stile: '' (Outline) | beige (gefüllte Papierkachel mit cyanem Zeichen — die
  * Variante für Verlaufs- und Bildflächen, s. style.css 6c).
+ *
+ * label überschreibt die Beschriftung für Screenreader (Vorgabe: der
+ * Plattformname), target="_blank" öffnet den Link in einem neuen Tab. Beides
+ * braucht das Social-Media-Menü im Footer, das seine Punkte durch dieselbe
+ * Funktion schickt (s. idt_render_social_menu()).
  */
 function idt_sc_social( $atts ) {
-	$atts  = shortcode_atts( array( 'platform' => 'x', 'href' => '#', 'style' => '' ), $atts, 'social' );
-	$label = ucfirst( $atts['platform'] );
-	$cls   = 'idt-social__icon';
+	$atts   = shortcode_atts( array( 'platform' => 'x', 'href' => '#', 'style' => '', 'label' => '', 'target' => '' ), $atts, 'social' );
+	$label  = trim( (string) $atts['label'] );
+	$label  = '' !== $label ? $label : ucfirst( $atts['platform'] );
+	$cls    = 'idt-social__icon';
 	if ( 'beige' === $atts['style'] ) { $cls .= ' idt-social__icon--beige'; }
-	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '" aria-label="' . esc_attr( $label ) . '" rel="me noopener">' .
+	$target = '_blank' === $atts['target'] ? ' target="_blank"' : '';
+	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '" aria-label="' . esc_attr( $label ) . '"' . $target . ' rel="me noopener">' .
 		idt_icon( $atts['platform'], 20 ) . '</a>';
 }
 add_shortcode( 'social', 'idt_sc_social' );
+
+/**
+ * Welches Zeichen gehört zu dieser Adresse?
+ *
+ * Damit die Redaktion ein Social-Media-Menü genauso pflegt wie jedes andere
+ * (Design → Menüs, „Individueller Link"), leitet das Theme die Plattform aus
+ * der Adresse ab, statt ein zusätzliches Feld zu verlangen. Erkannt werden die
+ * Hosts der Plattformen, zu denen idt_icon() ein Zeichen hat; Mastodon läuft
+ * auf beliebigen Servern und wird deshalb zusätzlich an „mastodon" im
+ * Hostnamen und an der Endung „.social" erkannt (Bluesky steht vorher fest in
+ * der Liste, sonst würde bsky.social hier hängen bleiben).
+ *
+ * Bleibt eine Adresse unerkannt, trägt die Kachel den Pfeil für externe Links
+ * — sichtbar, aber unauffällig. Wer das nicht will, schreibt dem Menüpunkt
+ * unter „CSS-Klassen" das gewünschte Kürzel hin (s. idt_render_social_menu()).
+ */
+function idt_social_platform( $url ) {
+	$url = strtolower( trim( (string) $url ) );
+	if ( 0 === strpos( $url, 'mailto:' ) ) {
+		return 'mail';
+	}
+
+	$host = (string) wp_parse_url( $url, PHP_URL_HOST );
+	$host = preg_replace( '/^www\./', '', $host );
+	$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+
+	$hosts = array(
+		'x.com'           => 'x',
+		'twitter.com'     => 'x',
+		'facebook.com'    => 'facebook',
+		'fb.com'          => 'facebook',
+		'm.facebook.com'  => 'facebook',
+		'instagram.com'   => 'instagram',
+		'linkedin.com'    => 'linkedin',
+		'de.linkedin.com' => 'linkedin',
+		'youtube.com'     => 'youtube',
+		'youtu.be'        => 'youtube',
+		'bsky.app'        => 'bluesky',
+		'bsky.social'     => 'bluesky',
+	);
+	if ( isset( $hosts[ $host ] ) ) {
+		return $hosts[ $host ];
+	}
+	if ( false !== strpos( $host, 'mastodon' ) || '.social' === substr( $host, -7 ) ) {
+		return 'mastodon';
+	}
+	if ( preg_match( '#/(feed|rss)/?$#', $path ) ) {
+		return 'rss';
+	}
+	return 'extern';
+}
+
+/**
+ * Social-Media-Menü als Reihe von Icon-Kacheln.
+ *
+ * Gerendert wird das Menü des übergebenen Standorts (Vorgabe: „social", s.
+ * functions.php) — jeder Punkt der ersten Ebene wird eine Kachel, gebaut von
+ * derselben idt_sc_social()-Funktion wie Shortcode und Block. Der Titel des
+ * Menüpunkts ist die Beschriftung für Screenreader, „Link in neuem Tab öffnen"
+ * wird übernommen.
+ *
+ * Das Zeichen bestimmt normalerweise die Adresse. Steht dem Menüpunkt unter
+ * „CSS-Klassen" ein bekanntes Kürzel (etwa „mastodon"), gewinnt dieses — der
+ * Weg für Adressen, die sich nicht ansehen lassen, wohin sie führen.
+ *
+ * Ohne zugewiesenes Menü bleibt die Reihe leer: Erfundene Profil-Links wären
+ * schlimmer als gar keine.
+ */
+function idt_render_social_menu( $location = 'social' ) {
+	$locations = get_nav_menu_locations();
+	if ( empty( $locations[ $location ] ) ) {
+		return '';
+	}
+
+	$items = wp_get_nav_menu_items( (int) $locations[ $location ] );
+	if ( empty( $items ) ) {
+		return '';
+	}
+
+	/* Kürzel, die als CSS-Klasse am Menüpunkt die Adresserkennung überstimmen. */
+	$known = array( 'x', 'facebook', 'instagram', 'linkedin', 'youtube', 'mastodon', 'bluesky', 'rss', 'mail', 'extern' );
+
+	$icons = '';
+	foreach ( $items as $item ) {
+		/* Nur die erste Ebene — eine Kachelreihe hat keine Untermenüs. */
+		if ( (int) $item->menu_item_parent ) {
+			continue;
+		}
+		$forced   = array_values( array_intersect( $known, array_map( 'strtolower', (array) $item->classes ) ) );
+		$platform = $forced ? $forced[0] : idt_social_platform( $item->url );
+		$label    = trim( wp_strip_all_tags( (string) $item->title ) );
+
+		$icons .= idt_sc_social( array(
+			'platform' => $platform,
+			'href'     => $item->url,
+			'label'    => $label,
+			'target'   => $item->target,
+		) );
+	}
+
+	if ( '' === $icons ) {
+		return '';
+	}
+
+	return '<nav class="fsocial" aria-label="' . esc_attr__( 'Soziale Netzwerke', 'idt' ) . '">' . $icons . '</nav>';
+}
 
 /**
  * Social-Leiste — eine Reihe von Social-Icons.
