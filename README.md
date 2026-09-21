@@ -422,7 +422,7 @@ zweite Zeile darunter:
 |---|---|
 | **Links** (Vorgabe) | Marke am linken Rand, Menü und Aktionsleiste (Lupe/Striche) rechts daneben. |
 | **Mittig** | Marke zentriert im Kopf, das Menü zentriert in einer zweiten Zeile darunter. Lupe und Striche bleiben rechts. |
-| **Rechts** | Das Spiegelbild von *Links*: Aktionsleiste und Menü links, die Marke am rechten Rand. |
+| **Rechts** | Das Spiegelbild von *Links*: Aktionsleiste und Menü links, die Marke am rechten Rand. Beim aufklappbaren Menü spiegelt die Tafel auf dem Telefon mit — die Punkte stehen dann linksbündig unter dem Kreuz. |
 
 Unterhalb von 900 px bleibt der Kopf in allen drei Stellungen **einzeilig** — das Menü
 liegt dort ohnehin hinter dem Hamburger bzw. der Tafel und nicht im Kopf. Die Marke

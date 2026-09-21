@@ -1068,6 +1068,20 @@ html.idt-nav-lock { overflow: hidden; }
 .idt-logo-rechts .site-header__actions { grid-column: 1; grid-row: 1; }
 .idt-logo-rechts .main-nav { grid-column: 2; grid-row: 1; margin-left: 0; }
 .idt-logo-rechts .site-header__brand { grid-column: 3; grid-row: 1; justify-self: end; }
+
+/* Beim aufklappbaren Menü wandert mit der Aktionsleiste auch das Kreuz nach
+   links — die Tafel auf dem Telefon muss deshalb mitspiegeln. 5c stellt ihre
+   Punkte rechtsbündig, „unter das Kreuz, mit dem man sie geöffnet hat"; steht
+   das Kreuz links, stünden sie am anderen Ende des Bildschirms als der
+   Schalter, der sie geöffnet hat. Die Treppe läuft entsprechend von links
+   statt von rechts. */
+@media (max-width: 900px) {
+  .idt-nav-overlay.idt-logo-rechts .main-nav ul { align-items: flex-start; }
+  .idt-nav-overlay.idt-logo-rechts .main-nav li,
+  .idt-nav-overlay.idt-logo-rechts .main-nav .sub-menu li { text-align: left; }
+  .idt-nav-overlay.idt-logo-rechts .main-nav .idt-navsearch { justify-content: flex-start; }
+  .idt-js .idt-nav-overlay.idt-logo-rechts .main-nav > ul > li,
+  .idt-js .idt-nav-overlay.idt-logo-rechts .main-nav .idt-navsearch { transform: translateX(-12px); }
 }
 
 /* =============================================================================

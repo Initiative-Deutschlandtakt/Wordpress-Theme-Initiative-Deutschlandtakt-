@@ -40,6 +40,13 @@ _(keine offenen Aufgaben)_
     dieselbe Überlegung wie in 5c („Der Platz ist schon vorher reserviert, damit
     Logo und Schaltfläche beim Öffnen nicht springen"): Ein Kopf, der die
     Menüzeile erst beim Öffnen aufklappt, ließe die zentrierte Marke hüpfen.
+  - **Bei „Rechts" spiegelt die Menütafel mit.** Mit der Aktionsleiste wandert
+    auch das Kreuz des aufklappbaren Menüs nach links. 5c stellt die Punkte auf
+    dem Telefon rechtsbündig, „unter das Kreuz, mit dem man sie geöffnet hat" —
+    stünde das Kreuz links und die Punkte weiter rechts, wären sie am anderen
+    Ende des Bildschirms als ihr Schalter. Punkte, Untermenüs und der Suchpunkt
+    richten sich deshalb links aus, und die Treppe läuft von links statt von
+    rechts (nachgemessen bei 390 px).
   - **Ohne Marke keine Stellung.** Auf Seiten mit „Menü ohne Logo" fällt
     `idt_logo_pos()` auf *Links* zurück — sonst trüge der Kopf bei *Mittig* eine
     leere erste Zeile über dem Menü.
