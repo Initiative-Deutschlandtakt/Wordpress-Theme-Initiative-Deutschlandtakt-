@@ -175,7 +175,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
 | `[buttonstack bg="ink"]…[/buttonstack]` | Button-Stack: derselbe Baustein nur mit den Linkzeilen — ohne Eyebrow, Überschrift und Vortext; `bg` wie beim Themenblock |
 | `[beitragsliste count="3"]` | dynamische Beitragsliste im Zeilen-Layout (Datum + Chip links, Titel und Anriss rechts) |
-| `[socialrow style="beige" align="center"]…[/socialrow]` | Social-Leiste, eine Zeile je Icon („Plattform \| Link"); `style="beige"` für farbige Flächen |
+| `[socialrow style="beige" align="center"]…[/socialrow]` | Social-Leiste, eine Zeile je Icon („Plattform \| Link"); Plattformen: `x`, `facebook`, `instagram`, `linkedin`, `youtube`, `mastodon`, `bluesky`, `rss`, `mail` (dort statt der URL die Adresse — die Kachel wird zum `mailto:`-Link); `style="beige"` für farbige Flächen |
 | `[email]adresse@example.org[/email]` | Mail-Link: baut aus der Adresse den `mailto:`-Link und zeigt sie an; `address="…"` plus Inhalt für eine eigene Beschriftung, `subject="…"` belegt die Betreffzeile vor, `icon="false"` lässt das Briefzeichen weg |
 | `[logo size="120" color="paper"]` | Logo-Sperrsatz: dreizeilige Wortmarke, rechts daneben das Signet (s. u.) |
 
@@ -504,7 +504,7 @@ oder dunklen Fläche:
 |---|---|---|
 | **Logo (Wortmarke + Signet)** | `/Logo`, `[logo]` | Dreizeilige Wortmarke, rechts daneben das Signet im Kreis. Echter Text in Inter statt Bild — scharf in jeder Größe und vorlesbar. Felder: Größe des Signets (alle übrigen Maße folgen ihr), Schriftfarbe (von der Fläche erben / Papier / Ink), Ausrichtung, optionaler Link. |
 | **Beige Buttons** | Stil **Beige** an Button, Pill-Button und Pill-Button-Stack | Gefüllte Papierfläche mit halbrunden Enden. Die runde Form ist hier kein Bruch mit dem sonst eckigen Design, sondern das Zitat der Wortmarke. Gestapelt (Pill-Button-Stack) sind das die breiten Schaltflächen der Linkseite. |
-| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. |
+| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. Neben den Profilen steht mit der Plattform `mail` auch eine **Mail-Kachel** zur Verfügung: In die Zeile kommt dann statt der URL die Adresse, die Kachel wird zum `mailto:`-Link. |
 
 Im Editor steht der Inhalt weiterhin auf weißem Grund — die Verlaufsfläche
 bringt die Seitenvorlage mit, nicht der Block. Damit die hellen Bausteine dort

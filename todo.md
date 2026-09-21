@@ -4,6 +4,33 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Mail als Kachel in der Social-Leiste (v2.3.3).** Rückmeldung zur
+  Kartenansicht (Linkseite auf dem Verlauf): Neben den Profilen soll dort auch
+  eine Kontaktmöglichkeit per Mail stehen. Die Leiste kannte bisher nur die
+  acht Plattformen — der Mail-Link (`[email]`) ist ein Textlink und passt nicht
+  in eine Reihe quadratischer Kacheln.
+  - **Neue Plattform `mail`** in `idt_sc_social()` (`inc/shortcodes.php`) und
+    als Eintrag **E-Mail** im Auswahlfeld *Plattform* der Blöcke „Social-Icon"
+    und „Social-Leiste" (`inc/blocks.php`). Das Briefzeichen gab es im
+    Icon-Vorrat (`idt_icon( 'mail' )`) schon, es kommt vom Mail-Link — Stil,
+    Größe und die beige Variante sind damit unverändert dieselben wie bei den
+    übrigen Kacheln, ohne eine Zeile CSS.
+  - **In die Zeile kommt die Adresse, nicht eine URL** („`mail |
+    kontakt@example.org`"). Den `mailto:`-Link baut der Baustein selbst und
+    schickt die Adresse dabei durch `antispambot()`, genau wie `[email]` — im
+    Quelltext steht deshalb kein zusammenhängendes „name@domain" für
+    Adress-Sammler. Der href läuft folgerichtig durch `esc_attr()` statt
+    `esc_url()`, das die Entities zerlegen würde. Steht in der Zeile etwas
+    anderes als eine Adresse (etwa der Link zur Kontaktseite), bleibt es ein
+    gewöhnlicher Link.
+  - **Beschriftung für Screenreader** kommt jetzt aus einer Liste der
+    Plattformnamen in ihrer eigenen Schreibweise statt aus `ucfirst()`: „E-Mail
+    schreiben", nebenbei auch „LinkedIn" und „RSS" statt „Linkedin"/„Rss".
+  - **Beide Vorlagen bringen die Kachel mit** — die Icon-Reihe und die
+    Verlaufsseite (die Kartenansicht aus der Rückmeldung); `[socialrow]`,
+    README und die Feldbeschriftungen nennen die Schreibweise. Geprüft mit
+    `check-theme.sh` und `check-zip.sh`.
+
 - **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
   Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche
   ähnlich groß machen wie die anderen?" Bisher stand die Suche unter der
