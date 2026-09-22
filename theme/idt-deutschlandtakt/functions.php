@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.4.2' );
+define( 'IDT_VERSION', '2.4.3' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -378,6 +378,9 @@ function idt_assets() {
 		'i18n'  => array(
 			'open'  => __( 'Menü öffnen', 'idt' ),
 			'close' => __( 'Menü schließen', 'idt' ),
+			/* Hinweis auf das Tastaturkürzel; assets/nav.js hängt ihn als
+			   title an die drei Striche, sobald das Kürzel wirklich greift. */
+			'key'   => __( 'Taste M', 'idt' ),
 		),
 	) );
 
