@@ -4,6 +4,20 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Social-Icons im Footer ohne Rahmen (v2.4.3).** Rückmeldung aus dem Verein:
+  Die hellen Kästchen um die Zeichen irritieren. Sie stammten aus der
+  Kachelfassung für den Seiteninhalt, wo der Rahmen den Button trägt — auf der
+  dunklen Footer-Fläche neben dem Logo las sich die Reihe dadurch wie eine
+  zweite Marke. Im Footer steht jetzt nur noch das Zeichen: Rahmen transparent,
+  Verlaufsrand beim Überfahren abgeschaltet, dafür wechselt das Zeichen auf
+  Cyan — dieselbe Geste wie bei den Links der Footer-Spalten. Die Fläche von
+  40×40 bleibt als Klickziel erhalten (das Zeichen selbst wächst auf 24 px),
+  der Abstand rückt enger zusammen, und ein negativer Einzug von 8 px setzt das
+  erste Zeichen auf die Fluchtlinie von Logo und Slogan — ohne Rahmen wirkte
+  der Innenabstand der Kachel sonst wie eine Einrückung. Alles in `style.css`
+  Abschnitt 9 unter `.site-footer .fsocial`; die Kacheln im Seiteninhalt
+  ([socialrow], Block „Social-Leiste") bleiben unverändert.
+
 - **Social-Media-Menü im Footer (v2.4.2).** Wunsch aus dem Verein: „Ich möchte im
   Footer eine Social-Media-Menü drin haben." Die Icons gab es im Theme längst
   (Block „Social-Leiste" / `[socialrow]`), aber nur für den Seiteninhalt — im
