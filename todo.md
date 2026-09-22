@@ -4,7 +4,7 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
-- **Social-Media-Menü im Footer (v2.4.0).** Wunsch aus dem Verein: „Ich möchte im
+- **Social-Media-Menü im Footer (v2.4.2).** Wunsch aus dem Verein: „Ich möchte im
   Footer eine Social-Media-Menü drin haben." Die Icons gab es im Theme längst
   (Block „Social-Leiste" / `[socialrow]`), aber nur für den Seiteninhalt — im
   Footer standen die Profile nirgends.
@@ -39,9 +39,148 @@ _(keine offenen Aufgaben)_
     Hover-Verlauf kommen aus der bestehenden Regel in Abschnitt 7 — der
     Selektor für dunkle Flächen nennt jetzt auch `.site-footer`, statt die
     Werte ein zweites Mal hinzuschreiben.
+  - **Beim Einmischen von main (v2.4.1)** traf das Menü auf die dort neu
+    hinzugekommene Mail-Kachel. Beides steht jetzt in einer Fassung von
+    `idt_sc_social()`: die Namensliste und der `antispambot()`-Weg für
+    `mailto:` aus main, `label` und `target` aus diesem Zweig. Ein Menüpunkt
+    mit `mailto:`-Adresse bekommt damit von allein die Briefkachel — und die
+    Adresse steht im Quelltext nicht am Stück für Adress-Sammler.
   - Doku: neuer README-Abschnitt „Footer" mit der Tabelle der drei
     Footer-Standorte und dem Pflegeweg. Geprüft mit `check-theme.sh` und
     `check-zip.sh`.
+- **Mail als Kachel in der Social-Leiste (v2.4.1).** Rückmeldung zur
+  Kartenansicht (Linkseite auf dem Verlauf): Neben den Profilen soll dort auch
+  eine Kontaktmöglichkeit per Mail stehen. Die Leiste kannte bisher nur die
+  acht Plattformen — der Mail-Link (`[email]`) ist ein Textlink und passt nicht
+  in eine Reihe quadratischer Kacheln.
+  - **Neue Plattform `mail`** in `idt_sc_social()` (`inc/shortcodes.php`) und
+    als Eintrag **E-Mail** im Auswahlfeld *Plattform* der Blöcke „Social-Icon"
+    und „Social-Leiste" (`inc/blocks.php`). Das Briefzeichen gab es im
+    Icon-Vorrat (`idt_icon( 'mail' )`) schon, es kommt vom Mail-Link — Stil,
+    Größe und die beige Variante sind damit unverändert dieselben wie bei den
+    übrigen Kacheln, ohne eine Zeile CSS.
+  - **In die Zeile kommt die Adresse, nicht eine URL** („`mail |
+    kontakt@example.org`"). Den `mailto:`-Link baut der Baustein selbst und
+    schickt die Adresse dabei durch `antispambot()`, genau wie `[email]` — im
+    Quelltext steht deshalb kein zusammenhängendes „name@domain" für
+    Adress-Sammler. Der href läuft folgerichtig durch `esc_attr()` statt
+    `esc_url()`, das die Entities zerlegen würde. Steht in der Zeile etwas
+    anderes als eine Adresse (etwa der Link zur Kontaktseite), bleibt es ein
+    gewöhnlicher Link.
+  - **Beschriftung für Screenreader** kommt jetzt aus einer Liste der
+    Plattformnamen in ihrer eigenen Schreibweise statt aus `ucfirst()`: „E-Mail
+    schreiben", nebenbei auch „LinkedIn" und „RSS" statt „Linkedin"/„Rss".
+  - **Beide Vorlagen bringen die Kachel mit** — die Icon-Reihe und die
+    Verlaufsseite (die Kartenansicht aus der Rückmeldung); `[socialrow]`,
+    README und die Feldbeschriftungen nennen die Schreibweise. Geprüft mit
+    `check-theme.sh` und `check-zip.sh`.
+  - **Nummer:** Auf main ist währenddessen die Logo-Stellung im Kopf (v2.4.0)
+    gelandet; diese Änderung trägt deshalb **2.4.1**, im Theme-Header und in
+    `IDT_VERSION` zugleich (CLAUDE.md, Konvention 1). Inhaltlich berühren sich
+    beide Zweige nicht — der Kopf hier, die Social-Leiste dort.
+
+- **Das Logo muss nicht links oben stehen (v2.4.0).** Bis hierher kannte der Kopf
+  genau zwei Zustände: Marke links oder — mit der Vorlage „Menü ohne Logo" — gar
+  keine Marke. Dazwischen fehlte der Fall, den Plakat-Seiten brauchen: Die Marke
+  ist da, nur eben nicht in der linken oberen Ecke. Neu sind deshalb eine
+  Customizer-Einstellung für den ganzen Auftritt und eine Seitenvorlage für die
+  einzelne Seite.
+  - **„Stellung des Logos im Kopf"** steht unter *Design → Customizer →
+    Website-Identität*, direkt hinter der Logo-Höhe und vor der Menüform:
+    **Links** (Vorgabe, unverändert), **Mittig** — Marke zentriert, das Menü
+    zentriert in einer zweiten Zeile darunter — und **Rechts**, das Spiegelbild
+    von Links (Aktionsleiste und Menü links, Marke am rechten Rand).
+  - **Seitenvorlage „Logo mittig"** (`page-logo-mitte.php`) für die einzelne
+    Seite. Sie schlägt die Customizer-Einstellung und ändert sonst nichts:
+    Überschrift und Inhalt stehen wie in `page.php`. Wie bei den übrigen
+    Sondervorlagen hängt das am Template-Slug und nicht am aktiven
+    Template-File — so greift es auch für die statische Startseite, die
+    `front-page.php` rendert.
+  - **Ein Markup, drei Stellungen.** `header.php` blieb unberührt; den
+    Unterschied machen die Body-Klassen `.idt-logo-mitte` / `.idt-logo-rechts`
+    aus `idt_logo_pos()` und der neue Stylesheet-Abschnitt **5d**. Dort schaltet
+    `.site-header__inner` von Flex auf Grid, und alle drei Kinder werden
+    ausdrücklich platziert — nichts wird automatisch verteilt, damit keine Regel
+    aus 5/5c die Anordnung von hinten wieder verschiebt. Die äußeren Spalten
+    sind `minmax(0, 1fr)`: Ohne die Null als Minimum wüchse die Spalte mit der
+    Aktionsleiste über ihren Anteil und schöbe die Marke aus der Mitte
+    (nachgemessen: Markenmitte liegt bei 1280 px exakt auf 640).
+  - **Unter 900 px bleibt der Kopf einzeilig.** Das Menü steht dort ohnehin
+    außerhalb des Flusses — im Menüband absolut unter dem Kopf, beim
+    aufklappbaren Menü als Tafel über der Seite —, die zweite Zeile entsteht
+    also gar nicht erst. Eine eigene Media Query braucht es dafür nicht; nur die
+    Zentrierung der Menüpunkte wird zurückgenommen, weil sie dort untereinander
+    stehen.
+  - **Beim aufklappbaren Menü bleibt die zweite Zeile reserviert.** Das ist
+    dieselbe Überlegung wie in 5c („Der Platz ist schon vorher reserviert, damit
+    Logo und Schaltfläche beim Öffnen nicht springen"): Ein Kopf, der die
+    Menüzeile erst beim Öffnen aufklappt, ließe die zentrierte Marke hüpfen.
+  - **Bei „Rechts" spiegelt die Menütafel mit.** Mit der Aktionsleiste wandert
+    auch das Kreuz des aufklappbaren Menüs nach links. 5c stellt die Punkte auf
+    dem Telefon rechtsbündig, „unter das Kreuz, mit dem man sie geöffnet hat" —
+    stünde das Kreuz links und die Punkte weiter rechts, wären sie am anderen
+    Ende des Bildschirms als ihr Schalter. Punkte, Untermenüs und der Suchpunkt
+    richten sich deshalb links aus, und die Treppe läuft von links statt von
+    rechts (nachgemessen bei 390 px).
+  - **Ohne Marke keine Stellung.** Auf Seiten mit „Menü ohne Logo" fällt
+    `idt_logo_pos()` auf *Links* zurück — sonst trüge der Kopf bei *Mittig* eine
+    leere erste Zeile über dem Menü.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün) sowie im
+    Browser (Chromium/Playwright) gegen das echte Stylesheet: alle drei
+    Stellungen mal mit Menüband, mal mit aufklappbarem Menü, bei 1280 und
+    700 px — Kopfhöhe, Markenmitte und die Lage von Menü und Aktionsleiste
+    nachgemessen. `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus
+    dieser Umgebung nicht erreichbar.
+
+- **Menü-Schaltfläche durchsichtig, Fokus ohne Kasten (v2.3.3).** Zwei
+  Rückmeldungen zum aufklappbaren Menü: „Mach das Menü beim Scrollen komplett
+  durchsichtig" und „beim Mobil kriegt das manchmal einen violetten Rahmen,
+  wenn ich einen Menüpunkt auswähle — das Cyan ist gut, das so lassen."
+  - **Keine Papierflächen mehr im Kopf** (`style.css` 5c). Seit v2.2.1 legte
+    sich beim Scrollen je ein weißes Kästchen unter die drei Striche und unter
+    die Wortmarke, damit die 2,5 px dünnen Linien und das Logo über laufendem
+    Text zu finden bleiben. Über einem Bild war das der letzte sichtbare Rest
+    des Menübands — genau das, was bei dieser Menüform weg soll. Beide sind
+    entfernt; Striche und Marke stehen frei über der Seite, der Kopf ist
+    vollständig durchsichtig. Der Kommentar an der Stelle nennt den
+    Schlagschatten an `.nav-toggle__bar` als Weg, falls die Striche über einem
+    unruhigen Bild verschwinden.
+  - **Mit der Fläche unter der Marke fällt ihre Polsterung weg.** Sie stand nur,
+    damit das Kästchen Luft um das Logo hatte, und wurde durch gleich große
+    negative Ränder wieder aufgehoben, damit nichts springt. Die absolut
+    gesetzte Inverse-Fassung des Logos (die auf der Tinte des offenen Menüs
+    eingeblendet wird) hing an genau diesen Werten und sitzt jetzt auf
+    `top: 0; left: 0`. Ebenfalls gegenstandslos und entfernt: die Gegenregel,
+    die beide Flächen im offenen Zustand wieder wegnahm.
+  - **Nachgereicht: Die Marke bleibt auch auf dem Telefon stehen.** „Das Logo
+    bitte jetzt immer da lassen, aber weiterhin ohne Hintergrundquadrat."
+    Bisher wich sie dort beim Scrollen ganz — das war die Antwort darauf, dass
+    der Fließtext die Wortmarke auf schmalem Kopf über ihre ganze Breite
+    kreuzt. Entschieden ist es gegen die Lesbarkeit an dieser einen Stelle und
+    für einen Kopf, der immer derselbe ist.
+  - **Damit ist der Scrollzustand des Kopfes ganz entfallen.** An
+    `.idt-nav-scrolled` hingen zuletzt die beiden Papierflächen und das
+    Ausblenden der Marke; ohne Abnehmer setzt `assets/nav.js` die Klasse nicht
+    mehr und braucht auch seinen Scroll-Listener (rAF-gedrosselt, 40 px
+    Schwelle) nicht länger. Die Marke hat in `style.css` 5c jetzt gar keine
+    eigene Regel mehr, nur noch `position: relative` samt z-index weiter
+    unten. Kommentare in beiden Dateien und der Abschnitt „Form des
+    Hauptmenüs" in der `README.md` sind nachgezogen.
+  - **Fokus im Menü als Linie statt als Rahmen** (`style.css` 5, neuer Block
+    hinter den Untermenü-Regeln). Der violette Kasten kam aus dem globalen
+    `:focus-visible` in Abschnitt 3 — und stand öfter, als jemand die Tastatur
+    anfasste: `assets/nav.js` setzt den Fokus beim Öffnen auf den ersten Punkt
+    und beim Schließen zurück auf die Schaltfläche, auf dem Telefon also mitten
+    im Antippen. Der Fokus ist nicht weg, er sieht jetzt aus wie der
+    Mauszeiger-Zustand: Schrift und Linie im Markenton, auf der Tinte des
+    offenen Menüs in Cyan — das bleibt damit unverändert. Dazu
+    `-webkit-tap-highlight-color: transparent` für Menüpunkte und
+    Schaltfläche: Mobile Browser legen beim Antippen eine eigene, teils aus der
+    Linkfarbe eingefärbte Fläche darüber, die auch ohne Fokus als violetter
+    Kasten erscheint.
+  - Geprüft mit `check-theme.sh` und `check-zip.sh` (beide grün).
+    `smoke-test.sh` lief hier nicht: `api.wordpress.org` ist aus dieser
+    Umgebung nicht erreichbar.
 
 - **Suchpunkt im aufgeklappten Menü so groß wie die Menüpunkte (v2.3.2).**
   Rückmeldung aus dem Verein zum Menü auf dem Telefon: „Können wir die Suche

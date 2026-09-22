@@ -175,7 +175,7 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
 | `[buttonstack bg="ink"]…[/buttonstack]` | Button-Stack: derselbe Baustein nur mit den Linkzeilen — ohne Eyebrow, Überschrift und Vortext; `bg` wie beim Themenblock |
 | `[beitragsliste count="3"]` | dynamische Beitragsliste im Zeilen-Layout (Datum + Chip links, Titel und Anriss rechts) |
-| `[socialrow style="beige" align="center"]…[/socialrow]` | Social-Leiste, eine Zeile je Icon („Plattform \| Link"); `style="beige"` für farbige Flächen |
+| `[socialrow style="beige" align="center"]…[/socialrow]` | Social-Leiste, eine Zeile je Icon („Plattform \| Link"); Plattformen: `x`, `facebook`, `instagram`, `linkedin`, `youtube`, `mastodon`, `bluesky`, `rss`, `mail` (dort statt der URL die Adresse — die Kachel wird zum `mailto:`-Link); `style="beige"` für farbige Flächen |
 | `[email]adresse@example.org[/email]` | Mail-Link: baut aus der Adresse den `mailto:`-Link und zeigt sie an; `address="…"` plus Inhalt für eine eigene Beschriftung, `subject="…"` belegt die Betreffzeile vor, `icon="false"` lässt das Briefzeichen weg |
 | `[logo size="120" color="paper"]` | Logo-Sperrsatz: dreizeilige Wortmarke, rechts daneben das Signet (s. u.) |
 
@@ -393,13 +393,15 @@ Standbild neu und commitet es mit:
 
 ## Logo im Kopfmenü
 
-Das Bild links oben im Menüband ist ohne Code-Änderung austauschbar und einstellbar —
-beides unter **Design → Customizer → Website-Identität**:
+Das Bild im Menüband ist ohne Code-Änderung austauschbar, in der Höhe einstellbar und
+muss nicht links oben stehen — alles drei unter
+**Design → Customizer → Website-Identität**:
 
 | Einstellung | Wirkung |
 |---|---|
 | **Logo** | Bild aus der Mediathek (WordPress-Standard „Custom Logo"). Ohne eigenes Logo zeigt das Theme das mitgelieferte `assets/logo-idt-transparent.png`. |
 | **Logo-Höhe im Kopfmenü (px)** | Darstellungshöhe im Menüband, 20–120 px, Vorgabe 38. Die Breite ergibt sich aus dem Seitenverhältnis. |
+| **Stellung des Logos im Kopf** | Wo die Marke steht: **Links** (Vorgabe), **Mittig** oder **Rechts** — siehe Tabelle unten. |
 
 Die Höhe wird als CSS-Token `--header-logo-h` gesetzt (Vorgabe in `style.css`, abweichende
 Werte als Inline-CSS über `idt_header_logo_css()` in `functions.php`) und im Customizer
@@ -409,6 +411,39 @@ Zwei Sonderfälle bleiben davon unberührt: Der dunkle Footer nutzt weiterhin fe
 Inverse-Variante (`assets/logo-idt-inverse.png`), und die Splash-Bühne bringt ihr Logo
 selbst mit — Seiten mit der Vorlage **„Menü ohne Logo"** blenden den Marken-Block im
 Kopfmenü deshalb ganz aus (das Menü bleibt).
+
+### Stellung des Logos
+
+Die Marke muss nicht links oben stehen. Für Seiten, die wie ein Plakat auftreten
+(Kampagne, Veranstaltung, Einladung), trägt die Mitte — das Menü rückt dann in eine
+zweite Zeile darunter:
+
+| Einstellung | Kopf auf dem Desktop |
+|---|---|
+| **Links** (Vorgabe) | Marke am linken Rand, Menü und Aktionsleiste (Lupe/Striche) rechts daneben. |
+| **Mittig** | Marke zentriert im Kopf, das Menü zentriert in einer zweiten Zeile darunter. Lupe und Striche bleiben rechts. |
+| **Rechts** | Das Spiegelbild von *Links*: Aktionsleiste und Menü links, die Marke am rechten Rand. Beim aufklappbaren Menü spiegelt die Tafel auf dem Telefon mit — die Punkte stehen dann linksbündig unter dem Kreuz. |
+
+Unterhalb von 900 px bleibt der Kopf in allen drei Stellungen **einzeilig** — das Menü
+liegt dort ohnehin hinter dem Hamburger bzw. der Tafel und nicht im Kopf. Die Marke
+steht dann mittig (bzw. rechts) neben den Strichen.
+
+Eine **einzelne Seite** kann von der Einstellung abweichen: Die Seitenvorlage
+**„Logo mittig"** (Seite bearbeiten → Seitenleiste → *Seite* → **Vorlage**) zentriert
+die Marke nur auf dieser Seite. Sonst ändert sie nichts — Überschrift und Inhalt stehen
+wie auf jeder anderen Seite. Die Sondervorlagen des Themes im Vergleich:
+
+| Vorlage | Logo | Menüband | Footer |
+|---|---|---|---|
+| **Logo mittig** | mittig über dem Menü | ja | ja |
+| **Menü ohne Logo** | aus | ja | ja |
+| **Ohne Menüband** | — | aus | ja |
+| **Verlaufsseite** | — | aus | aus |
+
+Gerendert wird in allen Stellungen dasselbe Markup (`header.php`); den Unterschied macht
+die Body-Klasse `.idt-logo-mitte` bzw. `.idt-logo-rechts` aus `idt_logo_pos()` und der
+Stylesheet-Abschnitt **5d**. Auf Seiten mit der Vorlage *Menü ohne Logo* fällt die
+Stellung auf *Links* zurück — ohne Marke im Kopf gäbe es sonst eine leere erste Zeile.
 
 ## Form des Hauptmenüs
 
@@ -425,14 +460,13 @@ Kein Hintergrund, keine Trennlinie, keine Mattscheibe: nur das Logo links und
 drei Striche rechts, frei über der Seite. Vom Menüband bleibt damit nichts
 stehen, was nach Leiste aussieht.
 
-Damit Schrift und Kopf sich trotzdem nicht ins Gehege kommen, trägt beim
-Scrollen **jedes Stück seinen eigenen Grund**: Die Striche bekommen eine
-Papierfläche untergelegt, das Logo ebenso. Auf dem papierfarbenen Grund des
-Themes sieht man diese Flächen nicht — sie decken nur den Text dahinter ab;
-über einem Bild tragen sie. Auf dem Telefon ist der Kopf zu schmal dafür:
-Dort **weicht das Logo beim Scrollen ganz**, sonst reichte seine Fläche fast
-bis zu den Strichen und der Balken wäre wieder da, nur in zwei Teilen. Am
-Seitenanfang und im offenen Menü steht die Marke wie gewohnt.
+Der Kopf **ändert sich beim Scrollen überhaupt nicht**: Marke und Striche
+stehen durchgehend da, auf jeder Breite, und ohne Fläche darunter. Bis v2.3.2
+bekam jedes der beiden beim Scrollen ein Kästchen in Papierfarbe untergelegt,
+damit der Fließtext nicht hindurchläuft, und auf dem Telefon wich das Logo
+sogar ganz. Beides ist entfernt — über einem Bild las sich das Kästchen als
+letzter Rest der Leiste. Wo Text und Marke sich kreuzen, gewinnt jetzt der
+gleichbleibende Kopf.
 
 Die **Suche steht bei dieser Form im Menü**, nicht im Kopf: als letzter Punkt
 unter den Menüpunkten, mit Lupe und dem Wort „Suche". Sie öffnet dasselbe
@@ -546,7 +580,7 @@ oder dunklen Fläche:
 |---|---|---|
 | **Logo (Wortmarke + Signet)** | `/Logo`, `[logo]` | Dreizeilige Wortmarke, rechts daneben das Signet im Kreis. Echter Text in Inter statt Bild — scharf in jeder Größe und vorlesbar. Felder: Größe des Signets (alle übrigen Maße folgen ihr), Schriftfarbe (von der Fläche erben / Papier / Ink), Ausrichtung, optionaler Link. |
 | **Beige Buttons** | Stil **Beige** an Button, Pill-Button und Pill-Button-Stack | Gefüllte Papierfläche mit halbrunden Enden. Die runde Form ist hier kein Bruch mit dem sonst eckigen Design, sondern das Zitat der Wortmarke. Gestapelt (Pill-Button-Stack) sind das die breiten Schaltflächen der Linkseite. |
-| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. |
+| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. Neben den Profilen steht mit der Plattform `mail` auch eine **Mail-Kachel** zur Verfügung: In die Zeile kommt dann statt der URL die Adresse, die Kachel wird zum `mailto:`-Link. |
 
 Im Editor steht der Inhalt weiterhin auf weißem Grund — die Verlaufsfläche
 bringt die Seitenvorlage mit, nicht der Block. Damit die hellen Bausteine dort

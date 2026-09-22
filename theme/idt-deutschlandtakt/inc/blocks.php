@@ -299,7 +299,7 @@ function idt_blocks_config() {
 		'social' => array(
 			'title'    => __( 'Social-Icon', 'idt' ),
 			'icon'     => 'share',
-			'keywords' => array( 'social', 'icon', 'x', 'facebook', 'instagram', 'linkedin', 'youtube', 'mastodon', 'bluesky', 'rss', 'dt' ),
+			'keywords' => array( 'social', 'icon', 'x', 'facebook', 'instagram', 'linkedin', 'youtube', 'mastodon', 'bluesky', 'rss', 'mail', 'e-mail', 'kontakt', 'dt' ),
 			'fields'   => array(
 				array( 'key' => 'platform', 'label' => __( 'Plattform', 'idt' ), 'type' => 'select', 'default' => 'x', 'options' => array(
 					array( 'label' => 'X (Twitter)', 'value' => 'x' ),
@@ -310,8 +310,9 @@ function idt_blocks_config() {
 					array( 'label' => 'Mastodon', 'value' => 'mastodon' ),
 					array( 'label' => 'Bluesky', 'value' => 'bluesky' ),
 					array( 'label' => 'RSS', 'value' => 'rss' ),
+					array( 'label' => 'E-Mail', 'value' => 'mail' ),
 				) ),
-				array( 'key' => 'href', 'label' => __( 'Link (URL)', 'idt' ), 'type' => 'text', 'default' => '#' ),
+				array( 'key' => 'href', 'label' => __( 'Link (URL) — bei E-Mail die Adresse', 'idt' ), 'type' => 'text', 'default' => '#' ),
 				array( 'key' => 'style', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
 					array( 'label' => __( 'Outline', 'idt' ), 'value' => '' ),
 					array( 'label' => __( 'Beige (für farbige Flächen)', 'idt' ), 'value' => 'beige' ),
@@ -322,13 +323,13 @@ function idt_blocks_config() {
 		'sociallinks' => array(
 			'title'    => __( 'Social-Leiste', 'idt' ),
 			'icon'     => 'share',
-			'keywords' => array( 'social', 'leiste', 'icons', 'profile', 'dt' ),
+			'keywords' => array( 'social', 'leiste', 'icons', 'profile', 'mail', 'kontakt', 'dt' ),
 			'fields'   => array(
 				array(
 					'key'     => 'links',
-					'label'   => __( 'Icons — eine Zeile je Icon: Plattform | Link', 'idt' ),
+					'label'   => __( 'Icons — eine Zeile je Icon: Plattform | Link (bei „mail" die Adresse)', 'idt' ),
 					'type'    => 'textarea',
-					'default' => "x | #\nfacebook | #\ninstagram | #\nlinkedin | #\nyoutube | #\nmastodon | #\nbluesky | #\nrss | #",
+					'default' => "x | #\nfacebook | #\ninstagram | #\nlinkedin | #\nyoutube | #\nmastodon | #\nbluesky | #\nrss | #\nmail | kontakt@example.org",
 				),
 				array( 'key' => 'style', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
 					array( 'label' => __( 'Outline', 'idt' ), 'value' => '' ),

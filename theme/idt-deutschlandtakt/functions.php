@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.4.0' );
+define( 'IDT_VERSION', '2.4.2' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -152,6 +152,71 @@ function idt_nav_style() {
 	return idt_sanitize_nav_style( get_theme_mod( 'idt_nav_style', idt_nav_style_default() ) );
 }
 
+/* -------------------------------------------------------------------------
+ * Logo-Position im Kopf
+ * ----------------------------------------------------------------------
+ * Das Logo steht im Auslieferungszustand links oben — der Normalfall, und
+ * die Stelle, an der man eine Marke zuerst sucht. Für Seiten, die wie ein
+ * Plakat auftreten (Kampagne, Veranstaltung, Linkseite), ist das nicht
+ * zwingend die richtige Stelle: Dort trägt die Mitte, und das Menü darf
+ * darunter rücken. Drei Stellungen stehen zur Wahl:
+ *
+ *   'links'  — wie bisher: Marke am linken Rand, Menü und Aktionsleiste
+ *              rechts daneben.
+ *   'mitte'  — die Marke steht mittig im Kopf, das Menü zentriert in einer
+ *              zweiten Zeile darunter. Lupe und Striche bleiben rechts.
+ *   'rechts' — die gespiegelte Fassung von 'links': Marke am rechten Rand,
+ *              Menü und Aktionsleiste links.
+ *
+ * Gewählt wird für die ganze Seite unter „Design → Customizer →
+ * Website-Identität"; eine einzelne Seite kann über die Vorlage „Logo mittig"
+ * (page-logo-mitte.php) davon abweichen — s. idt_logo_pos(). Vorgabe bleibt
+ * links, damit bestehende Seiten sich ohne Zutun nicht verändern.
+ *
+ * Gerendert wird in allen drei Fällen dasselbe Markup (header.php bleibt
+ * unberührt); den Unterschied machen Body-Klasse und Stylesheet-Abschnitt
+ * (style.css 5d).
+ */
+
+/** Vorgabe der Logo-Position im Kopf. */
+function idt_logo_pos_default() {
+	return 'links';
+}
+
+/** Auswahlliste der Logo-Positionen (Schlüssel → Beschriftung im Customizer). */
+function idt_logo_pos_choices() {
+	return array(
+		'links'  => __( 'Links — Marke am linken Rand, Menü rechts daneben', 'idt' ),
+		'mitte'  => __( 'Mittig — Marke in der Mitte, Menü zentriert darunter', 'idt' ),
+		'rechts' => __( 'Rechts — Marke am rechten Rand, Menü links daneben', 'idt' ),
+	);
+}
+
+/** Nur bekannte Positionen zulassen, sonst die Vorgabe. */
+function idt_sanitize_logo_pos( $value ) {
+	return array_key_exists( $value, idt_logo_pos_choices() ) ? $value : idt_logo_pos_default();
+}
+
+/**
+ * Die für die aktuelle Seite geltende Logo-Position.
+ *
+ * Die Seitenvorlage schlägt dabei die Customizer-Einstellung: Wer einer
+ * einzelnen Seite „Logo mittig" gibt, meint genau diese Seite und nicht den
+ * ganzen Auftritt.
+ */
+function idt_logo_pos() {
+	/* Ohne Marke im Kopf ist die Frage gegenstandslos — die Vorlage „Menü ohne
+	   Logo" blendet den Block ganz aus (header.php). Ohne diesen Zweig trüge
+	   der Kopf bei 'mitte' eine leere erste Zeile über dem Menü. */
+	if ( idt_page_template_is( 'page-no-logo.php' ) ) {
+		return idt_logo_pos_default();
+	}
+	if ( idt_page_template_is( 'page-logo-mitte.php' ) ) {
+		return 'mitte';
+	}
+	return idt_sanitize_logo_pos( get_theme_mod( 'idt_logo_pos', idt_logo_pos_default() ) );
+}
+
 /** Höhe auf einen sinnvollen Bereich begrenzen (Kopfmenü bleibt ein Menüband). */
 function idt_sanitize_header_logo_height( $value ) {
 	$value = absint( $value );
@@ -181,6 +246,22 @@ function idt_customize_register( $wp_customize ) {
 		'label'       => __( 'Logo-Höhe im Kopfmenü (px)', 'idt' ),
 		'description' => __( 'Wie hoch das Logo oben im Menüband dargestellt wird. Die Breite ergibt sich aus dem Seitenverhältnis. Vorgabe: 38.', 'idt' ),
 		'input_attrs' => array( 'min' => 20, 'max' => 120, 'step' => 1 ),
+	) );
+
+	/* ---- Website-Identität: Stellung des Logos im Kopf ------------------- */
+	$wp_customize->add_setting( 'idt_logo_pos', array(
+		'default'           => idt_logo_pos_default(),
+		'sanitize_callback' => 'idt_sanitize_logo_pos',
+		'transport'         => 'refresh', /* Body-Klasse und damit das ganze Kopf-Layout hängen daran. */
+	) );
+
+	$wp_customize->add_control( 'idt_logo_pos', array(
+		'type'        => 'radio',
+		'section'     => 'title_tagline',
+		'priority'    => 9, /* direkt hinter der Logo-Höhe, vor der Menüform */
+		'label'       => __( 'Stellung des Logos im Kopf', 'idt' ),
+		'description' => __( 'Wo die Marke im Kopfmenü steht. Mittig rückt das Menü in eine zweite Zeile darunter; Lupe und Striche bleiben in allen Fällen rechts. Einzelne Seiten können über die Seitenvorlage „Logo mittig" abweichen.', 'idt' ),
+		'choices'     => idt_logo_pos_choices(),
 	) );
 
 	/* ---- Website-Identität: Form des Hauptmenüs -------------------------- */
@@ -267,6 +348,12 @@ function idt_is_verlauf_page() {
 function idt_body_class( $classes ) {
 	if ( idt_is_verlauf_page() ) {
 		$classes[] = 'idt-verlauf';
+	}
+	/* Logo-Position als Klasse: style.css 5d hängt an .idt-logo-mitte bzw.
+	   .idt-logo-rechts; „links" ist der Normalfall und bleibt klassenlos. */
+	$idt_logo_pos = idt_logo_pos();
+	if ( idt_logo_pos_default() !== $idt_logo_pos ) {
+		$classes[] = 'idt-logo-' . $idt_logo_pos;
 	}
 	/* Menüform als Klasse: style.css 5c hängt vollständig an .idt-nav-overlay,
 	   das Menüband braucht keine eigene Klasse (es ist der Normalfall). */
