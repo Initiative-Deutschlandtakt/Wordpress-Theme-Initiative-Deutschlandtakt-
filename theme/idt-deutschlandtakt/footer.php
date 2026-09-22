@@ -18,6 +18,12 @@ if ( ! idt_is_verlauf_page() ) : ?>
 			<div class="fbrand">
 				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/logo-idt-inverse.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>">
 				<p><?php echo esc_html( get_theme_mod( 'idt_footer_slogan', idt_footer_slogan_default() ) ); ?></p>
+				<?php
+				/* Social-Media-Menü (Design → Menüs, Standort „Social-Media-Menü
+				   (Footer)"): eine Reihe Icon-Kacheln unter dem Slogan. Ohne
+				   zugewiesenes Menü gibt die Funktion nichts aus. */
+				echo idt_render_social_menu(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				?>
 			</div>
 			<div class="fcol">
 				<h4>Themen</h4>

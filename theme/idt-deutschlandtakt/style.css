@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.4.1
+Version: 2.4.2
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1414,7 +1414,7 @@ body.idt-verlauf {
 }
 .idt-social__icon:hover { border-color: transparent; }
 .idt-social__icon:hover::before { opacity: 1; }
-.section--ink .idt-social__icon, .idt-einschub .idt-social__icon { color: var(--idt-paper); border-color: var(--idt-paper); }
+.section--ink .idt-social__icon, .idt-einschub .idt-social__icon, .site-footer .idt-social__icon { color: var(--idt-paper); border-color: var(--idt-paper); }
 /* Social-Leiste — Reihe aus Social-Icons ([socialrow] / Block „Social-Leiste"),
    bricht auf schmalen Bildschirmen um. Das margin der Icons bleibt ihr eigener
    Abstand, wenn sie einzeln im Fließtext stehen. */
@@ -2065,6 +2065,14 @@ main#content:has(.entry > :is(.stage, .stage2):last-child) { padding-bottom: 0; 
 .site-footer .fcol ul { list-style: none; padding: 0; margin: 0; }
 .site-footer .fcol a { display: block; color: var(--idt-on-ink-muted); text-decoration: none; font-size: var(--fs-sm); padding: 5px 0; transition: color var(--dur-fast) var(--ease-out); }
 .site-footer .fcol a:hover { color: var(--idt-paper); }
+/* Social-Media-Menü — Icon-Kacheln unter dem Slogan (Menüstandort „social",
+   gerendert von idt_render_social_menu()). Etwas kleiner als im Seiteninhalt,
+   damit die Reihe neben dem Logo nicht zur zweiten Marke wird; Farbe und
+   Hover-Verlauf kommen aus Abschnitt 7 (.idt-social__icon, dort auch die
+   helle Fassung für dunkle Flächen). */
+.site-footer .fsocial { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.site-footer .fsocial .idt-social__icon { width: 40px; height: 40px; margin: 0; }
+
 .site-footer .fbar { border-top: 1px solid rgba(255,245,240,.16); padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--idt-on-ink-muted); font-size: var(--fs-xs); font-family: var(--font-mono); }
 .site-footer .fbar a { color: inherit; margin-left: 18px; }
 .site-footer .fbar a:hover { color: var(--idt-paper); }

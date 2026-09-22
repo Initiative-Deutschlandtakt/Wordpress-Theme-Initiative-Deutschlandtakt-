@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.4.1' );
+define( 'IDT_VERSION', '2.4.2' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -52,10 +52,15 @@ function idt_setup() {
 		'flex-width'  => true,
 	) );
 
+	/* Vier Menü-Standorte: das Hauptmenü im Kopf, die beiden Linkspalten im
+	   Footer und das Social-Media-Menü. Letzteres rendert der Footer nicht als
+	   Liste, sondern als Reihe von Icon-Kacheln — welches Zeichen ein Punkt
+	   bekommt, leitet sich aus seiner Adresse ab (s. idt_social_platform()). */
 	register_nav_menus( array(
 		'primary'          => __( 'Hauptmenü', 'idt' ),
 		'footer'           => __( 'Footer-Menü', 'idt' ),
 		'footer-mitmachen' => __( 'Footer-Menü „Mitmachen“', 'idt' ),
+		'social'           => __( 'Social-Media-Menü (Footer)', 'idt' ),
 	) );
 
 	/* Farbvorschläge im Editor = IDT-Markenfarben (ersetzt die WP-Standard-
