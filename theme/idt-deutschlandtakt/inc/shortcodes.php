@@ -848,17 +848,55 @@ add_shortcode( 'newscard', 'idt_sc_newscard' );
 /**
  * Social-Icon-Link (quadratische Kachel im Pill-Stil).
  * [social platform="x" href="https://x.com/…" style="beige"]
- * Plattformen: x | facebook | instagram | linkedin | youtube | mastodon | bluesky | rss
+ * [social platform="mail" href="kontakt@example.org"]
+ * Plattformen: x | facebook | instagram | linkedin | youtube | mastodon |
+ * bluesky | rss | mail
  * Stile: '' (Outline) | beige (gefüllte Papierkachel mit cyanem Zeichen — die
  * Variante für Verlaufs- und Bildflächen, s. style.css 6c).
+ *
+ * Die Kachel zeigt nur das Zeichen — die Beschriftung für Screenreader kommt
+ * deshalb aus einer Liste der Plattformnamen in ihrer eigenen Schreibweise
+ * („LinkedIn", „RSS"), nicht aus ucfirst().
  */
 function idt_sc_social( $atts ) {
-	$atts  = shortcode_atts( array( 'platform' => 'x', 'href' => '#', 'style' => '' ), $atts, 'social' );
-	$label = ucfirst( $atts['platform'] );
+	$atts     = shortcode_atts( array( 'platform' => 'x', 'href' => '#', 'style' => '' ), $atts, 'social' );
+	$platform = strtolower( trim( (string) $atts['platform'] ) );
+	/* „email"/„e-mail" sind dieselbe Kachel wie „mail" — die Redaktion tippt
+	   mal das eine, mal das andere. */
+	if ( 'email' === $platform || 'e-mail' === $platform ) {
+		$platform = 'mail';
+	}
+	$labels = array(
+		'x'         => 'X',
+		'facebook'  => 'Facebook',
+		'instagram' => 'Instagram',
+		'linkedin'  => 'LinkedIn',
+		'youtube'   => 'YouTube',
+		'mastodon'  => 'Mastodon',
+		'bluesky'   => 'Bluesky',
+		'rss'       => 'RSS',
+		'mail'      => 'E-Mail schreiben',
+	);
+	$label = isset( $labels[ $platform ] ) ? $labels[ $platform ] : ucfirst( $platform );
 	$cls   = 'idt-social__icon';
 	if ( 'beige' === $atts['style'] ) { $cls .= ' idt-social__icon--beige'; }
+
+	/* Mail: im Linkfeld steht die Adresse, der mailto-Link entsteht hier. Wie
+	   bei [email] läuft sie durch antispambot(), damit im Quelltext kein
+	   zusammenhängendes „name@domain" für Adress-Sammler steht — und der href
+	   deshalb durch esc_attr() statt esc_url(), das die Entities zerlegen
+	   würde (ausführlich bei idt_sc_email()). Steht dort etwas anderes als eine
+	   Adresse (etwa der Link zur Kontaktseite), bleibt es ein normaler Link. */
+	if ( 'mail' === $platform ) {
+		$address = sanitize_email( preg_replace( '/^mailto:/i', '', trim( (string) $atts['href'] ) ) );
+		if ( '' !== $address ) {
+			return '<a class="' . esc_attr( $cls ) . '" href="' . esc_attr( 'mailto:' . antispambot( $address ) ) . '" aria-label="' . esc_attr( $label ) . '">' .
+				idt_icon( 'mail', 20 ) . '</a>';
+		}
+	}
+
 	return '<a class="' . esc_attr( $cls ) . '" href="' . esc_url( $atts['href'] ) . '" aria-label="' . esc_attr( $label ) . '" rel="me noopener">' .
-		idt_icon( $atts['platform'], 20 ) . '</a>';
+		idt_icon( $platform, 20 ) . '</a>';
 }
 add_shortcode( 'social', 'idt_sc_social' );
 
@@ -869,6 +907,7 @@ add_shortcode( 'social', 'idt_sc_social' );
  *   [socialrow style="beige" align="center"]
  *   x | https://x.com/…
  *   mastodon | https://…
+ *   mail | kontakt@example.org
  *   [/socialrow]
  * style gibt den Stil an alle Icons weiter, align richtet die Reihe aus.
  */
