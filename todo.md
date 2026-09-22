@@ -4,6 +4,28 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Tastaturkürzel M fürs Hauptmenü (v2.4.3).** Die drei Striche sind beim
+  aufklappbaren Menü klein und stehen weit rechts; wer die Seite mit der
+  Tastatur bedient, musste sich erst dorthin tabben. Jetzt klappt **M** das
+  Menü auf und wieder zu — Gegenstück zum bereits vorhandenen Esc.
+  - **Im selben Handler-Umfeld wie der Rest** (`assets/nav.js`): Der Listener
+    ruft dasselbe `setOpen()` wie der Klick auf die Schaltfläche, es gibt
+    also keinen zweiten Öffnungspfad, der auseinanderlaufen könnte.
+  - **Drei Wächter**, weil ein nackter Buchstabe sonst überall dazwischenfunkt:
+    kein Kürzel, solange der Fokus in `input`/`textarea`/`select` oder einem
+    `contenteditable` steht; keins, solange das Such-Overlay offen ist
+    (Klasse `idt-searchbox-open` am `<html>`, die `assets/search.js` setzt);
+    und keins mit Strg/Cmd/Alt — Umschalt bleibt erlaubt, damit auch ein
+    großes M zählt.
+  - **Nur wo die Striche sichtbar sind.** Beim Menüband auf dem Desktop stehen
+    die Punkte ohnehin offen und die Schaltfläche ist ausgeblendet; dort wäre
+    ein Umschalten ohne Wirkung. Geprüft wird das an der gemessenen Größe der
+    Schaltfläche, nicht an einer zweiten Kopie der Media Query.
+  - **Angekündigt wird es erst aus dem Script heraus** — `aria-keyshortcuts="M"`
+    und ein `title` („Taste M", neue i18n-Zeichenkette in `functions.php`)
+    setzt `nav.js`, nicht `header.php`: Ohne JavaScript gibt es das Kürzel
+    nicht, und ein Versprechen im Markup wäre dann falsch.
+
 - **Social-Media-Menü im Footer (v2.4.2).** Wunsch aus dem Verein: „Ich möchte im
   Footer eine Social-Media-Menü drin haben." Die Icons gab es im Theme längst
   (Block „Social-Leiste" / `[socialrow]`), aber nur für den Seiteninhalt — im
