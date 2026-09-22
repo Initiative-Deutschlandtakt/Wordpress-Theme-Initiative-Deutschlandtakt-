@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.3.3
+Version: 2.4.1
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -413,6 +413,32 @@ blockquote {
 }
 .main-nav .sub-menu .current-menu-item > a { color: var(--accent-primary); }
 
+/* ---- Fokus im Menü: Linie statt Kasten ---- */
+/* Abschnitt 3 legt um jedes fokussierte Element einen violetten Rahmen. Im
+   Menü steht der öfter, als jemand die Tastatur anfasst: assets/nav.js setzt
+   den Fokus beim Öffnen auf den ersten Punkt und beim Schließen zurück auf
+   die Schaltfläche — auf dem Telefon also mitten im Antippen. Der Kasten
+   wirkt dort wie ein Fehler und nicht wie ein Hinweis.
+
+   Der Fokus verschwindet deshalb nicht, er wechselt die Form: dieselbe
+   Rückmeldung wie unter dem Mauszeiger — Schrift und Linie im Markenton,
+   auf der Tinte des offenen Menüs in Cyan. Wer mit der Tabulatortaste geht,
+   sieht seinen Punkt also weiterhin, nur ohne Rahmen darum.
+
+   Die Regel steht bewusst nach den Untermenü-Regeln darüber: Sie ist
+   spezifitätsgleich mit `.main-nav .sub-menu a`, die Reihenfolge entscheidet.
+   Dazu der abgeschaltete Tipp-Schimmer: Mobile Browser legen beim Antippen
+   eine eigene Fläche über den Link, teils eingefärbt aus der Linkfarbe — das
+   ist der violette Kasten, der auch ohne Fokus erscheint. */
+.main-nav a { -webkit-tap-highlight-color: transparent; }
+.main-nav a:focus-visible {
+  outline: none;
+  color: var(--accent-primary); border-bottom-color: var(--accent-primary);
+}
+.idt-nav-open .idt-nav-overlay .main-nav a:focus-visible {
+  color: var(--accent-secondary); border-bottom-color: var(--accent-secondary);
+}
+
 /* ---- Hamburger-Toggle (zusammenklappbares Menü) ---- */
 .nav-toggle {
   display: none; align-items: center;
@@ -432,6 +458,14 @@ blockquote {
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+/* Fokus wie oben bei den Menüpunkten: Die Schaltfläche bekommt ihn zurück,
+   sobald das Menü zugeht (assets/nav.js) — der violette Rahmen aus Abschnitt 3
+   stünde also nach jedem Schließen da. Die drei Striche färben sich
+   stattdessen um, wie beim Überfahren. */
+.nav-toggle { -webkit-tap-highlight-color: transparent; }
+.nav-toggle:focus-visible { outline: none; color: var(--accent-primary); }
+.idt-nav-open .idt-nav-overlay .nav-toggle:focus-visible { color: var(--idt-cyan); }
 
 @media (max-width: 900px) {
   .nav-toggle { display: flex; }
@@ -645,19 +679,17 @@ html.idt-searchbox-open { overflow: hidden; }
 }
 .idt-js .idt-nav-overlay .nav-toggle:hover { color: var(--accent-primary); border-color: transparent; }
 
-/* Gescrollt bekommen die Striche eine eigene Papierfläche untergelegt — nicht
-   der ganze Kopf, sondern nur sie. Drei 2,5 px dünne Linien über laufendem
-   Text sind sonst schlicht nicht zu finden. Eckig wie alles im Auftritt
-   (--radius-sm ist 0). Die Klasse setzt assets/nav.js ab 40 px Scrollhöhe.
+/* Hier stand bis v2.3.1 eine Papierfläche, die sich beim Scrollen unter die
+   drei Striche legte, damit die dünnen Linien über laufendem Text zu finden
+   bleiben. Sie ist bewusst entfernt: Das weiße Kästchen war über einem Bild
+   der letzte sichtbare Rest des Menübands — genau das, was bei dieser
+   Menüform weg sollte. Die Schaltfläche bleibt in jedem Scrollzustand
+   durchsichtig, es trägt sie nur noch ihre eigene Tintenfarbe.
 
-   Bewusst ohne Kante: Eine Haarlinie zeichnete auf dem papierfarbenen Grund
-   des Themes wieder genau den Kasten, der hier weg sollte (nachgestellt bei
-   390 px) — und über einem Bild braucht es sie nicht, dort trägt schon die
-   Papierfläche selbst. Bleibt der flache Schatten, damit die Fläche auf
-   mittleren Tönen nicht wie ein Schnitt im Bild wirkt. */
-.idt-nav-scrolled .idt-nav-overlay .nav-toggle {
-  background: var(--idt-paper); box-shadow: var(--shadow-sm);
-}
+   Also nicht versehentlich wieder einsetzen. Wenn die Striche über einem
+   unruhigen Bild verschwinden, ist der Weg ein Schlagschatten an den Linien
+   (`filter: drop-shadow(...)` an `.nav-toggle__bar`) — der trägt sie, ohne
+   wieder eine Fläche aufzuziehen. */
 
 /* ---- Kein Balken, auch nicht beim Scrollen ---- */
 /* Bei dieser Menüform entfällt das Band als Fläche — kein Hintergrund, keine
@@ -667,16 +699,17 @@ html.idt-searchbox-open { overflow: hidden; }
 
    Bis v2.2.1 legte sich beim Scrollen die volle Papierfläche darunter, damit
    die Schrift nicht durch das Logo läuft. Das war der Balken durch die
-   Hintertür — und genau so hat ihn der Verein auch gesehen. Statt der Fläche
-   für alles trägt jetzt jedes Stück seinen eigenen Grund: die Striche eine
-   Papierfläche (oben), das Logo weicht auf dem Telefon (unten). Der Kopf
-   selbst bleibt in jedem Scrollzustand durchsichtig.
+   Hintertür — und genau so hat ihn der Verein auch gesehen. Danach trug
+   jedes Stück seinen eigenen Grund statt der Fläche für alles; seit v2.3.3
+   ist auch davon nichts mehr übrig: Marke und Striche stehen frei über der
+   Seite, auf jeder Breite und durchgehend. Der Kopf ändert sich beim
+   Scrollen überhaupt nicht mehr — es gibt keinen Scrollzustand.
 
-   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Nur mit
-   assets/nav.js gibt es überhaupt einen Scrollzustand und ein erreichbares
-   Menü. Ohne JavaScript bliebe der Kopf sonst dauerhaft transparent, ohne
-   dass irgendetwas das auffinge — dann also lieber das gewohnte Menüband
-   aus Abschnitt 5, zu dem die Form ohne JavaScript ohnehin zurückfällt. */
+   An `.idt-js` gehängt wie das Verstecken der Menüpunkte: Ohne
+   assets/nav.js gibt es kein erreichbares Menü. Der Kopf bliebe sonst
+   dauerhaft transparent, ohne dass irgendetwas das auffinge — dann also
+   lieber das gewohnte Menüband aus Abschnitt 5, zu dem die Form ohne
+   JavaScript ohnehin zurückfällt. */
 .idt-js .idt-nav-overlay .site-header {
   background: transparent; border-bottom-color: transparent;
   backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -690,48 +723,20 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-js .idt-nav-overlay .site-header__actions,
 .idt-js .idt-nav-overlay .main-nav { pointer-events: auto; }
 
-/* Auch die Marke bekommt beim Scrollen ihren eigenen Grund — dieselbe
-   Papierfläche wie die Striche, nur in ihrer Form. Ohne sie läuft der Text
-   mitten durch die Wortmarke, und beides wird unlesbar (nachgestellt bei
-   1280×800: Der Fließtext kreuzt das Logo auf halber Höhe). Auf dem
-   papierfarbenen Grund des Themes sieht man die Fläche nicht, sie deckt aber
-   den Text dahinter ab; über einem Bild trägt sie die Marke.
+/* Die Marke steht immer da — auf jeder Breite und in jedem Scrollzustand,
+   und weiterhin ohne Fläche darunter. Zwei Vorgänger hatte diese Stelle:
+   bis v2.2.1 die volle Papierfläche über den ganzen Kopf, danach ein
+   Kästchen nur unter dem Logo, dazu das Ausblenden auf dem Telefon. Beides
+   ist weg. Der Gedanke dahinter war, dass der Fließtext sonst durch die
+   Wortmarke läuft; entschieden ist er gegen die Lesbarkeit an dieser einen
+   Stelle und für einen Kopf, der immer derselbe ist.
 
-   Die Polsterung steht dauerhaft und wird durch negative Ränder wieder
-   aufgehoben: So sitzt das Logo an genau derselben Stelle wie vorher und
-   springt nicht, wenn die Fläche beim Scrollen dazukommt. */
-.idt-nav-overlay .site-header__brand {
-  padding: var(--space-2) var(--space-3);
-  margin: calc(var(--space-2) * -1) calc(var(--space-3) * -1);
-  background: transparent; box-shadow: none;
-  transition: background var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out),
-              opacity var(--dur-base) var(--ease-out);
-}
-.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
-  background: var(--idt-paper); box-shadow: var(--shadow-sm);
-}
-
-/* Auf dem Telefon weicht die Marke stattdessen ganz. Dort ist der Kopf so
-   schmal, dass die Papierfläche unter dem Logo fast bis zu den Strichen
-   reichte — und damit wäre der Balken wieder da, nur in zwei Teilen. Die
-   Marke ist ohnehin gleich wieder zu sehen: am Seitenanfang und, sobald man
-   das Menü öffnet (s. unten). */
-@media (max-width: 900px) {
-  .idt-js .idt-nav-overlay .site-header__brand {
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
-  }
-  .idt-js.idt-nav-scrolled .idt-nav-overlay .site-header__brand {
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
-  }
-  /* Offen ist die Marke wieder da: Die Tafel ist die Tinte des Kopfes, und auf
-     die gehört sie — auch mitten auf einer gescrollten Seite. */
-  .idt-js.idt-nav-scrolled.idt-nav-open .idt-nav-overlay .site-header__brand {
-    opacity: 1; visibility: visible;
-    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
-  }
-}
+   Damit hat die Marke hier gar keine eigene Regel mehr: Sie sitzt auf der
+   allgemeinen aus Abschnitt 5, dazu kommt weiter unten nur noch
+   `position: relative` samt z-index, damit sie über der Tafel liegt.
+   Keine Fläche, kein Übergang, kein Zustand. Mit ihr ist der Scrollzustand
+   des Kopfes insgesamt entfallen — `assets/nav.js` setzt seit v2.3.3 keine
+   Klasse `.idt-nav-scrolled` mehr, weil nichts mehr daran hing. */
 
 /* ---- Das Menüband kippt auf Markentinte ---- */
 /* Der Kopf bleibt dabei über allem: Auf dem Telefon liegt die Tafel darunter,
@@ -755,13 +760,10 @@ html.idt-searchbox-open { overflow: hidden; }
 /* Schrift und Linien auf der Tinte in Papierfarbe. */
 .idt-nav-open .idt-nav-overlay .main-nav a,
 .idt-nav-open .idt-nav-overlay .nav-toggle { color: var(--text-on-inverse); }
-/* Steht nach der Papierfläche des gescrollten Zustands (oben) und nimmt sie
-   wieder weg: Ein weißes Kästchen um das Kreuz wäre auf der Tinte ein Fleck.
-   Offen trägt das Kreuz die Fläche des ganzen Kopfes. */
-.idt-nav-open .idt-nav-overlay .nav-toggle,
-.idt-nav-open .idt-nav-overlay .site-header__brand {
-  background: transparent; border-color: transparent; box-shadow: none;
-}
+/* Hier stand die Gegenregel zu den Papierflächen des gescrollten Zustands:
+   Kreuz und Marke hätten auf der Tinte sonst je ein weißes Kästchen getragen.
+   Seit beide Flächen weg sind (s. oben), gibt es nichts mehr zurückzunehmen —
+   offen wie geschlossen trägt allein der Kopf die Fläche. */
 .idt-nav-open .idt-nav-overlay .nav-toggle:hover { color: var(--idt-cyan); border-color: transparent; }
 .idt-nav-open .idt-nav-overlay .main-nav a:hover { color: var(--accent-secondary); border-bottom-color: var(--accent-secondary); }
 .idt-nav-open .idt-nav-overlay .main-nav .current-menu-item > a { border-bottom-color: var(--idt-cyan); }
@@ -777,12 +779,11 @@ html.idt-searchbox-open { overflow: hidden; }
 .idt-nav-overlay .site-header__brand,
 .idt-nav-overlay .site-header__actions { position: relative; z-index: 2; }
 .idt-nav-overlay .main-nav { z-index: 1; }
-/* Deckungsgleich über dem Logo darunter: Die Versatzwerte sind genau die
-   Polsterung des Marken-Blocks (s. oben, Papierfläche beim Scrollen) — sie
-   müssen mit ihr zusammen geändert werden, sonst rutscht die helle Fassung
-   neben die dunkle. */
+/* Deckungsgleich über dem Logo darunter: Der Marken-Block trägt seit v2.3.3
+   keine Polsterung mehr (s. oben), die helle Fassung sitzt also bündig in
+   seiner Ecke. Kommt dort wieder ein Versatz dazu, muss er hier mit. */
 .idt-nav-overlay .site-header__logo-inverse {
-  position: absolute; top: var(--space-2); left: var(--space-3);
+  position: absolute; top: 0; left: 0;
   height: var(--header-logo-h); width: auto;
   opacity: 0; transition: opacity var(--dur-base) var(--ease-out); pointer-events: none;
 }
@@ -988,7 +989,6 @@ html.idt-nav-lock { overflow: hidden; }
    Die Tafel ist da oder nicht, die Punkte stehen sofort. */
 @media (prefers-reduced-motion: reduce) {
   .idt-nav-overlay .site-header,
-  .idt-nav-overlay .site-header__brand,
   .idt-nav-overlay .site-header__logo-inverse,
   .idt-nav-overlay .main-nav,
   .idt-nav-overlay .main-nav > ul > li,
@@ -998,6 +998,90 @@ html.idt-nav-lock { overflow: hidden; }
     transition-duration: 1ms !important;
     transition-delay: 0s !important;
   }
+}
+
+/* =============================================================================
+   5d) STELLUNG DES LOGOS IM KOPF — Customizer / Seitenvorlage „Logo mittig"
+   =============================================================================
+   Der Kopf aus Abschnitt 5 setzt die Marke links, Menü und Aktionsleiste
+   rechts — der Normalfall und deshalb klassenlos. Zwei Abweichungen hängen an
+   einer Body-Klasse (idt_body_class() aus idt_logo_pos()):
+
+     .idt-logo-mitte  — die Marke steht mittig im Kopf, das Menü zentriert in
+       einer zweiten Zeile darunter. Für Seiten, die wie ein Plakat auftreten.
+     .idt-logo-rechts — die gespiegelte Fassung: Aktionsleiste und Menü links,
+       die Marke am rechten Rand.
+
+   Beide schalten `.site-header__inner` von Flex auf Grid und setzen die drei
+   Kinder ausdrücklich — nichts wird automatisch platziert, damit keine Regel
+   aus Abschnitt 5/5c die Anordnung von hinten wieder verschiebt. Das Markup
+   ist in allen drei Stellungen dasselbe (header.php).
+
+   Unterhalb von 900 px steht das Menü ohnehin außerhalb des Flusses (im
+   Menüband absolut unter dem Kopf, beim aufklappbaren Menü als Tafel über der
+   Seite) — die zweite Zeile entsteht dort also gar nicht erst, und der Kopf
+   bleibt einzeilig. Eine eigene Media Query braucht es dafür nicht.
+   ============================================================================= */
+
+/* ---- Marke mittig, Menü darunter ---- */
+/* Die beiden 1fr-Spalten außen sind gleich breit, die Marke steht damit
+   tatsächlich in der Mitte des Kopfes und nicht nur zwischen ihren Nachbarn.
+   `minmax(0, 1fr)` statt `1fr`: Ohne die Null als Minimum wüchse die Spalte
+   mit der Aktionsleiste über ihren Anteil hinaus und schöbe die Marke aus
+   der Mitte. */
+.idt-logo-mitte .site-header__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-5);
+  row-gap: var(--space-2);
+  /* Zwei Zeilen brauchen etwas Luft nach oben und unten; die 68 px Mindesthöhe
+     aus Abschnitt 5 tragen nur eine. */
+  padding-top: var(--space-2); padding-bottom: var(--space-2);
+}
+.idt-logo-mitte .site-header__brand { grid-column: 2; grid-row: 1; }
+.idt-logo-mitte .site-header__actions { grid-column: 3; grid-row: 1; justify-self: end; }
+/* Das Menü nimmt die ganze Breite der zweiten Zeile ein und zentriert seine
+   Punkte darin; `margin-left: auto` aus Abschnitt 5 zöge sie sonst nach
+   rechts. Auch beim aufklappbaren Menü bleibt die Zeile reserviert — dort ist
+   das Menü nur unsichtbar (5c), und ein einklappender Kopf ließe die Marke
+   beim Öffnen springen. */
+.idt-logo-mitte .main-nav {
+  grid-column: 1 / -1; grid-row: 2;
+  justify-content: center; margin-left: 0;
+}
+@media (max-width: 900px) {
+  /* Aufgeklappt ist das Menü eine Leiste bzw. Tafel und keine Kopfzeile mehr —
+     die Punkte stehen dort untereinander und beginnen oben. */
+  .idt-logo-mitte .main-nav { justify-content: flex-start; }
+}
+
+/* ---- Marke rechts ---- */
+/* Spiegelbild von Abschnitt 5: Aktionsleiste und Menü bleiben beieinander,
+   nur stehen sie jetzt links und die Marke am gegenüberliegenden Rand. */
+.idt-logo-rechts .site-header__inner {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-5);
+}
+.idt-logo-rechts .site-header__actions { grid-column: 1; grid-row: 1; }
+.idt-logo-rechts .main-nav { grid-column: 2; grid-row: 1; margin-left: 0; }
+.idt-logo-rechts .site-header__brand { grid-column: 3; grid-row: 1; justify-self: end; }
+
+/* Beim aufklappbaren Menü wandert mit der Aktionsleiste auch das Kreuz nach
+   links — die Tafel auf dem Telefon muss deshalb mitspiegeln. 5c stellt ihre
+   Punkte rechtsbündig, „unter das Kreuz, mit dem man sie geöffnet hat"; steht
+   das Kreuz links, stünden sie am anderen Ende des Bildschirms als der
+   Schalter, der sie geöffnet hat. Die Treppe läuft entsprechend von links
+   statt von rechts. */
+@media (max-width: 900px) {
+  .idt-nav-overlay.idt-logo-rechts .main-nav ul { align-items: flex-start; }
+  .idt-nav-overlay.idt-logo-rechts .main-nav li,
+  .idt-nav-overlay.idt-logo-rechts .main-nav .sub-menu li { text-align: left; }
+  .idt-nav-overlay.idt-logo-rechts .main-nav .idt-navsearch { justify-content: flex-start; }
+  .idt-js .idt-nav-overlay.idt-logo-rechts .main-nav > ul > li,
+  .idt-js .idt-nav-overlay.idt-logo-rechts .main-nav .idt-navsearch { transform: translateX(-12px); }
 }
 
 /* =============================================================================
