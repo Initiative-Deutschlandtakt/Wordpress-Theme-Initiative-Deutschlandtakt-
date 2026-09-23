@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.4.3' );
+define( 'IDT_VERSION', '2.4.4' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
