@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.4.3' );
+define( 'IDT_VERSION', '2.5.0' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -437,6 +437,7 @@ require get_template_directory() . '/inc/shortcodes.php';
 require get_template_directory() . '/inc/blocks.php';
 require get_template_directory() . '/inc/patterns.php';
 require get_template_directory() . '/inc/search.php';
+require get_template_directory() . '/inc/social-meta.php';
 
 /* Demo-/Erstinhalte: nur im Dev-Stack vorhanden — das Production-Zip enthält
  * diese Datei bewusst nicht, damit eine Aktivierung auf einer bestehenden

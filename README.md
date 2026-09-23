@@ -554,6 +554,33 @@ Dieselben Icons stehen auch im Seiteninhalt zur Verfügung: der Block
 (`[social]`) für ein einzelnes. Menü und Block rendern durch dieselbe Funktion —
 sie sehen überall gleich aus.
 
+## Linkvorschau (Social Media)
+
+Wird ein Link auf die Website geteilt — auf LinkedIn, Mastodon, Bluesky,
+Facebook oder in Messengern wie Signal, WhatsApp und Telegram —, baut der Dienst
+aus Meta-Tags im `<head>` eine Vorschaukarte mit Titel, Kurztext und Bild. Das
+Theme gibt diese Tags (Open Graph und Twitter Card) selbst aus, damit die Karte
+nicht dem Zufall überlassen bleibt.
+
+| Teil der Karte | Woher er kommt |
+| --- | --- |
+| **Titel** | Titel der Seite bzw. des Beitrags; auf der Startseite der Website-Titel |
+| **Text** | **Textauszug** der Seite (Seitenleiste im Editor), sonst der Anfang des Inhalts, sonst die Standardbeschreibung |
+| **Bild** | **Beitragsbild**, sonst das Standardbild, sonst das Logo auf Papierfläche (`assets/social-preview.png`) |
+
+Standardbeschreibung und Standardbild pflegt man unter *Design → Customizer →
+Linkvorschau (Social Media)*. Das Bild am besten im Querformat 1200 × 630 px,
+das Wichtige mittig — manche Dienste schneiden quadratisch zu. Auf der
+Startseite greift nur ein ausdrücklich gesetzter Textauszug, weil der Inhalt dort
+die Splash-Bühne ist und keinen lesbaren Text hergibt.
+
+Ist ein SEO-Plugin aktiv, das selbst Open-Graph-Tags schreibt (Yoast, Rank Math,
+SEOPress, All in One SEO, The SEO Framework, Jetpack), hält sich das Theme
+zurück. Prüfen lässt sich das Ergebnis mit dem
+[Post Inspector von LinkedIn](https://www.linkedin.com/post-inspector/) oder dem
+[Sharing Debugger von Facebook](https://developers.facebook.com/tools/debug/) —
+beide leeren dabei auch den Vorschau-Cache des jeweiligen Dienstes.
+
 ## Startseite
 
 Die Homepage wird **nicht** mehr fest in `front-page.php` verdrahtet: Die Vorlage

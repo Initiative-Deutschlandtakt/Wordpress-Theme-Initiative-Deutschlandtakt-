@@ -4,6 +4,32 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Linkvorschau für Social Media (v2.5.0).** Hinweis aus dem Verein: Beim
+  Teilen von initiative-deutschlandtakt.de fehlten die Meta-Tags für die
+  Vorschaukarte — was LinkedIn, Mastodon oder ein Messenger anzeigt, blieb dem
+  jeweiligen Dienst überlassen. Neue Datei `inc/social-meta.php`.
+  - **Open Graph und Twitter Card** (`og:title`, `og:description`, `og:image`
+    samt Maßen und Alt-Text, `og:url`, `og:type`, `og:locale`, `og:site_name`,
+    `twitter:card` = `summary_large_image`), dazu `<meta name="description">`
+    für Suchmaschinen. Beiträge tragen zusätzlich `article:published_time`
+    und `article:modified_time`. Suche und 404 bekommen keine Tags.
+  - **Pflege ohne neue Felder, wo es geht:** Text aus dem Textauszug, Bild aus
+    dem Beitragsbild. Damit der Textauszug auch auf Seiten verfügbar ist, schaltet
+    das Theme ihn für den Seitentyp ein. Ohne Auszug wird der Anfang des Inhalts
+    (≈ 200 Zeichen, ohne Shortcodes, am Wortende gekürzt) genommen — außer auf
+    der Startseite, deren Inhalt die Splash-Bühne ist.
+  - **Vorgaben im Customizer**, neuer Bereich „Linkvorschau (Social Media)":
+    Standardbeschreibung (leer = Untertitel der Website) und Standardbild.
+  - **Mitgeliefertes Standardbild** `assets/social-preview.png`: 1200 × 630,
+    das Logo mittig auf `--paper` (#FFF6F0). Nicht das transparente Logo-PNG
+    direkt — mehrere Dienste legen Transparenz auf Schwarz, und das
+    Seitenverhältnis 1,9 : 1 ist das, was alle großen Karten erwarten. In
+    `readme.txt` unter den Marken- und Bildrechten nachgetragen.
+  - **Kein Doppel mit SEO-Plugins:** Sind Yoast, Rank Math, SEOPress, All in One
+    SEO, The SEO Framework oder das Open-Graph-Modul von Jetpack aktiv, gibt das
+    Theme nichts aus. Filter `idt_social_meta_enabled` und `idt_social_data`
+    für Sonderfälle.
+
 - **Tastaturkürzel M fürs Hauptmenü (v2.4.3).** Die drei Striche sind beim
   aufklappbaren Menü klein und stehen weit rechts; wer die Seite mit der
   Tastatur bedient, musste sich erst dorthin tabben. Jetzt klappt **M** das
