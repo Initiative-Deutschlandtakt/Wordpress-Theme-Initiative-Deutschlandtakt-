@@ -478,8 +478,11 @@ Punkte und Kreuz werden hell, die Seite tritt zurück. Auf dem Telefon wächst
 dieselbe Fläche über den ganzen Bildschirm; Logo und Kreuz bleiben dabei stehen,
 wo sie waren, und gehen nahtlos in sie über.
 
-Beide Formen bedienen sich gleich: Esc schließt, ein Klick auf einen Menüpunkt
-schließt. Auf dem Vollbild kommt dazu, dass die Seite dahinter stillsteht und
+Beide Formen bedienen sich gleich: **Taste M** klappt das Menü auf und wieder
+zu, Esc schließt, ein Klick auf einen Menüpunkt schließt. Das M greift überall
+dort, wo die drei Striche zu sehen sind — beim Menüband also nur unterhalb von
+900 px, beim aufklappbaren Menü auf jeder Breite. Während in einem Feld getippt
+wird oder die Suche offen steht, bleibt der Buchstabe ein Buchstabe. Auf dem Vollbild kommt dazu, dass die Seite dahinter stillsteht und
 der Tastaturfokus im Menü bleibt, bis es geschlossen ist. Untermenüs erscheinen
 auf dem Desktop als Flyout, auf dem Telefon eingerückt und dauerhaft offen —
 dort gibt es kein Hover.

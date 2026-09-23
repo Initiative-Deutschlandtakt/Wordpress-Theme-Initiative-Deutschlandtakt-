@@ -12,6 +12,8 @@
  *
  * Geöffnet wird in beiden Fällen über dieselben zwei Klassen — `.is-open` am
  * Menü und `idt-nav-open` am <html> —, das Aussehen macht style.css (5, 5c).
+ * Neben dem Klick auf die drei Striche öffnet und schließt die Taste **M** das
+ * Menü, solange der Fokus nicht in einem Eingabefeld steht.
  * Nur was die Tafel zur Ebene über der Seite macht (Abdunkler, gesperrtes
  * Scrollen, gefangener Tastaturfokus), gilt allein für 'overlay' auf schmalen
  * Viewports.
@@ -25,6 +27,9 @@
   /* Muss zur Media Query in style.css passen: darunter wird aus dem
      waagerechten Ausfächern die bildschirmfüllende Tafel. */
   var PANEL_MAX = 900;
+  /* Tastaturkürzel fürs Auf- und Zuklappen. Ein nackter Buchstabe ohne
+     Zusatztaste — deshalb weiter unten die Prüfung, ob gerade jemand tippt. */
+  var KEY = 'm';
 
   function ready(fn) {
     if (document.readyState !== 'loading') { fn(); }
@@ -90,6 +95,51 @@
     btn.addEventListener('click', function () {
       setOpen(!isOpen());
     });
+
+    /* --- Tastaturkürzel M ---------------------------------------------
+     *
+     * Die Striche sind auf dem Desktop beim Menüband gar nicht da und beim
+     * aufklappbaren Menü klein und weit rechts — wer viel mit der Tastatur
+     * arbeitet, kommt mit einem Buchstaben schneller hin. Ein nackter
+     * Buchstabe kollidiert allerdings mit allem, was Text entgegennimmt;
+     * die drei Prüfungen unten halten ihn davon fern. */
+
+    /* Nimmt das Element gerade Text entgegen? Dann gehört das M dort hin. */
+    function isTyping(el) {
+      if (!el) { return false; }
+      if (el.isContentEditable) { return true; }
+      var tag = (el.tagName || '').toLowerCase();
+      return 'input' === tag || 'textarea' === tag || 'select' === tag;
+    }
+
+    /* Die Striche sind der Anker des Kürzels: Wo sie nicht zu sehen sind —
+       Menüband auf dem Desktop, Seitenvorlage ohne Menüband —, stehen die
+       Punkte entweder ohnehin offen oder es gibt kein Menü zum Aufklappen. */
+    function toggleVisible() {
+      return btn.offsetWidth > 0 || btn.offsetHeight > 0;
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== KEY && e.key !== KEY.toUpperCase()) { return; }
+      /* Zusatztasten gehören Browser und Betriebssystem (Strg+M, Cmd+M …).
+         Umschalt bleibt erlaubt, sonst fiele ein großes M unter den Tisch. */
+      if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) { return; }
+      if (isTyping(e.target) || isTyping(document.activeElement)) { return; }
+      /* Über der Seite liegt die Suche — dort hat das Menü nichts zu suchen,
+         auch wenn der Fokus gerade nicht im Suchfeld steht (assets/search.js
+         setzt die Klasse, solange das Overlay offen ist). */
+      if (root.classList.contains('idt-searchbox-open')) { return; }
+      if (!toggleVisible()) { return; }
+
+      e.preventDefault();
+      setOpen(!isOpen());
+    });
+
+    /* Erst jetzt ankündigen, nicht schon im Markup (header.php): Ohne
+       JavaScript gibt es das Kürzel nicht, und ein Versprechen, das die Taste
+       nicht einlöst, ist schlimmer als keins. */
+    btn.setAttribute('aria-keyshortcuts', KEY.toUpperCase());
+    if (I18N.key) { btn.setAttribute('title', I18N.key); }
 
     /* Hier hing bis v2.3.2 ein Scroll-Beobachter, der ab 40 px die Klasse
        `.idt-nav-scrolled` setzte. Daran hingen zuletzt nur noch die
