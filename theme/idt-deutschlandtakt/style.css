@@ -2065,13 +2065,21 @@ main#content:has(.entry > :is(.stage, .stage2):last-child) { padding-bottom: 0; 
 .site-footer .fcol ul { list-style: none; padding: 0; margin: 0; }
 .site-footer .fcol a { display: block; color: var(--idt-on-ink-muted); text-decoration: none; font-size: var(--fs-sm); padding: 5px 0; transition: color var(--dur-fast) var(--ease-out); }
 .site-footer .fcol a:hover { color: var(--idt-paper); }
-/* Social-Media-Menü — Icon-Kacheln unter dem Slogan (Menüstandort „social",
-   gerendert von idt_render_social_menu()). Etwas kleiner als im Seiteninhalt,
-   damit die Reihe neben dem Logo nicht zur zweiten Marke wird; Farbe und
-   Hover-Verlauf kommen aus Abschnitt 7 (.idt-social__icon, dort auch die
-   helle Fassung für dunkle Flächen). */
-.site-footer .fsocial { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.site-footer .fsocial .idt-social__icon { width: 40px; height: 40px; margin: 0; }
+/* Social-Media-Menü — Zeichenreihe unter dem Slogan (Menüstandort „social",
+   gerendert von idt_render_social_menu()). Im Footer stehen die Zeichen ohne
+   Rahmen: die hellen Kästchen auf der dunklen Fläche lasen sich wie eine
+   zweite Marke neben dem Logo. Die Fläche von 40×40 bleibt als Klickziel
+   erhalten, sichtbar ist nur das Zeichen — dafür etwas größer als im
+   Seiteninhalt. Der negative Einzug rückt das erste Zeichen auf die
+   Fluchtlinie von Logo und Slogan, denn ohne Rahmen wirkt der Innenabstand
+   der Kachel wie eine Einrückung. */
+.site-footer .fsocial { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 20px; margin-left: -8px; }
+.site-footer .fsocial .idt-social__icon { width: 40px; height: 40px; margin: 0; border-color: transparent; }
+.site-footer .fsocial .idt-social__icon svg { width: 24px; height: 24px; }
+/* Ohne Rahmen trägt kein Verlaufsrand den Hover — stattdessen wechselt das
+   Zeichen auf Cyan, wie die Links der Footer-Spalten auf Papierweiß. */
+.site-footer .fsocial .idt-social__icon::before { display: none; }
+.site-footer .fsocial .idt-social__icon:hover { color: var(--idt-cyan); }
 
 .site-footer .fbar { border-top: 1px solid rgba(255,245,240,.16); padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--idt-on-ink-muted); font-size: var(--fs-xs); font-family: var(--font-mono); }
 .site-footer .fbar a { color: inherit; margin-left: 18px; }
