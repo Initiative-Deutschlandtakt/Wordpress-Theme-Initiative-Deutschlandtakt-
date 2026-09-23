@@ -50,6 +50,7 @@ Initiative Deutschlandtakt e. V. — insbesondere:
 * assets/logo-idt-transparent.png
 * assets/logo-idt-inverse.png
 * assets/site-icon.png
+* assets/social-preview.png
 * screenshot.png
 
 Diese Dateien sind Teil des Auftritts des Vereins und dürfen nicht verwendet
