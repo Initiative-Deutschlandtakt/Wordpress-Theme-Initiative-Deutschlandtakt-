@@ -338,6 +338,38 @@ das Bild für alle, die es nicht sehen, und *ersetzt* es — er erscheint nicht 
 der Seite. Beide Felder gehören gefüllt, mit verschiedenen Texten: Der
 Alternativtext sagt, was zu sehen ist, die Bildunterschrift sagt, was es bedeutet.
 
+### Bilder mit Mobil-Variante
+
+Eine breite Grafik (16:9) wird auf dem Telefon oft so klein, dass die
+Beschriftung nicht mehr lesbar ist. Für einzelne Bilder kann man deshalb eine
+zweite Datei im Hochformat hinterlegen, die auf schmalen Bildschirmen
+(bis 700 px Breite) an ihre Stelle tritt. Alle anderen Bilder bleiben, wie sie sind.
+
+1. Beide Dateien in die Mediathek hochladen, die Mobil-Datei mit dem Zusatz
+   `-mobil` vor der Endung: zu `netzgrafik.png` gehört `netzgrafik-mobil.png`.
+   Beide müssen im selben Upload-Ordner landen — am einfachsten im selben Monat
+   hochladen. Das gilt für jedes Format (png, jpg, webp, svg).
+2. Im Editor den Bildblock mit der **breiten** Datei einfügen und in der
+   Seitenleiste unter **Mobil-Variante** den Schalter **Mobil-Variante
+   verwenden** einschalten. Der Schalter setzt die Klasse `mobil-variante`
+   (sichtbar unter „Erweitert → Zusätzliche CSS-Klasse(n)"; dort von Hand
+   eingetragen wirkt sie genauso).
+3. Darunter zeigt der Editor, ob die Mobil-Datei gefunden wurde. Fehlt sie,
+   erscheint ein Hinweis mit dem erwarteten Dateinamen — die Seite zeigt dann
+   überall das normale Bild.
+
+Der Browser lädt immer nur eine der beiden Dateien. Alternativtext, Link,
+Ausrichtung und Bildunterschrift stellt man wie gewohnt am Bildblock ein; sie
+gelten für beide Fassungen — der Alternativtext sollte also zu beiden passen.
+
+Für Entwickler: Umgesetzt in `inc/mobil-variante.php` (Filter auf
+`render_block_core/image`, packt das `<img>` in ein `<picture>` mit einer
+`<source media="(max-width: 700px)">`). Der Breakpoint lässt sich mit der
+Konstante `IDT_MOBIL_BREAKPOINT` (vorab in der `wp-config.php`) oder dem Filter
+`idt_mobil_variante_breakpoint` ändern. Die Suche nach der Mobil-Datei wird
+einen Tag lang zwischengespeichert; Hochladen oder Löschen einer `-mobil`-Datei
+leert den Eintrag sofort.
+
 ### Knotendreieck (bewegte Grafik zum Knotenprinzip)
 
 Der Block **Knotendreieck** (Inserter, Kategorie *Deutschlandtakt*) zeigt drei

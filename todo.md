@@ -4,6 +4,39 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Mobil-Variante für ausgewählte Bilder (v2.6.0).** Breite Grafiken (16:9)
+  sind auf dem Telefon kaum lesbar; für einzelne Bildblöcke kann die Redaktion
+  jetzt eine Hochformat-Datei hinterlegen, die bis 700 px Viewport-Breite an
+  ihre Stelle tritt. Neue Dateien `inc/mobil-variante.php` und
+  `assets/mobil-variante.js`.
+  - **Opt-in pro Block** über die Klasse `mobil-variante` — bewusst ohne
+    idt-Präfix, weil sie ein Redaktionsbegriff ist, den man auch eintippen
+    können soll. Pauschal auf alle Bilder wirkt nichts.
+  - **Namenskonvention statt neuem Feld:** zu `grafik.png` gehört
+    `grafik-mobil.png` im selben Upload-Ordner. Gesucht wird ab der
+    Originaldatei des Anhangs; Größen- und `-scaled`-Zusätze von WordPress
+    werden dabei abgestreift, `…-mobil-scaled.jpg` wird mitgefunden.
+  - **Serverseitig, ein Download:** Filter auf `render_block_core/image`
+    ersetzt nur das `<img>`-Tag durch `<picture><source media=…><img …></picture>`.
+    Das `<img>` bleibt mit allen Attributen stehen, Figur, Link,
+    Ausrichtungsklassen und `figcaption` werden nicht angefasst. Die `<source>`
+    trägt den `srcset` der Mobil-Datei (SVG: die eine URL), ihren MIME-Typ und
+    ihre eigenen Maße, damit das Hochformat sein Seitenverhältnis reserviert
+    bekommt. `picture.idt-mobil-variante` steht auf `display: contents`
+    (style.css Abschnitt 8), damit Ausrichtung und Breite am `<img>` wirken
+    wie bisher.
+  - **Cache:** `attachment_url_to_postid()` sucht über ungeindexte Meta-Werte;
+    Treffer und Fehltreffer liegen deshalb einen Tag als Transient (mit
+    Objekt-Cache dort), dazu ein statischer Cache pro Aufruf.
+    Hochladen/Löschen einer `-mobil`-Datei leert den Eintrag sofort.
+  - **Breakpoint** als Konstante `IDT_MOBIL_BREAKPOINT` (in der wp-config.php
+    vorab definierbar) und Filter `idt_mobil_variante_breakpoint`.
+  - **Editor:** Schalter „Mobil-Variante verwenden" in der Seitenleiste des
+    Bildblocks (Filter `editor.BlockEdit`), der die Klasse setzt bzw.
+    entfernt. Ist er an, fragt der Editor über `idt/v1/mobil-variante` (nur
+    mit `edit_posts`) nach — dieselbe Suche wie im Frontend — und zeigt
+    „Gefunden: …" oder einen Hinweis mit dem erwarteten Dateinamen.
+
 - **Linkvorschau für Social Media (v2.5.0).** Hinweis aus dem Verein: Beim
   Teilen von initiative-deutschlandtakt.de fehlten die Meta-Tags für die
   Vorschaukarte — was LinkedIn, Mastodon oder ein Messenger anzeigt, blieb dem
