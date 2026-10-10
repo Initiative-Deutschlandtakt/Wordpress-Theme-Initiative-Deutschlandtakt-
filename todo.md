@@ -4,6 +4,35 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Anmeldeseite im IDT-Design (v2.7.0).** `wp-login.php` trägt jetzt die
+  Marke; neue Dateien `inc/login.php` und `assets/login.css`. Nur
+  Darstellung — Rollen-Mapping und Zugriff bleiben in den Must-Use-Plugins.
+  - **Authentik zuerst:** Die Karte des Plugins „OpenID Connect Generic
+    Client" (`.openid-connect-login-button`) steht als weiße Karte mit
+    vollbreitem Violett-Knopf „Mit IDT-Konto anmelden" (Filter
+    `openid-connect-generic-login-button-text`) oben; die Inline-Margin des
+    Plugins wird mit `!important` überschrieben.
+  - **Trenner „oder mit lokalem Konto"** hängt `idt_login_trenner()` an
+    `login_message` (Priorität 100, nach dem Plugin) — nur wenn die Karte
+    wirklich da ist, sonst gäbe es kein „oder". Als Markup statt
+    CSS-`content`, damit er übersetzbar und vorlesbar bleibt.
+  - **Lokales Formular zurückhaltend:** transparent, dünner Rahmen, kleine
+    Labels, Absenden als Petrol-Outline. Fokus in Violett, Meldungen mit
+    weicher Ecke.
+  - **Tokens aus einer Quelle:** Die Anmeldeseite lädt `style.css` nicht
+    (dessen Basis-Styles würden das WordPress-Formular verbiegen).
+    `idt_login_tokens_css()` liest stattdessen die `@font-face`-Regeln und
+    den `:root`-Block aus `style.css` und stellt sie inline voran,
+    Schriftpfade auf absolute Adressen umgeschrieben. `login.css` arbeitet
+    so nur mit `var(--…)` und der lokalen Inter.
+  - **Logo:** das Logo aus „Website-Identität" als Hintergrund von
+    `#login h1 a`, Seitenverhältnis aus den Bildmaßen; ohne Logo steht der
+    Website-Name als Text. Der Link führt zur Startseite.
+  - Farbwerte und Radius kommen aus den Tokens, nicht aus der Vorgabe im
+    Auftrag (Creme `--surface`, Petrol `--idt-ink`, Violett
+    `--accent-primary`; Karte und Meldungen `--radius-soft` 10px) —
+    sonst hätte die Anmeldeseite eine zweite, leicht abweichende Palette.
+
 - **Mobil-Variante für ausgewählte Bilder (v2.6.0).** Breite Grafiken (16:9)
   sind auf dem Telefon kaum lesbar; für einzelne Bildblöcke kann die Redaktion
   jetzt eine Hochformat-Datei hinterlegen, die bis 700 px Viewport-Breite an
