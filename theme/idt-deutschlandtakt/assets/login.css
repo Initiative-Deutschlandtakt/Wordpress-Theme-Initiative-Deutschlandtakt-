@@ -1,0 +1,242 @@
+/* =============================================================================
+   ANMELDESEITE (wp-login.php) — geladen über inc/login.php
+   -----------------------------------------------------------------------------
+   Liegt über dem WordPress-eigenen login.css (Abhängigkeit 'login'). Die
+   Design-Tokens und die Inter-Schrift stellt inc/login.php inline voran —
+   sie kommen aus style.css Abschnitt 1 und 2, hier stehen keine eigenen Werte.
+
+   Aufbau der Seite von oben nach unten:
+   1  Logo bzw. Website-Name
+   2  Authentik-Karte (.openid-connect-login-button) — die Hauptaktion
+   3  Trenner „oder mit lokalem Konto" (.idt-login-trenner, inc/login.php)
+   4  Meldungen (#login_error, .message)
+   5  lokales Formular (#loginform, auch #lostpasswordform u. a.) — zurückhaltend
+   6  Links darunter (#nav, #backtoblog, Datenschutz, Sprachwahl)
+   ============================================================================= */
+
+body.login {
+  background: var(--surface);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#login {
+  width: 360px;
+  max-width: calc(100% - 2 * var(--space-4));
+  padding: clamp(var(--space-6), 10vh, var(--space-9)) 0 var(--space-6);
+}
+
+.login a { color: var(--text-body); }
+.login a:hover,
+.login a:focus { color: var(--accent-primary); }
+.login a:focus {
+  box-shadow: none;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- 1  Logo / Website-Name ---------------------------------------------
+   Ohne Logo steht der Name (login_headertext) als Text da. Ist in
+   „Website-Identität" ein Logo gesetzt, legt inc/login.php es als Hintergrund
+   darüber und schiebt den Text wieder aus dem Bild. */
+#login h1 a {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  margin: 0 auto var(--space-6);
+  background: none center / contain no-repeat;
+  text-indent: 0;
+  overflow: visible;
+  color: var(--text-strong);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* ---- 2  Authentik-Karte ------------------------------------------------- */
+.login .openid-connect-login-button {
+  margin: 0 !important; /* das Plugin setzt eine Inline-Margin */
+  padding: var(--space-5);
+  background: #fff;
+  border-radius: var(--radius-soft);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+.login .openid-connect-login-button a.button {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 14px var(--space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  text-align: center;
+  white-space: normal;
+  box-shadow: none;
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+.login .openid-connect-login-button a.button:hover,
+.login .openid-connect-login-button a.button:focus {
+  background: var(--idt-ink);
+  color: var(--text-on-inverse);
+}
+.login .openid-connect-login-button a.button:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* ---- 3  Trenner --------------------------------------------------------- */
+.login .idt-login-trenner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 var(--space-4);
+  color: var(--text-body);
+  opacity: 0.65;
+  font-size: var(--fs-xs);
+}
+.login .idt-login-trenner::before,
+.login .idt-login-trenner::after {
+  content: "";
+  flex: 1;
+  border-top: var(--bw-hair) solid currentColor;
+}
+
+/* ---- 4  Meldungen ------------------------------------------------------- */
+.login .message,
+.login .notice,
+.login .success,
+.login #login_error {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-left-width: 4px;
+  border-radius: var(--radius-soft);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  overflow-wrap: anywhere;
+}
+.login .message,
+.login .notice-info { border-left-color: var(--accent-primary); }
+.login .success { border-left-color: var(--idt-success); }
+.login #login_error,
+.login .notice-error { border-left-color: var(--idt-danger); }
+.login .message a,
+.login #login_error a { color: var(--text-body); text-decoration: underline; }
+
+/* ---- 5  Lokales Formular ------------------------------------------------ */
+.login form {
+  margin: 0;
+  padding: var(--space-5);
+  background: transparent;
+  border: var(--bw-hair) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+.login label {
+  color: var(--text-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+}
+.login form .input,
+.login input[type="text"],
+.login input[type="password"],
+.login input[type="email"] {
+  font-size: var(--fs-body);
+  min-height: 40px;
+  padding: var(--space-1) var(--space-3);
+  border: var(--bw-hair) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-body);
+  box-shadow: none;
+}
+.login form .input:focus,
+.login input[type="text"]:focus,
+.login input[type="password"]:focus,
+.login input[type="email"]:focus,
+.login input[type="checkbox"]:focus {
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 1px var(--focus-ring);
+  outline: 2px solid transparent;
+}
+.login input[type="checkbox"] { accent-color: var(--accent-primary); }
+
+/* Auge zum Passwort-Anzeigen */
+.login .button.wp-hide-pw { color: var(--text-body); }
+.login .button.wp-hide-pw:focus {
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 1px var(--focus-ring);
+}
+
+/* Absenden als Outline in Petrol, gefüllt beim Überfahren */
+.wp-core-ui.login .button-primary {
+  min-height: 36px;
+  padding: 0 var(--space-4);
+  border: var(--bw-base) solid var(--idt-ink);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-body);
+  font-weight: var(--fw-semibold);
+  text-shadow: none;
+  box-shadow: none;
+  transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+.wp-core-ui.login .button-primary:hover,
+.wp-core-ui.login .button-primary:focus,
+.wp-core-ui.login .button-primary:active {
+  background: var(--idt-ink);
+  border-color: var(--idt-ink);
+  color: var(--text-on-inverse);
+}
+.wp-core-ui.login .button-primary:focus {
+  box-shadow: none;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- 6  Links darunter -------------------------------------------------- */
+.login #nav,
+.login #backtoblog {
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  font-size: var(--fs-xs);
+}
+.login #nav a,
+.login #backtoblog a { color: var(--text-body); }
+.login #nav a:hover,
+.login #backtoblog a:hover { color: var(--accent-primary); }
+
+.login .privacy-policy-page-link { margin: var(--space-6) 0 0; font-size: var(--fs-xs); }
+.login .language-switcher { font-size: var(--fs-xs); }
+.login .language-switcher label { color: var(--text-body); }
+.wp-core-ui.login .language-switcher .button {
+  border-color: var(--idt-ink);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-body);
+}
+.wp-core-ui.login .language-switcher .button:hover,
+.wp-core-ui.login .language-switcher .button:focus {
+  background: var(--idt-ink);
+  color: var(--text-on-inverse);
+}
+
+/* ---- Schmale Bildschirme ------------------------------------------------ */
+@media (max-width: 480px) {
+  #login { padding-top: var(--space-6); }
+  .login .openid-connect-login-button,
+  .login form { padding: var(--space-4); }
+  /* Absenden unter „Angemeldet bleiben" statt daneben, damit nichts klemmt. */
+  .login .button-primary { float: none; width: 100%; margin-top: var(--space-3); }
+}
