@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.7.0
+Version: 2.7.1
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -1609,6 +1609,70 @@ body.idt-verlauf {
 .wp-block-button__link,
 .wp-block-button .wp-element-button,
 .wp-block-file .wp-block-file__button { border-radius: 0; }
+
+/* Kern-Buttons in den Vereinsfarben — WordPress färbt die Schaltflächen seiner
+   Blöcke Datei (Download), Suche und Button dunkelgrau (#32373c) mit weißer
+   Schrift. Sie bekommen hier die Form von .idt-btn (Gewicht, Größe, Polsterung,
+   2px-Rahmen, eckig) in Petrol mit Papierschrift; Überfahren und Tastatur-Fokus
+   in Violett, der Fokus zusätzlich mit dem Fokusrahmen des Themes.
+   - Das vorangestellte `body` hebt die Regeln über die gleich spezifischen
+     Vorgaben der Block-Bibliothek, egal in welcher Reihenfolge WordPress die
+     Stylesheets ausgibt. Im Editor schreibt add_editor_style() `body` zu
+     `.editor-styles-wrapper` um — dort greift also dieselbe Regel.
+   - Der Button-Block wird nur in seiner Standardform erfasst: Wer im Editor
+     eine Farbe oder einen Verlauf wählt (.has-background / .has-text-color)
+     oder den Stil „Kontur" nimmt, behält diese Wahl.
+   - Klassen statt Elementnamen: im Editor ist die Datei-Schaltfläche ein
+     <div>, im Frontend ein <a>. */
+body .wp-block-file .wp-block-file__button,
+body .wp-block-search .wp-block-search__button,
+body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-background):not(.has-text-color) {
+  font-family: var(--font-sans); font-weight: var(--fw-semibold); font-size: var(--fs-sm);
+  line-height: inherit; letter-spacing: -.01em; padding: 11px 18px;
+  border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-sm);
+  background: var(--idt-ink); color: var(--idt-paper); text-decoration: none; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+body .wp-block-file .wp-block-file__button:hover,
+body .wp-block-file .wp-block-file__button:focus-visible,
+body .wp-block-search .wp-block-search__button:hover,
+body .wp-block-search .wp-block-search__button:focus-visible,
+body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-background):not(.has-text-color):hover,
+body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-background):not(.has-text-color):focus-visible {
+  background: var(--accent-primary); border-color: var(--accent-primary); color: var(--idt-paper); text-decoration: none;
+}
+body .wp-block-file .wp-block-file__button:hover,
+body .wp-block-search .wp-block-search__button:hover,
+body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-background):not(.has-text-color):hover { transform: translateY(-2px); }
+body .wp-block-file .wp-block-file__button:active,
+body .wp-block-search .wp-block-search__button:active,
+body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-background):not(.has-text-color):active { transform: translateY(0); background: var(--accent-primary-active); border-color: var(--accent-primary-active); }
+body .wp-block-file .wp-block-file__button:focus-visible,
+body .wp-block-search .wp-block-search__button:focus-visible,
+body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-background):not(.has-text-color):focus-visible {
+  outline: var(--bw-frame) solid var(--focus-ring); outline-offset: 2px;
+}
+
+/* Absende-Schaltfläche des Plugins Fluent Forms (Kontaktformular) — dasselbe
+   Aussehen wie die Kern-Buttons oben. Fluent Forms bringt Blau mit, beim
+   Überfahren halbe Deckkraft und beim Fokus keinen Rahmen; formularbezogene
+   Farben aus den Formulareinstellungen schreibt es mit Spezifität 0,3,1 bzw.
+   0,4,1 (Hover) aus. Der Selektor liegt mit button.… und form.… knapp darüber,
+   damit das Theme gewinnt, ohne !important. Am Plugin selbst ändert sich nichts. */
+.fluentform form.frm-fluent-form button.ff-btn-submit {
+  font-family: var(--font-sans); font-weight: var(--fw-semibold); font-size: var(--fs-sm);
+  line-height: inherit; letter-spacing: -.01em; padding: 11px 18px;
+  border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-sm);
+  background: var(--idt-ink); color: var(--idt-paper); opacity: 1; box-shadow: none; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.fluentform form.frm-fluent-form button.ff-btn-submit:hover,
+.fluentform form.frm-fluent-form button.ff-btn-submit:focus-visible {
+  background: var(--accent-primary); border-color: var(--accent-primary); color: var(--idt-paper); opacity: 1;
+}
+.fluentform form.frm-fluent-form button.ff-btn-submit:hover { transform: translateY(-2px); }
+.fluentform form.frm-fluent-form button.ff-btn-submit:active { transform: translateY(0); background: var(--accent-primary-active); border-color: var(--accent-primary-active); }
+.fluentform form.frm-fluent-form button.ff-btn-submit:focus-visible { outline: var(--bw-frame) solid var(--focus-ring); outline-offset: 2px; }
 
 /* Kategorie-Tag (Chip) */
 .idt-tag {

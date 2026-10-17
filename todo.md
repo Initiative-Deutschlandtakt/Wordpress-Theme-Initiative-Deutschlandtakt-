@@ -4,6 +4,30 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Kern-Buttons in den Vereinsfarben (v2.7.1).** Die Download-Schaltfläche
+  des Blocks „Datei" (Presseseite) stand im WordPress-Grau `#32373c`. Jetzt
+  tragen die Schaltflächen der Kernblöcke Datei, Suche und Button die Form von
+  `.idt-btn` (Semibold, `--fs-sm`, 11×18 px, 2px-Rahmen, eckig) in Petrol mit
+  Papierschrift; Überfahren und `:focus-visible` in Violett, der Fokus mit dem
+  Fokusrahmen des Themes. Nur `style.css` Abschnitt 7b.
+  - **Kein `theme.json`:** Das Theme ist klassisch; eine `theme.json` würde
+    Global Styles, Layout- und Abstandsvorgaben für die ganze Website
+    einschalten. Die Regeln stehen deshalb als CSS neben der bestehenden
+    Radius-Regel der Kern-Buttons.
+  - **Editor = Frontend:** `style.css` läuft über `add_editor_style()` auch im
+    Editor; das vorangestellte `body` wird dort zu `.editor-styles-wrapper`
+    und hebt die Regel zugleich über die gleich spezifischen Vorgaben der
+    Block-Bibliothek, egal in welcher Reihenfolge sie geladen werden.
+  - **Button-Block nur im Standard:** mit eigener Farbe/Verlauf
+    (`.has-background`, `.has-text-color`) oder Stil „Kontur" bleibt er, wie
+    die Redaktion ihn eingestellt hat.
+  - **Fluent Forms:** die Absende-Schaltfläche des Kontaktformulars bekommt
+    dasselbe Aussehen, ohne `!important` und ohne Eingriff ins Plugin — der
+    Selektor liegt knapp über den formularbezogenen Farben des Plugins.
+  - Farben aus den Tokens (`--idt-ink`, `--idt-paper`, `--accent-primary`),
+    nicht aus den Hexwerten im Auftrag (#1B3A3E/#FDF3EE/#5B3EE8) — wie bei der
+    Anmeldeseite, damit es keine zweite, leicht abweichende Palette gibt.
+
 - **Anmeldeseite im IDT-Design (v2.7.0).** `wp-login.php` trägt jetzt die
   Marke; neue Dateien `inc/login.php` und `assets/login.css`. Nur
   Darstellung — Rollen-Mapping und Zugriff bleiben in den Must-Use-Plugins.
