@@ -200,3 +200,22 @@ Jede Entscheidung wird hier sofort eingetragen, mit Datum und Wortlaut der Antwo
 Design System und WordPress-Theme müssen übereinstimmen. Das gilt für alle Bereiche, deshalb entfällt die Frage „welche Seite ist maßgeblich“. Jede Entscheidung wird in beiden umgesetzt: im Artefakt (nach dessen SKILL.md) und im Theme (eigener Branch). Eine Entscheidung ist erst abgeschlossen, wenn sie in Tokens, Komponenten und README des DS und in `style.css`, Render-Funktionen und `todo.md` des Themes steht.
 ### Vorgehen ab Runde 2
 Jede Frage wird als Vergleich dargestellt (Theme links, DS rechts, gerendert), mit Optionen und deren Wirkung auf beide Seiten. Entschieden wird je Frage.
+### Runde 2 (2026-10-20)
+Jede Entscheidung gilt in Design System (DS) und Theme. „Wie vorgeschlagen“ bedeutet die Empfehlung aus dem Fragenkatalog und der Vergleichsseite.
+| Frage | Entscheidung | Theme | Design System |
+|---|---|---|---|
+| F2 Verlaufsrichtung | wie vorgeschlagen (c): waagerecht Cyan → Violett, senkrechte Verlaufsseite als einzige Ausnahme (F2b ja) | Hover-Rand der Pills, Verlaufs-Button, Trenner, Suchkante und Block „Verlauf“ auf Cyan → Violett; Verlaufsseite bleibt Violett oben, Cyan unten | Token für den Seitenverlauf, Ausnahme im README, Splash 3 umstellen |
+| F3 Runde Formen | (c) alles eckig. Umfang bei Bildmotiven offen, siehe Runde 3 | beige Pill, beiger Button, Social-Kachel eckig; `--radius-bar` und `--radius-soft` entfallen | Splash 3 eckig; README „Radius 0“ bleibt ohne Ausnahme |
+| F10 Linkskante | Linkskante bleibt erlaubt und gilt als Standard (Auslegung, zu bestätigen) | Suchtreffer und Zitat behalten die Kante | Regel „keine Linkskante“ wird nicht ins README aufgenommen; Callout behält die Kante (siehe F5) |
+| F4 Card | Theme-Karte (Haarlinie, `shadow-sm`, Hover) ist der Standard; die Farbe (Oberkante) ist optional | `.idt-card` bleibt; Farb-Oberkante als Modifier | `soft` wird Standard, `accent` bleibt optional; weitere Varianten offen, siehe Runde 3 |
+| F5 Callout | DS-Form (Kante links), aber ohne eigene Hintergrundfarbe: nur die farbige Markierung | Block-Schatten und Tint-Flächen entfallen; Typen cyan/violet/yellow färben nur die Kante | Callout ohne Tint-Fläche, Fläche neutral; Töne und Titel bleiben |
+| F6 Kennzahl | wie vorgeschlagen (a): zwei Größen | `.idt-stat--lg` (88px), Farbmodifier, optionale Label-Zeile | `size="md"` (36px) und `"lg"` (88px) |
+| F7 Button | wie vorgeschlagen (a bis d) | Disabled-Regel ergänzen; beige und gradient bleiben (beige wird eckig, F3) | Varianten onColor und gradient ergänzen; Hover hebt 2px an, Press 0; Größen dokumentiert; Ghost transparent |
+| F8 Tag | wie vorgeschlagen (a) | Textfarbe `--idt-violet-hover`; Literal `#C9A100` durch Token ersetzen | Token für das Gelb-Icon oder Ink |
+| F9 Formularfelder | DS-Felder gelten | Input und Checkbox des DS in CSS umsetzen (Fluent Forms, Kommentare, Suche); eigener Folgeauftrag | keine Änderung |
+| F11 Kopf- und Fußzeile | Website behält die Theme-Kopfzeile; andere Anwendungen dürfen die durchgehende Kopfzeile des DS nutzen | keine Änderung | beide Formen dokumentieren (Website, Anwendung); `--header-logo-h` als Token; Fußkante offen, siehe Runde 3 |
+| F12 Bausteine nur im Theme | Takt-Rhythmus und Diagonal-Akzent entfallen. Marker, Initiale, Pill-Stack und Eyebrow (mit Pfeil) werden ins DS aufgenommen. Übrige Bausteine wie vorgeschlagen | `.idt-takt` und `.idt-diagonal` samt Shortcodes entfernen, Umgang mit bestehendem Inhalt offen | README-Abschnitt „Theme-Bausteine“ ohne Takt und Diagonal |
+| F13 Icons | DS-Set gilt | `site-icon.png` ersetzen, Favicon-Set und Manifest ergänzen, `readme.txt` anpassen | keine Änderung |
+| F14 Tokens | wie vorgeschlagen (a) | alle DS-Tokens außer Print (Print als Kommentar) | Theme-Tokens aufnehmen, soweit sie bleiben |
+| F15 Logo-Regeln | wie vorgeschlagen | keine Änderung | Vermerk im README, beim Verein nachfragen |
+| F16 Live-Version | offen | | |
