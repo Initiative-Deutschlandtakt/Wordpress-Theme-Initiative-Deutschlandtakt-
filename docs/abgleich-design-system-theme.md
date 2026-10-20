@@ -195,4 +195,8 @@ Empfehlung: Vermerk im README beibehalten und beim Verein anfragen; das Theme br
 ### Offene Prüfung
 **F16. Live-Version.** Wer prüft, ob initiative-deutschlandtakt.de 2.7.1 ausliefert? Das geht ohne Proxy-Sperre in einer Minute: Seitenquelltext, Suche nach `idt-deutschlandtakt/style.css?ver=`. Empfehlung: Sie nennen mir das Ergebnis oder öffnen den Host für diese Sitzung; für die Entscheidungen selbst ist es nicht nötig.
 ## Entscheidungen
-Noch keine. Jede Entscheidung wird hier sofort eingetragen, mit Datum und Wortlaut der Antwort.
+Jede Entscheidung wird hier sofort eingetragen, mit Datum und Wortlaut der Antwort.
+### Grundsatz (F1), 2026-10-20
+Design System und WordPress-Theme müssen übereinstimmen. Das gilt für alle Bereiche, deshalb entfällt die Frage „welche Seite ist maßgeblich“. Jede Entscheidung wird in beiden umgesetzt: im Artefakt (nach dessen SKILL.md) und im Theme (eigener Branch). Eine Entscheidung ist erst abgeschlossen, wenn sie in Tokens, Komponenten und README des DS und in `style.css`, Render-Funktionen und `todo.md` des Themes steht.
+### Vorgehen ab Runde 2
+Jede Frage wird als Vergleich dargestellt (Theme links, DS rechts, gerendert), mit Optionen und deren Wirkung auf beide Seiten. Entschieden wird je Frage.
