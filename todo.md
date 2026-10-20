@@ -4,6 +4,42 @@ _(keine offenen Aufgaben)_
 
 ## Done
 
+- **Abgleich mit dem Design System (v2.8.0).** Theme und Design System tragen
+  jetzt dieselben Regeln; die Entscheidungen und ihre Begründung stehen in
+  `docs/abgleich-design-system-theme.md`.
+  - **Verlauf:** Der Signalverlauf läuft waagerecht Cyan → Violett, nie umgekehrt
+    (Pill-Hover, Verlaufs-Button, Trenner, Suchkante, Block „Verlauf“, Preset
+    `idt-verlauf`). Tokens `--idt-gradient-accent`, `-band`, `-page` wie im DS
+    (ersetzen `--idt-grad-*`). Einzige Fläche: die Verlaufsseite, senkrecht
+    Violett → Cyan. `bg="violet-cyan"` bleibt als veraltete Schreibweise gültig
+    und zeigt denselben Verlauf wie `cyan-violet`.
+  - **Eckig:** beige Pill, beiger Button und beige Social-Kachel sind eckig;
+    `--radius-soft` entfällt, `--radius-bar` gilt nur für die Splash-Balken.
+  - **Callout:** nur farbige Kante links (8px), kein Rahmen, keine Fläche; Typen
+    `success`/`danger` und `title` neu.
+  - **Karte:** Haarlinie bleibt Vorgabe; Varianten `frame`, `block`, `filled`,
+    `inverse` und optionale Farb-Oberkante (`[card variant color]`, Block „Karte“);
+    `[concept color="none"]` ohne Farbkante; Hover 3px.
+  - **Kennzahl:** `size="lg"` (88px), `color`, `title`.
+  - **Tag:** Violett-Text in `--idt-violet-hover` (Kontrast 5,2:1 statt 4,0:1);
+    Gelb-Icon in Ink statt Literal `#C9A100`.
+  - **Button:** Deaktiviert-Regel (Deckkraft .45).
+  - **Fußzeile:** 3px-Violett-Kante oben.
+  - **Gestrichen:** Takt-Rhythmus und Diagonal-Akzent (CSS, Pattern, Demo-Inhalt).
+    `[takt]` und `[diagonal]` bleiben als veraltete Hüllen registriert, die Blöcke
+    sind aus dem Inserter genommen (`supports.inserter`), vorhandene rendern weiter.
+  - **Tokens:** Datenviz-Palette und die Zusatztokens des DS (`--z-*`,
+    `--shadow-none`, `--space-0`, `--radius-none`, `--fs-mono-sm`); Druckwerte nur
+    als Kommentar.
+  - **Icons:** Favicon-Set des DS (`assets/favicons/`, `inc/favicons.php`, nur
+    ohne Website-Icon aus dem Customizer); `assets/site-icon.png` ersetzt.
+  - **Formularfelder:** Input und Checkbox des DS für Fluent Forms und das
+    Kommentarformular (style.css 7b).
+  - **Smoke-Test:** `bin/smoke-render.php` lässt veraltete Blöcke (`hidden`)
+    leer rendern; sie müssen nur ohne Fehler laufen.
+  - **Offen:** Live-Seite war beim Abgleich nicht erreichbar (Proxy); ob `[takt]`
+    und `[diagonal]` dort benutzt werden, ist ungeprüft.
+
 - **Kern-Buttons in den Vereinsfarben (v2.7.1).** Die Download-Schaltfläche
   des Blocks „Datei" (Presseseite) stand im WordPress-Grau `#32373c`. Jetzt
   tragen die Schaltflächen der Kernblöcke Datei, Suche und Button die Form von

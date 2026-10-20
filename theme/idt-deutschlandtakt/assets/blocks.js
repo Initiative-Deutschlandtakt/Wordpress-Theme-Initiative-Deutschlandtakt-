@@ -67,6 +67,7 @@
 			category:   'idt',
 			keywords:   def.keywords,
 			attributes: def.attributes,
+			supports:   def.hidden ? { inserter: false } : {},
 			edit: function ( props ) {
 				var attrs    = props.attributes;
 				var controls = def.fields.map( function ( field ) {

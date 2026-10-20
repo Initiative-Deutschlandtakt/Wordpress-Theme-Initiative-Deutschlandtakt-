@@ -67,6 +67,6 @@
 .idt-logo-outer:has(.idt-logo--paper),
 .idt-pillstack-outer:has(.pill--beige),
 .idt-socialrow--beige {
-  background: var(--idt-grad-seite);
+  background: var(--idt-gradient-page);
   padding: var(--space-5);
 }

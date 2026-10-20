@@ -5,11 +5,9 @@
  * Diese lassen sich direkt im Editor in Texten verwenden, z. B.:
  *   [eyebrow]Über die Initiative[/eyebrow]
  *   Bahnfahren wird [mark]attraktiver[/mark].
- *   [takt count="5"]
- *   [stat number="2008" label="gegründet"]
+ *   [stat number="2008" label="gegründet" size="lg"]
  *   [pill href="/mitmachen"]Mitglied werden[/pill]
  *   [callout type="cyan"]Wichtiger Hinweis …[/callout]
- *   [diagonal]Großer Aussage-Block auf dunklem Grund.[/diagonal]
  *   Mail: [email]kontakt@initiative-deutschlandtakt.de[/email]
  *   [themenblock bg="ink" title="Unser Plan"]Die Vision | /vision/ | Kurzbeschreibung[/themenblock]
  *   [buttonstack bg="ink"]Die Vision | /vision/ | Kurzbeschreibung[/buttonstack]
@@ -41,20 +39,28 @@ function idt_sc_lead( $atts, $content = '' ) {
 }
 add_shortcode( 'lead', 'idt_sc_lead' );
 
-/** Takt-Rhythmus — dekorative Punkt-/Strich-Sequenz. */
+/**
+ * Takt-Rhythmus — veraltet. Der Baustein ist aus dem Auftritt gestrichen; der
+ * Shortcode bleibt registriert, damit [takt] in bestehenden Inhalten nicht als
+ * Rohtext erscheint, und zeigt nichts. Entfernen, sobald die Inhalte gesichtet sind.
+ */
 function idt_sc_takt( $atts ) {
-	$atts  = shortcode_atts( array( 'count' => 6 ), $atts, 'takt' );
-	$count = max( 1, min( 24, (int) $atts['count'] ) );
-	$dots  = str_repeat( '<span></span>', $count );
-	return '<span class="idt-takt" aria-hidden="true">' . $dots . '</span>';
+	return '';
 }
 add_shortcode( 'takt', 'idt_sc_takt' );
 
-/** Kennzahl — große Zahl mit Label. */
+/**
+ * Kennzahl — Zahl mit Label. size: md (36px, Vorgabe) | lg (88px); color:
+ * violet (Vorgabe) | cyan | yellow | ink; title: optionale Zeile in Inter über
+ * dem Mono-Label (im Design System „label"; das Mono-Label dort „sub").
+ */
 function idt_sc_stat( $atts ) {
-	$atts = shortcode_atts( array( 'number' => '', 'label' => '' ), $atts, 'stat' );
-	return '<span class="idt-stat"><span class="idt-stat__num">' . esc_html( $atts['number'] ) .
-		'</span><span class="idt-stat__label">' . esc_html( $atts['label'] ) . '</span></span>';
+	$atts  = shortcode_atts( array( 'number' => '', 'label' => '', 'title' => '', 'size' => 'md', 'color' => 'violet' ), $atts, 'stat' );
+	$class = 'idt-stat' . ( 'lg' === $atts['size'] ? ' idt-stat--lg' : '' );
+	$style = in_array( $atts['color'], array( 'cyan', 'yellow', 'ink' ), true ) ? ' style="--stat-color:var(--idt-' . esc_attr( $atts['color'] ) . ')"' : '';
+	$title = '' !== $atts['title'] ? '<span class="idt-stat__title">' . esc_html( $atts['title'] ) . '</span>' : '';
+	$label = '' !== $atts['label'] ? '<span class="idt-stat__label">' . esc_html( $atts['label'] ) . '</span>' : '';
+	return '<span class="' . $class . '"' . $style . '><span class="idt-stat__num">' . esc_html( $atts['number'] ) . '</span>' . $title . $label . '</span>';
 }
 add_shortcode( 'stat', 'idt_sc_stat' );
 
@@ -93,20 +99,28 @@ function idt_sc_pillstack( $atts, $content = '' ) {
 }
 add_shortcode( 'pillstack', 'idt_sc_pillstack' );
 
-/** Callout / Hinweisbox. */
+/**
+ * Callout / Hinweisbox — farbige Kante links, kein Rahmen, keine Fläche.
+ * type: cyan (Vorgabe) | violet | yellow | success | danger; title optional.
+ */
 function idt_sc_callout( $atts, $content = '' ) {
-	$atts  = shortcode_atts( array( 'type' => '' ), $atts, 'callout' );
+	$atts  = shortcode_atts( array( 'type' => '', 'title' => '' ), $atts, 'callout' );
 	$class = 'idt-callout';
-	if ( in_array( $atts['type'], array( 'cyan', 'violet', 'yellow' ), true ) ) {
+	if ( in_array( $atts['type'], array( 'cyan', 'violet', 'yellow', 'success', 'danger' ), true ) ) {
 		$class .= ' idt-callout--' . $atts['type'];
 	}
-	return '<div class="' . esc_attr( $class ) . '">' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
+	$title = '' !== $atts['title'] ? '<p class="idt-callout__title">' . esc_html( $atts['title'] ) . '</p>' : '';
+	return '<div class="' . esc_attr( $class ) . '">' . $title . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
 }
 add_shortcode( 'callout', 'idt_sc_callout' );
 
-/** Diagonal-Akzentblock (Horizont-Motiv auf dunklem Grund). */
+/**
+ * Diagonal-Akzentblock — veraltet. Der Baustein ist aus dem Auftritt gestrichen;
+ * der Shortcode bleibt registriert und gibt den Inhalt als normalen Text aus,
+ * damit bestehende Seiten lesbar bleiben. Entfernen, sobald die Inhalte gesichtet sind.
+ */
 function idt_sc_diagonal( $atts, $content = '' ) {
-	return '<div class="idt-diagonal">' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
+	return wp_kses_post( do_shortcode( wpautop( $content ) ) );
 }
 add_shortcode( 'diagonal', 'idt_sc_diagonal' );
 
@@ -138,9 +152,24 @@ function idt_sc_cards( $atts, $content = '' ) {
 }
 add_shortcode( 'cards', 'idt_sc_cards' );
 
-/** Karte. */
+/**
+ * Karte. Vorgabe: Haarlinie mit weichem Schatten. variant: frame | block |
+ * filled | inverse; color (optional): violet | cyan | yellow | ink — die
+ * 6px-Oberkante. Wie die Card des Design Systems.
+ */
 function idt_sc_card( $atts, $content = '' ) {
-	return '<div class="idt-card">' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
+	$atts  = shortcode_atts( array( 'variant' => '', 'color' => '' ), $atts, 'card' );
+	$class = 'idt-card';
+	if ( in_array( $atts['variant'], array( 'frame', 'block', 'filled', 'inverse' ), true ) ) {
+		$class .= ' idt-card--' . $atts['variant'];
+	}
+	$style = '';
+	if ( in_array( $atts['color'], array( 'violet', 'cyan', 'yellow', 'ink' ), true ) ) {
+		$a      = idt_accent( $atts['color'] );
+		$class .= ' idt-card--accent';
+		$style  = ' style="--card-accent:' . esc_attr( $a['border'] ) . '"';
+	}
+	return '<div class="' . esc_attr( $class ) . '"' . $style . '>' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
 }
 add_shortcode( 'card', 'idt_sc_card' );
 
@@ -361,9 +390,9 @@ function idt_icon( $name, $size = 24 ) {
 function idt_accent( $color ) {
 	switch ( $color ) {
 		case 'cyan':   return array( 'border' => 'var(--idt-cyan)',   'icon' => 'var(--idt-cyan)',   'soft' => 'var(--idt-cyan-soft)',   'text' => 'var(--idt-ink)' );
-		case 'yellow': return array( 'border' => 'var(--idt-yellow)', 'icon' => '#C9A100',           'soft' => 'var(--idt-yellow-soft)', 'text' => 'var(--idt-ink)' );
+		case 'yellow': return array( 'border' => 'var(--idt-yellow)', 'icon' => 'var(--idt-ink)',    'soft' => 'var(--idt-yellow-soft)', 'text' => 'var(--idt-ink)' );
 		case 'ink':    return array( 'border' => 'var(--idt-ink)',    'icon' => 'var(--idt-ink)',    'soft' => 'var(--idt-paper-2)',     'text' => 'var(--idt-ink)' );
-		default:       return array( 'border' => 'var(--idt-violet)', 'icon' => 'var(--idt-violet)', 'soft' => 'var(--idt-violet-soft)', 'text' => 'var(--idt-violet)' );
+		default:       return array( 'border' => 'var(--idt-violet)', 'icon' => 'var(--idt-violet)', 'soft' => 'var(--idt-violet-soft)', 'text' => 'var(--idt-violet-hover)' );
 	}
 }
 
@@ -504,7 +533,7 @@ function idt_render_category_filter( $reset_url = '' ) {
  *
  * bg ersetzt die Fläche der Variante durch einen frei gewählten Hintergrund:
  * Markenname („violet", „cyan", „ink", …), Hex-Wert oder Markenverlauf
- * („cyan-violet", „violet-cyan"). Die Schriftfarbe ergibt sich aus dem
+ * („cyan-violet"; „violet-cyan" ist veraltet und zeigt denselben Verlauf). Die Schriftfarbe ergibt sich aus dem
  * Kontrast zum Untergrund — s. idt_surface_fill().
  *   [btn href="/mitmachen/" bg="cyan-violet" arrow="true"]Mitglied werden[/btn]
  */
@@ -537,22 +566,24 @@ add_shortcode( 'tag', 'idt_sc_tag' );
 /**
  * Konzept-Karte mit farbiger Oberkante und Icon.
  * [concept color="violet" icon="clock" title="Erst der Fahrplan"]Text[/concept]
+ * color="none" lässt die Farbkante weg (violet | cyan | yellow | ink | none).
  * Icons: clock | rail | netz
  *
  * bg füllt die Karte statt mit Papier mit einer frei gewählten Fläche:
- * Markenname, Hex-Wert oder Markenverlauf („cyan-violet", „violet-cyan").
+ * Markenname, Hex-Wert oder Markenverlauf („cyan-violet").
  * Überschrift, Text und „Mehr erfahren" laufen dann in der Schriftfarbe mit,
  * die auf dem Untergrund den besseren Kontrast hat — s. idt_surface_fill().
  *   [concept bg="cyan-violet" color="ink" title="Die Idee" href="/idee/"]…[/concept]
  */
 function idt_sc_concept( $atts, $content = '' ) {
 	$atts = shortcode_atts( array( 'color' => 'violet', 'icon' => '', 'title' => '', 'href' => '', 'bg' => '' ), $atts, 'concept' );
-	$a    = idt_accent( $atts['color'] );
+	$none = 'none' === $atts['color'];
+	$a    = idt_accent( $none ? 'ink' : $atts['color'] );
 	$icon = $atts['icon'] ? '<div class="idt-concept__ic" style="color:' . esc_attr( $a['icon'] ) . '">' . idt_icon( $atts['icon'], 34 ) . '</div>' : '';
 	$head = $atts['title'] ? '<h3>' . esc_html( $atts['title'] ) . '</h3>' : '';
 	$body = '<div class="idt-concept__body">' . wp_kses_post( do_shortcode( wpautop( $content ) ) ) . '</div>';
 
-	$cls   = 'idt-concept';
+	$cls   = 'idt-concept' . ( $none ? ' idt-concept--plain' : '' );
 	$style = 'border-top-color:' . $a['border'];
 	$fill  = idt_surface_fill( $atts['bg'] );
 	if ( '' !== $fill['fill'] ) {
@@ -663,8 +694,11 @@ function idt_surface_is_dark( $hex ) {
  */
 function idt_surface_gradients() {
 	return array(
-		'cyan-violet' => array( 'css' => 'var(--idt-grad-cyan-violet)', 'stops' => array( '#00DCFA', '#6E50FA' ) ),
-		'violet-cyan' => array( 'css' => 'var(--idt-grad-violet-cyan)', 'stops' => array( '#6E50FA', '#00DCFA' ) ),
+		'cyan-violet' => array( 'css' => 'var(--idt-gradient-accent)', 'stops' => array( '#00DCFA', '#6E50FA' ) ),
+		/* Veraltet: Der Verlauf läuft nie umgekehrt. Die Schreibweise bleibt
+		   gültig, damit bestehende Inhalte weiter rendern — sie zeigt nun
+		   denselben Verlauf wie „cyan-violet". */
+		'violet-cyan' => array( 'css' => 'var(--idt-gradient-accent)', 'stops' => array( '#00DCFA', '#6E50FA' ) ),
 	);
 }
 

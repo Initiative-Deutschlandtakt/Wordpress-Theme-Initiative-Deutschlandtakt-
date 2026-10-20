@@ -41,14 +41,6 @@ function idt_register_patterns() {
 			. "</div>\n<!-- /wp:columns -->",
 	) );
 
-	register_block_pattern( 'idt/diagonal-aussage', array(
-		'title'         => __( 'Diagonal-Aussageblock', 'idt' ),
-		'description'   => __( 'Eine große Aussage auf dunklem Grund mit diagonalen Marken-Streifen.', 'idt' ),
-		'categories'    => array( 'idt' ),
-		'viewportWidth' => 900,
-		'content'       => "<!-- wp:idt/diagonal {\"text\":\"Der Fahrplan wird zur Grundlage aller Entscheidungen — nicht umgekehrt.\"} /-->",
-	) );
-
 	register_block_pattern( 'idt/horizont-splash', array(
 		'title'         => __( 'Horizont-Splash (Startseiten-Hero)', 'idt' ),
 		'description'   => __( 'Der Hero der aktuellen Live-Startseite (initiative-deutschlandtakt.de): diagonale Marken-Bühne mit zentriertem Logo, drei Pill-Links und Schlagzeile.', 'idt' ),

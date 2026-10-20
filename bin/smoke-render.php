@@ -121,6 +121,15 @@ if ( function_exists( 'idt_blocks_config' ) ) {
 			$attrs[ $field['key'] ] = $field['default'] ?? '';
 		}
 		$html = call_user_func( $config['render'], $attrs );
+		/* Veraltete Blöcke ('hidden', nicht mehr im Inserter) dürfen leer
+		 * bleiben — der Takt-Rhythmus etwa zeigt bewusst nichts mehr. Sie
+		 * müssen nur ohne Fehler rendern. */
+		if ( ! empty( $config['hidden'] ) ) {
+			if ( ! is_string( $html ) ) {
+				$idt_probleme[] = "Block idt/$name liefert kein Markup";
+			}
+			continue;
+		}
 		if ( ! is_string( $html ) || '' === trim( $html ) ) {
 			$idt_probleme[] = "Block idt/$name rendert mit seinen Standardwerten nichts";
 		}

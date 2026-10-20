@@ -162,15 +162,15 @@ Im Editor direkt im Text nutzbar (siehe Seite **Stilelemente** im Menü):
 | `[eyebrow]Label[/eyebrow]` | Mono-Label über einer Überschrift |
 | `[mark]Text[/mark]` | Texthighlight (Gelb; `color="cyan"`/`"violet"`) |
 | `[lead]Text[/lead]` | hervorgehobener Einleitungsabsatz |
-| `[takt count="8"]` | dekorativer Takt-Rhythmus |
-| `[stat number="2008" label="gegründet"]` | große Kennzahl mit Label |
+| `[stat number="2008" label="gegründet"]` | Kennzahl; `size="lg"` (88 px, Kennzahlenband), `color="cyan"`/`"yellow"`/`"ink"`, `title="…"` (Zeile in Inter über dem Label) |
 | `[pill href="…"]Text[/pill]` | Pill-Button (`style="solid"` / `style="violet"` / `style="beige"`) |
-| `[callout type="cyan"]…[/callout]` | Hinweisbox (`cyan`/`violet`/`yellow`) |
-| `[diagonal]…[/diagonal]` | Aussageblock mit durchgehenden Horizont-Diagonalen |
-| `[card]…[/card]` | Karte mit Rahmen und Schatten |
-| `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Violett→Cyan-Rahmen)/`beige`, `arrow="true"`; `bg=""` setzt die Fläche frei (s. u.) |
+| `[callout type="cyan" title="…"]…[/callout]` | Hinweisbox mit farbiger Kante links, ohne Rahmen und Fläche (`cyan`/`violet`/`yellow`/`success`/`danger`) |
+| `[card]…[/card]` | Karte (Haarlinie, weicher Schatten); `variant="frame"`/`"block"`/`"filled"`/`"inverse"`, `color="violet"`/`"cyan"`/`"yellow"`/`"ink"` für die optionale Farb-Oberkante |
+| `[btn href="…" variant="primary"]…[/btn]` | Button — `primary`/`secondary`/`outline`/`gradient` (Cyan→Violett-Rahmen)/`beige`, `arrow="true"`; `bg=""` setzt die Fläche frei (s. u.) |
 | `[concept color="…" icon="…" title="…" href="…"]…[/concept]` | Konzept-Karte; mit `href` klickbar; `bg=""` setzt die Fläche frei (s. u.) |
 | `[cards cols="3"]…[/cards]` | Karten-Raster: legt mehrere Karten in gleiche Breiten/Höhen (`2`/`3`/`4`/`auto`) |
+
+**Veraltet (seit 2.8.0):** `[takt]` und `[diagonal]` sind aus dem Auftritt gestrichen. Die Shortcodes bleiben registriert, damit bestehende Seiten nicht den Rohtext zeigen: `[takt]` gibt nichts aus, `[diagonal]…[/diagonal]` den Inhalt als normalen Text. Die Blöcke „Takt-Rhythmus“ und „Diagonal-Aussageblock“ lassen sich nicht mehr einfügen, vorhandene rendern weiter. Entfernt werden sie, sobald die Live-Inhalte gesichtet sind.
 | `[neuigkeiten count="3"]` | dynamische Beiträge-Übersicht als News-Karten |
 | `[themenblock bg="ink" title="…"]…[/themenblock]` | farbige Fläche mit Eyebrow, Überschrift, Texten und beliebig langer Linkliste; `bg` nimmt Markennamen (`ink`, `violet`, `cyan`, `paper` …) oder einen Hex-Wert |
 | `[buttonstack bg="ink"]…[/buttonstack]` | Button-Stack: derselbe Baustein nur mit den Linkzeilen — ohne Eyebrow, Überschrift und Vortext; `bg` wie beim Themenblock |
@@ -185,8 +185,8 @@ Die Shortcodes funktionieren weiter, sind aber **nicht** der empfohlene Weg.
 Stattdessen gibt es zwei komfortable Wege — je nachdem, ob das Element ein
 **Block** oder eine **Inline-Auszeichnung** ist:
 
-**Block-Stilelemente als native Blöcke** (Lead, Takt, Kennzahl, Button, Pill,
-Callout, Diagonal, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
+**Block-Stilelemente als native Blöcke** (Lead, Kennzahl, Button, Pill,
+Callout, Karte, Konzept-Karte, Karten-Raster, Einschub, Themenblock,
 Button-Stack, News-Karte, Social-Leiste, Mail-Link, Beiträge-Übersicht, Beitragsliste): In einem leeren Absatz `/` tippen und nach `dt` oder dem Elementnamen
 suchen (z. B. `/Kennzahl`, `/Pill`), oder im Inserter (`+`) unter der Kategorie
 **Deutschlandtakt**. Bearbeitet wird **ohne HTML/Shortcode** über Formularfelder
@@ -248,7 +248,7 @@ bestimmt die Chips, `more=""` blendet den Link aus.
 ### Buttons
 
 Im Editor wird bewusst nur das **Marken-Button-Set** angeboten: Primary (Violett),
-Sekundär (Cyan), Outline und Gradient-Rahmen (Violett→Cyan). Der WordPress-
+Sekundär (Cyan), Outline und Gradient-Rahmen (Cyan→Violett). Der WordPress-
 Standard-Button-Block ist im Editor ausgeblendet (`editor-formats.js`,
 reversibel). Die Varianten `ghost`/`inverse` existieren weiter per CSS für
 Sonderfälle (z. B. dunkle Flächen), werden aber nicht als Auswahl angeboten.
@@ -261,8 +261,7 @@ Es überschreibt die Fläche, die der gewählte Stil bzw. das Papier vorgibt:
 | Auswahl | Fläche |
 |---|---|
 | *Standard (aus dem Stil)* | wie bisher — Violett/Cyan beim Button, Papier bei der Karte |
-| *Verlauf Cyan → Violett* | Markenverlauf, links Cyan, rechts Violett |
-| *Verlauf Violett → Cyan* | derselbe Verlauf in Gegenrichtung |
+| *Verlauf Cyan → Violett* | Markenverlauf, links Cyan, rechts Violett — er läuft nie umgekehrt (die alte Schreibweise `bg="violet-cyan"` zeigt denselben Verlauf) |
 | Markenfarben | Violett, Cyan, Gelb, Ink, Papier 1–3, die drei hellen Töne, Grau |
 
 Als Shortcode heißt das Feld `bg` und nimmt zusätzlich einen freien Hex-Wert:
@@ -282,7 +281,7 @@ Stile (Block markieren → Seitenleiste **Stile**):
 | Stil | Wirkung |
 |---|---|
 | *(ohne)* | feine Linie im Rahmenton |
-| **Verlauf (Violett → Cyan)** | 4 px starker Strich im Markenverlauf über die volle Textbreite |
+| **Verlauf (Cyan → Violett)** | 4 px starker Strich im Markenverlauf über die volle Textbreite |
 | **Kurzer Strich** | kurze Akzentmarke (56 px) am linken Textrand — der Zwischenstrich zwischen zwei Abschnitten |
 
 Wird im Farbbereich des Blocks stattdessen von Hand eine Farbe oder ein Verlauf
@@ -641,8 +640,8 @@ oder dunklen Fläche:
 | Baustein | Block / Shortcode | Wirkung |
 |---|---|---|
 | **Logo (Wortmarke + Signet)** | `/Logo`, `[logo]` | Dreizeilige Wortmarke, rechts daneben das Signet im Kreis. Echter Text in Inter statt Bild — scharf in jeder Größe und vorlesbar. Felder: Größe des Signets (alle übrigen Maße folgen ihr), Schriftfarbe (von der Fläche erben / Papier / Ink), Ausrichtung, optionaler Link. |
-| **Beige Buttons** | Stil **Beige** an Button, Pill-Button und Pill-Button-Stack | Gefüllte Papierfläche mit halbrunden Enden. Die runde Form ist hier kein Bruch mit dem sonst eckigen Design, sondern das Zitat der Wortmarke. Gestapelt (Pill-Button-Stack) sind das die breiten Schaltflächen der Linkseite. |
-| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. Neben den Profilen steht mit der Plattform `mail` auch eine **Mail-Kachel** zur Verfügung: In die Zeile kommt dann statt der URL die Adresse, die Kachel wird zum `mailto:`-Link. |
+| **Beige Buttons** | Stil **Beige** an Button, Pill-Button und Pill-Button-Stack | Gefüllte Papierfläche, eckig wie alle Schaltflächen (im Design System der Button „inverse“). Gestapelt (Pill-Button-Stack) sind das die breiten Schaltflächen der Linkseite. |
+| **Beige Social-Leiste** | Social-Leiste, Stil **Beige** | Papierfarbene, eckige Kacheln mit cyanem Zeichen, über das Feld **Ausrichtung** links/mittig/rechts. Neben den Profilen steht mit der Plattform `mail` auch eine **Mail-Kachel** zur Verfügung: In die Zeile kommt dann statt der URL die Adresse, die Kachel wird zum `mailto:`-Link. |
 
 Im Editor steht der Inhalt weiterhin auf weißem Grund — die Verlaufsfläche
 bringt die Seitenvorlage mit, nicht der Block. Damit die hellen Bausteine dort

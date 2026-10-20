@@ -274,7 +274,7 @@ function idt_content_revolution() {
 
 <!-- wp:paragraph --><p>Historisch betrachtet basierten Bauprojekte wie die Strecke Hannover–Würzburg oder die Verbindung Köln–Frankfurt auf Zielfahrzeiten für den Personenfernverkehr — nicht jedoch auf fahrplantechnischen Überlegungen für das Gesamtnetz. Der Bundesverkehrswegeplan 2003 orientierte sich an Nachfrageprognosen, ohne konkrete Zugfrequenzen zu definieren.</p><!-- /wp:paragraph -->
 
-<!-- wp:shortcode -->[diagonal]Erst der Fahrplan, dann der Beton: Die Infrastruktur ergibt sich aus dem Takt — nicht der Takt aus der zufällig vorhandenen Infrastruktur.[/diagonal]<!-- /wp:shortcode -->
+<!-- wp:shortcode -->[callout type="violet" title="Erst der Fahrplan, dann der Beton"]Die Infrastruktur ergibt sich aus dem Takt — nicht der Takt aus der zufällig vorhandenen Infrastruktur.[/callout]<!-- /wp:shortcode -->
 
 <!-- wp:paragraph --><p>Die Machbarkeitsstudie von 2015 durchbrach dieses Muster erstmals: Sie stellte ein Linienkonzept mit definierten Zugfrequenzen dar und bewies, dass eine fahrplanbasierte Analyse des Bedarfs an Neubauten möglich ist. Nachfolgende Zielfahrpläne verfeinerten diese Logik, integrierten den Güterverkehr und bestimmten die Infrastruktur auf Basis realistischer Fahrpläne statt umgekehrt.</p><!-- /wp:paragraph -->
 
@@ -346,9 +346,6 @@ function idt_content_stilelemente() {
 <!-- wp:shortcode -->[eyebrow]Über die Initiative[/eyebrow]<!-- /wp:shortcode -->
 <!-- wp:paragraph --><p>Bahnfahren soll [mark]attraktiver[/mark] werden — mit kurzen [mark color="cyan"]Anschlüssen[/mark] und einem verlässlichen [mark color="violet"]Takt[/mark]. <code>[mark]…[/mark]</code>, <code>[eyebrow]…[/eyebrow]</code></p><!-- /wp:paragraph -->
 
-<!-- wp:heading {"level":2} --><h2>Takt-Rhythmus</h2><!-- /wp:heading -->
-<!-- wp:paragraph --><p>Der visuelle Takt: [takt count="8"] — <code>[takt count="8"]</code></p><!-- /wp:paragraph -->
-
 <!-- wp:heading {"level":2} --><h2>Kennzahlen</h2><!-- /wp:heading -->
 <!-- wp:columns --><div class="wp-block-columns">
 <!-- wp:column --><div class="wp-block-column"><!-- wp:shortcode -->[stat number="2008" label="gegründet"]<!-- /wp:shortcode --></div><!-- /wp:column -->
@@ -362,15 +359,13 @@ function idt_content_stilelemente() {
 <!-- wp:paragraph --><p><code>[pill href="…"]Text[/pill]</code>, <code>[pill style="solid"]…[/pill]</code>, <code>[pill style="violet"]…[/pill]</code> (violette Outline, Gradient-Rand bei Klick)</p><!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":2} --><h2>Callouts</h2><!-- /wp:heading -->
-<!-- wp:shortcode -->[callout type="cyan"]Cyan-Hinweis — <code>[callout type="cyan"]…[/callout]</code>[/callout]<!-- /wp:shortcode -->
+<!-- wp:shortcode -->[callout type="cyan" title="Titel"]Cyan-Kante — <code>[callout type="cyan" title="Titel"]…[/callout]</code>[/callout]<!-- /wp:shortcode -->
 <!-- wp:shortcode -->[callout type="violet"]Violetter Hinweis — <code>[callout type="violet"]…[/callout]</code>[/callout]<!-- /wp:shortcode -->
 <!-- wp:shortcode -->[callout type="yellow"]Gelber Hinweis — <code>[callout type="yellow"]…[/callout]</code>[/callout]<!-- /wp:shortcode -->
 
-<!-- wp:heading {"level":2} --><h2>Diagonal-Aussageblock</h2><!-- /wp:heading -->
-<!-- wp:shortcode -->[diagonal]Erst der Fahrplan, dann der Beton. <code>[diagonal]…[/diagonal]</code>[/diagonal]<!-- /wp:shortcode -->
-
 <!-- wp:heading {"level":2} --><h2>Karte</h2><!-- /wp:heading -->
-<!-- wp:shortcode -->[card]<strong>Karte</strong> mit Schatten und Rahmen. <code>[card]…[/card]</code>[/card]<!-- /wp:shortcode -->
+<!-- wp:shortcode -->[card]<strong>Karte</strong> mit Haarlinie und weichem Schatten. <code>[card]…[/card]</code>[/card]<!-- /wp:shortcode -->
+<!-- wp:shortcode -->[card variant="frame" color="violet"]<strong>Rahmen</strong> mit Farbkante. <code>[card variant="frame" color="violet"]…[/card]</code>[/card]<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":2} --><h2>Trenner</h2><!-- /wp:heading -->
 <!-- wp:paragraph --><p>Der WordPress-Block <strong>Trenner</strong> bringt zwei Marken-Stile mit (Block markieren → Seitenleiste <em>Stile</em>): <strong>Verlauf</strong> über die volle Textbreite und <strong>Kurzer Strich</strong> als Zwischenmarke am linken Textrand. Ohne Stil bleibt der Trenner eine feine Linie.</p><!-- /wp:paragraph -->
