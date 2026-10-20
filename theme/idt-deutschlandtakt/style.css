@@ -3,7 +3,7 @@ Theme Name: IDT Deutschlandtakt
 Theme URI: https://initiative-deutschlandtakt.de
 Author: Initiative Deutschlandtakt
 Description: WordPress-Theme im Corporate Design der Initiative Deutschlandtakt ("Horizont"-Splash). Bringt das vollständige Design-Token-System sowie spielerische Text-Stilelemente (Eyebrow, Marker, Takt-Rhythmus, Kennzahlen, Diagonalen, Pill-Buttons) als Shortcodes und Block-Patterns mit.
-Version: 2.7.1
+Version: 2.8.0
 Requires at least: 6.0
 Requires PHP: 8.0
 Text Domain: idt
@@ -64,19 +64,48 @@ Tags: custom-colors, custom-menu, featured-images
   --idt-ink-hover:     #073F49;
 
   /* ---- Markenverläufe -------------------------------------------------- */
-  /* Als Flächenfüllung wählbar (bg="cyan-violet" / bg="violet-cyan" an
-     [btn] und [concept], s. idt_surface_gradients() in inc/shortcodes.php). */
-  --idt-grad-cyan-violet: linear-gradient(90deg, var(--idt-cyan), var(--idt-violet));
-  --idt-grad-violet-cyan: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
-  /* Derselbe Verlauf senkrecht — die Fläche der Vorlage „Verlaufsseite"
-     (oben Violett, unten Cyan, s. Abschnitt 6c). */
-  --idt-grad-seite: linear-gradient(180deg, var(--idt-violet), var(--idt-cyan));
+  /* Der Signalverlauf läuft immer Cyan → Violett, waagerecht — wie in Logo und
+     Favicon, nie umgekehrt. Er steht als Haarlinien-Rand, Trenner, Kante und
+     Flächenfüllung von Buttons und Konzept-Karten (bg="cyan-violet", s.
+     idt_surface_gradients() in inc/shortcodes.php). Einzige Fläche im ganzen
+     Raster: die Verlaufsseite (Abschnitt 6c) mit dem senkrechten Seitenverlauf,
+     oben Violett, unten Cyan. Namen und Werte wie im Design System. */
+  --idt-gradient-accent-from: #00DCFA;
+  --idt-gradient-accent-to: #6E50FA;
+  --idt-gradient-accent: linear-gradient(90deg, #00DCFA 0%, #6E50FA 100%);
+  --idt-gradient-band: linear-gradient(96deg, #00DCFA 0%, #6E50FA 100%);
+  --idt-gradient-page: linear-gradient(180deg, #6E50FA 0%, #00DCFA 100%);
 
   /* ---- Semantic / Status ---------------------------------------------- */
   --idt-success: #1F8A5B;
   --idt-warning: #E8A100;
   --idt-danger:  #D64545;
   --idt-info:    var(--idt-cyan);
+
+  /* ---- Datenvisualisierung (wie im Design System) -------------------- */
+  /* Kategorial (Reihenfolge ist die Vorgabe), sequenziell, divergierend. */
+  --idt-chart-1: #6E50FA;
+  --idt-chart-2: #00DCFA;
+  --idt-chart-3: #00373C;
+  --idt-chart-4: #3A6068;
+  --idt-chart-5: #B3A6FF;
+  --idt-chart-6: #7FE9FB;
+  --idt-seq-1: #D3E7E8;
+  --idt-seq-2: #A8C7C9;
+  --idt-seq-3: #6E9097;
+  --idt-seq-4: #3A6068;
+  --idt-seq-5: #00373C;
+  --idt-diverge-neg: #D64545;
+  --idt-diverge-mid: #E2D3CB;
+  --idt-diverge-pos: #1F8A5B;
+  --idt-highlight: #FFFF96;
+  --idt-highlight-line: #00373C;
+  --idt-chart-grid: #E2D3CB;
+  --idt-chart-axis: #6E9097;
+  --idt-chart-track: #FBEDE6;
+  /* Druck-Referenz (CMYK-Umrechnung der Markenfarben) — nur zur Dokumentation,
+     nie als Variable auf dem Bildschirm: Papier #FEF2EC · Gelb #FFF58E ·
+     Cyan #00BBEE · Violett #82338B · Ink #00353F. */
 
   /* ---- Semantic Aliases ----------------------------------------------- */
   --surface:           var(--idt-paper);
@@ -130,6 +159,7 @@ Tags: custom-colors, custom-menu, featured-images
   --fs-body: 1.0625rem;
   --fs-sm: 0.9375rem;
   --fs-xs: 0.8125rem;
+  --fs-mono-sm: 0.8125rem;
 
   /* ---- Zeilenhöhen ---------------------------------------------------- */
   --lh-tight:   1.04;
@@ -145,6 +175,7 @@ Tags: custom-colors, custom-menu, featured-images
   --ls-label:   0.12em;
 
   /* ---- Spacing-Scale (4px-Basis) -------------------------------------- */
+  --space-0:  0;
   --space-1:  0.25rem;
   --space-2:  0.5rem;
   --space-3:  0.75rem;
@@ -171,22 +202,19 @@ Tags: custom-colors, custom-menu, featured-images
      Eckiges Design: Schaltflächen, Karten, Felder und Flächen laufen ohne
      Rundung aus. Die benannte Abstufung bleibt bestehen, damit alle Bausteine
      weiterhin an einer Stelle hängen — wer je wieder runden will, ändert nur
-     diese fünf Werte. Rund bleiben allein die Logo-Formen (Balken der
-     Splash-Bühne, Takt-Punkte, Diagonal-Akzent): sie zitieren die Wortmarke,
-     die selbst runde Enden hat. */
+     diese fünf Werte. Rund bleiben allein die Balken (die Diagonalen der
+     Splash-Bühne): sie zitieren die Wortmarke, die selbst runde Enden hat.
+     Bedienelemente — Buttons, Pills, Kacheln, Felder — sind immer eckig. */
+  --radius-none: 0;
   --radius-xs: 0;
   --radius-sm: 0;
   --radius-md: 0;
   --radius-lg: 0;
   --radius-pill: 0;
   --radius-card: var(--radius-md);
-  /* Die beiden Ausnahmen der eckigen Regel — die Formen, die die Wortmarke
-     zitieren: Balken und Pillen laufen halbrund aus (--radius-bar), die
-     quadratischen Kacheln der Social-Leiste bekommen die weiche Ecke
-     (--radius-soft). Genutzt von den Bausteinen der Verlaufsseite,
-     Abschnitt 6c. */
+  /* Die einzige Ausnahme der eckigen Regel — die Form, die die Wortmarke
+     zitiert: Die Balken der Splash-Bühne laufen halbrund aus (--radius-bar). */
   --radius-bar:  999px;
-  --radius-soft: 10px;
 
   /* ---- Borders -------------------------------------------------------- */
   --bw-hair: 1px;
@@ -195,6 +223,7 @@ Tags: custom-colors, custom-menu, featured-images
   --bw-frame-bold: 3px;
 
   /* ---- Shadows -------------------------------------------------------- */
+  --shadow-none: none;
   --shadow-sm: 0 1px 2px rgba(0, 50, 60, 0.06);
   --shadow-md: 0 4px 16px rgba(0, 50, 60, 0.08);
   --shadow-lg: 0 12px 40px rgba(0, 50, 60, 0.12);
@@ -209,8 +238,11 @@ Tags: custom-colors, custom-menu, featured-images
   --dur-slow: 360ms;
 
   /* ---- Z-index -------------------------------------------------------- */
+  --z-base: 1;
   --z-sticky: 100;
   --z-overlay: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
 }
 
 /* =============================================================================
@@ -523,10 +555,10 @@ html.idt-searchbox-open { overflow: hidden; }
   transform: translateY(-12px); transition: transform 260ms var(--ease-out);
 }
 .idt-searchbox.is-open .idt-searchbox__sheet { transform: translateY(0); }
-/* Markenkante oben: Violett → Cyan, wie die Verlaufselemente im Auftritt. */
+/* Markenkante oben: Cyan → Violett, wie die Verlaufselemente im Auftritt. */
 .idt-searchbox__sheet::before {
   content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px;
-  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  background: var(--idt-gradient-accent);
 }
 
 .idt-searchbox__inner {
@@ -1105,7 +1137,7 @@ html.idt-nav-lock { overflow: hidden; }
 .layer { position: absolute; left: 0; right: 0; overflow: hidden; pointer-events: none; }
 .layer.top { top: 0; height: 465px; }
 .layer.bottom { top: 465px; height: 335px; }
-.bar { position: absolute; border-radius: 999px; }
+.bar { position: absolute; border-radius: var(--radius-bar); }
 .layer.top .bar { background: #FFFFFF; }
 .layer.bottom .bar { background: var(--idt-violet); }
 /* Balken von der MITTE aus positioniert (50% ± Offset zur 1280er-Referenz):
@@ -1242,7 +1274,7 @@ body.idt-verlauf {
   color: var(--idt-paper);
   /* fixed: Der Verlauf bleibt am Viewport verankert, eine längere Seite
      scrollt darüber hinweg, statt ihn zu strecken. */
-  background: var(--idt-grad-seite) fixed no-repeat;
+  background: var(--idt-gradient-page) fixed no-repeat;
   background-size: cover;
 }
 
@@ -1353,7 +1385,7 @@ body.idt-verlauf {
 }
 .pill::before {
   content: ""; position: absolute; inset: 0; border-radius: 0; padding: 2px;
-  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  background: var(--idt-gradient-accent);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
@@ -1373,13 +1405,12 @@ body.idt-verlauf {
 .pill--violet:hover::before { opacity: 0; }
 .pill--violet:active, .pill--violet:focus-visible { border-color: transparent; color: var(--idt-violet); }
 .pill--violet:active::before, .pill--violet:focus-visible::before { opacity: 1; }
-/* Beiger Pill-Button — gefüllte Papierfläche mit halbrunden Enden, die Variante
-   für farbige Flächen (Verlaufsseite, Bild, dunkler Einschub). Die runde Form
-   ist kein Bruch mit dem eckigen Design, sondern das Zitat der Wortmarke
-   (s. Kommentar bei den Radien in Abschnitt 2). */
+/* Beiger Pill-Button — gefüllte Papierfläche, eckig wie alle Schaltflächen; die
+   Variante für farbige Flächen (Verlaufsseite, Bild, dunkler Einschub). Im
+   Design System entspricht er dem Button „inverse". */
 .pill--beige {
   color: var(--idt-ink); background: var(--idt-paper); border-color: var(--idt-paper);
-  border-radius: var(--radius-bar); padding: 16px 34px;
+  border-radius: 0; padding: 16px 34px;
 }
 .pill--beige::before { display: none; }
 .pill--beige:hover { color: var(--idt-ink); background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
@@ -1406,7 +1437,7 @@ body.idt-verlauf {
 .idt-social__icon svg { width: 20px; height: 20px; }
 .idt-social__icon::before {
   content: ""; position: absolute; inset: 0; border-radius: 0; padding: 2px;
-  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  background: var(--idt-gradient-accent);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
@@ -1419,11 +1450,11 @@ body.idt-verlauf {
    bricht auf schmalen Bildschirmen um. Das margin der Icons bleibt ihr eigener
    Abstand, wenn sie einzeln im Fließtext stehen. */
 .idt-socialrow { display: flex; flex-wrap: wrap; align-items: center; margin: var(--space-4) 0; }
-/* Beige Social-Kachel — Papierfläche, cyanes Zeichen, weiche Ecke: die Leiste
-   für farbige Flächen. */
+/* Beige Social-Kachel — Papierfläche, cyanes Zeichen, eckig: die Leiste für
+   farbige Flächen. */
 .idt-social__icon--beige {
   color: var(--idt-cyan); background: var(--idt-paper); border-color: var(--idt-paper);
-  border-radius: var(--radius-soft);
+  border-radius: 0;
 }
 .idt-social__icon--beige::before { display: none; }
 .idt-social__icon--beige:hover { color: var(--idt-cyan-hover); background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
@@ -1473,74 +1504,52 @@ body.idt-verlauf {
 .idt-mark--cyan { background-image: linear-gradient(120deg, var(--idt-cyan-soft), var(--idt-cyan-soft)); }
 .idt-mark--violet { background-image: linear-gradient(120deg, var(--idt-violet-soft), var(--idt-violet-soft)); }
 
-/* Takt-Rhythmus — dekorative Punkt-/Strich-Sequenz (das "Takten" visualisiert) */
-.idt-takt { display: inline-flex; align-items: center; gap: 8px; vertical-align: middle; }
-.idt-takt span { display: block; width: 10px; height: 10px; border-radius: 999px; background: var(--idt-violet); }
-.idt-takt span:nth-child(odd) { background: var(--idt-cyan); }
-.idt-takt span:nth-child(3n) { width: 26px; border-radius: 999px; background: var(--idt-ink); }
-
-/* Kennzahl / Stat — große tabellarische Zahl mit Label */
+/* Kennzahl / Stat — tabellarische Zahl mit Label. Zwei Größen wie im Design
+   System: md (36px, im Fließtext) und lg (88px, Kennzahlenband). Zeilen:
+   Zahl, optional Titel (Inter, DS „label"), Label in Mono (DS „sub"). Die
+   Zahlfarbe kommt aus --stat-color (Vorgabe Violett). */
 .idt-stat { display: flex; flex-direction: column; gap: 4px; }
 .idt-stat__num {
   font-family: var(--font-display); font-weight: var(--fw-extrabold);
   font-size: var(--fs-display-md); line-height: 1; letter-spacing: var(--ls-tight);
-  color: var(--accent-primary); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+  color: var(--stat-color, var(--accent-primary)); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
 }
+.idt-stat__title { font-weight: var(--fw-semibold); font-size: var(--fs-body); color: var(--text-strong); max-width: 22ch; }
 .idt-stat__label { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-muted); }
+.idt-stat--lg .idt-stat__num { font-size: var(--fs-display-2xl); line-height: .92; letter-spacing: var(--ls-tighter); }
+.idt-stat--lg .idt-stat__title { font-size: var(--fs-h3); }
+/* Auf Ink: Titel in Papier, Label gedämpft (im Design System: inverse). */
+.section--ink .idt-stat__title, .idt-einschub .idt-stat__title { color: var(--text-on-inverse); }
+.section--ink .idt-stat__label, .idt-einschub .idt-stat__label { color: var(--text-on-inverse-muted); }
 
-/* Callout / Hinweisbox mit Block-Schatten */
+/* Callout / Hinweisbox — wie im Design System: nur die farbige Kante links
+   (8px), kein Rahmen, keine Fläche. Die Farbe kommt aus --callout-edge; ohne
+   Typ ist sie Cyan. */
 .idt-callout {
-  border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-md);
-  background: var(--idt-paper); box-shadow: var(--shadow-block-sm);
-  padding: var(--space-5) var(--space-6); margin: var(--space-6) 0;
+  border: 0; border-left: 8px solid var(--callout-edge, var(--idt-cyan)); border-radius: 0;
+  background: transparent; padding: var(--space-2) 0 var(--space-2) var(--space-5); margin: var(--space-6) 0;
 }
-.idt-callout--cyan { background: var(--idt-cyan-soft); }
-.idt-callout--violet { background: var(--idt-violet-soft); }
-.idt-callout--yellow { background: var(--idt-yellow-soft); }
+.idt-callout--cyan { --callout-edge: var(--idt-cyan); }
+.idt-callout--violet { --callout-edge: var(--idt-violet); }
+.idt-callout--yellow { --callout-edge: var(--idt-yellow); }
+.idt-callout--success { --callout-edge: var(--idt-success); }
+.idt-callout--danger { --callout-edge: var(--idt-danger); }
+.idt-callout__title { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h3); color: var(--text-strong); margin: 0 0 4px; }
 .idt-callout > :last-child { margin-bottom: 0; }
-
-/* Diagonal-Akzent — schräges Band hinter einem Textblock (Horizont-Motiv).
-   Ein einzelner, breiter Diagonalstreifen (Violett auf Ink) — die Aussage
-   steht im Vordergrund, kein zweifarbiges/zweistufiges Muster. */
-.idt-diagonal {
-  position: relative; overflow: hidden;
-  padding: var(--space-8) var(--space-6); border-radius: var(--radius-lg);
-  color: var(--text-on-inverse);
-  background:
-    linear-gradient(
-      131deg,
-      transparent 40%,
-      color-mix(in srgb, var(--idt-violet) 80%, transparent) 40%,
-      color-mix(in srgb, var(--idt-violet) 80%, transparent) 54%,
-      transparent 54%
-    ),
-    var(--idt-ink);
-}
-.idt-diagonal h1, .idt-diagonal h2, .idt-diagonal h3 { color: var(--text-on-inverse); }
-.idt-diagonal > * { position: relative; z-index: 1; }
-/* Zweiter, schmaler Diagonalstrich weiter rechts – läuft unten aus der Karte
-   heraus (von overflow:hidden gekappt), das obere runde Ende bleibt innen
-   sichtbar. Winkel 41° = derselbe Neigungswinkel wie der Verlauf oben.
-   Zum Justieren: right (Position) · height (Länge) · width (Dicke). */
-.idt-diagonal::after {
-  content: "";
-  position: absolute;
-  z-index: 0;            /* über dem Verlauf, unter dem Text (z-index:1) */
-  pointer-events: none;
-  right: 16%;
-  bottom: -30%;
-  width: 22px;
-  height: 120%;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--idt-cyan) 70%, transparent);
-  transform: rotate(41deg);
-  transform-origin: bottom center;
-}
 
 /* Card */
 .idt-card { background: var(--surface-card); border: var(--bw-hair) solid var(--border); border-radius: var(--radius-card); padding: var(--space-6); box-shadow: var(--shadow-sm); transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
-.idt-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.idt-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
 .idt-card h3 { margin-top: 0; }
+/* Varianten wie im Design System (Vorgabe: Haarlinie mit weichem Schatten).
+   Die Farbe — eine 6px-Oberkante — ist optional: [card color="violet"]. */
+.idt-card--frame { border: var(--bw-frame) solid var(--idt-ink); box-shadow: none; }
+.idt-card--block { border: var(--bw-frame) solid var(--idt-ink); box-shadow: var(--shadow-block-sm); }
+.idt-card--block:hover { box-shadow: var(--shadow-block); }
+.idt-card--filled { background: var(--idt-paper-2); box-shadow: none; }
+.idt-card--inverse { background: var(--idt-ink); border: var(--bw-frame) solid var(--idt-ink); color: var(--text-on-inverse); box-shadow: none; }
+.idt-card--inverse h3 { color: var(--text-on-inverse); }
+.idt-card--accent { border-top: 6px solid var(--card-accent, var(--idt-violet)); }
 
 /* Drop-cap — Initiale */
 .idt-dropcap::first-letter { float: left; font-family: var(--font-display); font-weight: var(--fw-extrabold); font-size: 3.4em; line-height: 0.78; padding: 0.04em 0.12em 0 0; color: var(--accent-primary); }
@@ -1573,19 +1582,21 @@ body.idt-verlauf {
 .idt-btn--ghost:hover { background: var(--idt-paper-2); }
 .idt-btn--inverse { background: var(--idt-paper); color: var(--idt-ink); border-color: var(--idt-paper); }
 .idt-btn--inverse:hover { background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
-/* Beige Variante mit halbrunden Enden — das Gegenstück zum beigen Pill-Button
-   für farbige Flächen (s. Abschnitt 7, .pill--beige). */
+/* Beige Variante — das Gegenstück zum beigen Pill-Button für farbige Flächen
+   (s. Abschnitt 7, .pill--beige); im Design System der Button „inverse". */
 .idt-btn--beige {
   background: var(--idt-paper); color: var(--idt-ink); border-color: var(--idt-paper);
-  border-radius: var(--radius-bar); padding: 14px 28px;
+  border-radius: 0; padding: 14px 28px;
 }
 .idt-btn--beige:hover { background: var(--idt-paper-2); border-color: var(--idt-paper-2); }
+/* Deaktiviert — wie im Design System (Deckkraft .45, kein Anheben). */
+.idt-btn:disabled, .idt-btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; pointer-events: none; }
 /* Gradient-Rahmen — Violett→Cyan nur als Rand (Masken-Technik wie beim Pill),
    Füllung bleibt hell. */
 .idt-btn--gradient { position: relative; z-index: 0; background: var(--idt-paper); color: var(--idt-ink); border-color: transparent; }
 .idt-btn--gradient::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--bw-frame);
-  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  background: var(--idt-gradient-accent);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
@@ -1674,6 +1685,48 @@ body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-b
 .fluentform form.frm-fluent-form button.ff-btn-submit:active { transform: translateY(0); background: var(--accent-primary-active); border-color: var(--accent-primary-active); }
 .fluentform form.frm-fluent-form button.ff-btn-submit:focus-visible { outline: var(--bw-frame) solid var(--focus-ring); outline-offset: 2px; }
 
+/* Formularfelder — Input und Checkbox des Design Systems. Gestaltet werden die
+   Felder von Fluent Forms (Kontakt, Mitgliedsantrag) und das WordPress-
+   Kommentarformular; das Suchfeld hat eigene Regeln (idt-searchfield). Wie bei
+   der Absende-Schaltfläche liegt der Selektor von Fluent Forms mit form.… knapp
+   über den Vorgaben des Plugins, damit das Theme ohne !important gewinnt.
+   Feld: 2px Ink-Rahmen auf Papier, Fokus Violett, Fehler Danger; Label in
+   Semibold; Hinweis in --fs-xs. Checkbox: 22px-Quadrat, an = Violett mit
+   Papier-Haken. */
+.fluentform form.frm-fluent-form .ff-el-form-control,
+.comment-form input[type="text"], .comment-form input[type="email"], .comment-form input[type="url"], .comment-form textarea {
+  width: 100%; font-family: var(--font-sans); font-size: var(--fs-body); line-height: var(--lh-normal);
+  color: var(--text-body); background: var(--idt-paper); box-shadow: none;
+  border: var(--bw-frame) solid var(--idt-ink); border-radius: 0; padding: 13px 14px;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.fluentform form.frm-fluent-form .ff-el-form-control::placeholder, .comment-form textarea::placeholder { color: var(--text-muted); }
+.fluentform form.frm-fluent-form .ff-el-form-control:focus,
+.comment-form input[type="text"]:focus, .comment-form input[type="email"]:focus, .comment-form input[type="url"]:focus, .comment-form textarea:focus {
+  border-color: var(--idt-violet); outline: none; box-shadow: none; background: var(--idt-paper); color: var(--text-body);
+}
+.fluentform form.frm-fluent-form .ff-el-is-error .ff-el-form-control { border-color: var(--idt-danger); }
+.fluentform form.frm-fluent-form .ff-el-input--label label, .comment-form label {
+  font-weight: var(--fw-semibold); font-size: var(--fs-sm); color: var(--text-strong); margin-bottom: 6px;
+}
+.fluentform form.frm-fluent-form .ff-el-input--label label { display: block; }
+.fluentform form.frm-fluent-form .error.text-danger, .fluentform form.frm-fluent-form .ff-el-is-error .text-danger { font-size: var(--fs-xs); color: var(--idt-danger); margin-top: 6px; }
+.fluentform form.frm-fluent-form .ff-el-help-message { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 6px; }
+.fluentform form.frm-fluent-form input.ff-el-form-check-input[type="checkbox"],
+.comment-form input[type="checkbox"] {
+  -webkit-appearance: none; appearance: none; flex: none; width: 22px; height: 22px; margin: 0 10px 0 0;
+  vertical-align: middle; background: var(--idt-paper) center / 13px no-repeat; border: var(--bw-frame) solid var(--idt-ink);
+  border-radius: 0; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.fluentform form.frm-fluent-form input.ff-el-form-check-input[type="checkbox"]:checked,
+.comment-form input[type="checkbox"]:checked {
+  background-color: var(--idt-violet); border-color: var(--idt-violet);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFF6F0' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+}
+.fluentform form.frm-fluent-form input.ff-el-form-check-input[type="checkbox"]:focus-visible,
+.comment-form input[type="checkbox"]:focus-visible { outline: var(--bw-frame) solid var(--focus-ring); outline-offset: 2px; }
+.fluentform form.frm-fluent-form .ff-el-form-check label, .comment-form-cookies-consent label { font-weight: var(--fw-regular); font-size: var(--fs-body); color: var(--text-body); }
+
 /* Kategorie-Tag (Chip) */
 .idt-tag {
   display: inline-block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
@@ -1704,6 +1757,7 @@ body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-b
   background: var(--idt-paper); border: var(--bw-frame) solid var(--idt-ink); border-radius: var(--radius-md);
   padding: var(--space-6); border-top-width: 6px; border-top-style: solid;
 }
+.idt-concept--plain { border-top-width: var(--bw-frame); }
 .idt-concept__ic { margin-bottom: 16px; line-height: 0; }
 .idt-concept h3 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); margin: 0 0 10px; }
 .idt-concept__body > :last-child { margin-bottom: 0; }
@@ -1909,7 +1963,7 @@ body .wp-block-button:not(.is-style-outline) > .wp-block-button__link:not(.has-b
 .has-idt-cyan-soft-background-color { background-color: var(--idt-cyan-soft); }
 .has-idt-yellow-soft-color { color: var(--idt-yellow-soft); }
 .has-idt-yellow-soft-background-color { background-color: var(--idt-yellow-soft); }
-.has-idt-verlauf-gradient-background { background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan)); }
+.has-idt-verlauf-gradient-background { background: var(--idt-gradient-accent); }
 .has-idt-verlauf-dunkel-gradient-background { background: linear-gradient(131deg, var(--idt-ink), var(--idt-violet)); }
 
 /* -----------------------------------------------------------------------------
@@ -1954,7 +2008,7 @@ hr.wp-block-separator[class*="-background-color"] {
    Verlauf gewählt, gewinnt deren .has-…-Klasse (daher :not(.has-background)). */
 hr.wp-block-separator.is-style-idt-verlauf:not(.has-background),
 hr.wp-block-separator.is-style-idt-kurz:not(.has-background) {
-  background: linear-gradient(90deg, var(--idt-violet), var(--idt-cyan));
+  background: var(--idt-gradient-accent);
 }
 /* Breite: Lädt WordPress zusätzlich die Standard-Blockstile, begrenzt Core dort
    jeden Trenner ohne „Breit"-Stil auf 100px — die gleiche :not()-Kette plus
@@ -2127,7 +2181,7 @@ main#content:has(.entry > :is(.stage, .stage2):last-child) { padding-bottom: 0; 
 /* =============================================================================
    9) SITE-FOOTER (tiefes Teal)
    ============================================================================= */
-.site-footer { background: var(--idt-ink); color: var(--idt-paper); }
+.site-footer { background: var(--idt-ink); color: var(--idt-paper); border-top: 3px solid var(--idt-violet); }
 .site-footer .fwrap { max-width: var(--container-max); margin: 0 auto; padding: clamp(48px,6vw,80px) var(--gutter) 28px; display: flex; flex-direction: column; gap: clamp(36px,5vw,56px); }
 .site-footer .frow { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; }
 .site-footer .fbrand img { height: 60px; width: auto; }

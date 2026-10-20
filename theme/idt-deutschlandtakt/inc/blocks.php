@@ -28,7 +28,6 @@ function idt_bg_options() {
 	return array(
 		array( 'label' => __( 'Standard (aus dem Stil)', 'idt' ), 'value' => '' ),
 		array( 'label' => __( 'Verlauf Cyan → Violett', 'idt' ), 'value' => 'cyan-violet' ),
-		array( 'label' => __( 'Verlauf Violett → Cyan', 'idt' ), 'value' => 'violet-cyan' ),
 		array( 'label' => __( 'Violett', 'idt' ), 'value' => 'violet' ),
 		array( 'label' => __( 'Cyan', 'idt' ), 'value' => 'cyan' ),
 		array( 'label' => __( 'Gelb', 'idt' ), 'value' => 'yellow' ),
@@ -63,20 +62,23 @@ function idt_blocks_config() {
 			'icon'     => 'info',
 			'keywords' => array( 'callout', 'hinweis', 'box', 'dt' ),
 			'fields'   => array(
-				array( 'key' => 'type', 'label' => __( 'Farbe', 'idt' ), 'type' => 'select', 'default' => 'cyan', 'options' => array(
+				array( 'key' => 'type', 'label' => __( 'Farbe der Kante', 'idt' ), 'type' => 'select', 'default' => 'cyan', 'options' => array(
 					array( 'label' => 'Cyan', 'value' => 'cyan' ),
 					array( 'label' => 'Violett', 'value' => 'violet' ),
 					array( 'label' => 'Gelb', 'value' => 'yellow' ),
-					array( 'label' => 'Neutral', 'value' => '' ),
+					array( 'label' => 'Grün (Erfolg)', 'value' => 'success' ),
+					array( 'label' => 'Rot (Fehler)', 'value' => 'danger' ),
 				) ),
+				array( 'key' => 'title', 'label' => __( 'Titel (optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
 				array( 'key' => 'text', 'label' => __( 'Text', 'idt' ), 'type' => 'textarea', 'default' => 'Wichtiger Hinweis …' ),
 			),
-			'render'   => function ( $a ) { return idt_sc_callout( array( 'type' => $a['type'] ), $a['text'] ); },
+			'render'   => function ( $a ) { return idt_sc_callout( array( 'type' => $a['type'], 'title' => $a['title'] ), $a['text'] ); },
 		),
 		'diagonal' => array(
 			'title'    => __( 'Diagonal-Aussageblock', 'idt' ),
 			'icon'     => 'format-quote',
 			'keywords' => array( 'diagonal', 'aussage', 'dt' ),
+			'hidden'   => true, // veraltet: nicht mehr im Inserter, bestehende Blöcke rendern weiter
 			'fields'   => array(
 				array( 'key' => 'text', 'label' => __( 'Aussage', 'idt' ), 'type' => 'textarea', 'default' => 'Großer Aussage-Block auf dunklem Grund.' ),
 			),
@@ -87,9 +89,23 @@ function idt_blocks_config() {
 			'icon'     => 'index-card',
 			'keywords' => array( 'card', 'karte', 'dt' ),
 			'fields'   => array(
-				array( 'key' => 'text', 'label' => __( 'Inhalt', 'idt' ), 'type' => 'textarea', 'default' => 'Karteninhalt mit Rahmen und Schatten.' ),
+				array( 'key' => 'variant', 'label' => __( 'Stil', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
+					array( 'label' => 'Haarlinie (Standard)', 'value' => '' ),
+					array( 'label' => 'Rahmen', 'value' => 'frame' ),
+					array( 'label' => 'Rahmen mit Block-Schatten', 'value' => 'block' ),
+					array( 'label' => 'Gefüllt', 'value' => 'filled' ),
+					array( 'label' => 'Dunkel', 'value' => 'inverse' ),
+				) ),
+				array( 'key' => 'color', 'label' => __( 'Farbe der Oberkante (optional)', 'idt' ), 'type' => 'select', 'default' => '', 'options' => array(
+					array( 'label' => 'Ohne', 'value' => '' ),
+					array( 'label' => 'Violett', 'value' => 'violet' ),
+					array( 'label' => 'Cyan', 'value' => 'cyan' ),
+					array( 'label' => 'Gelb', 'value' => 'yellow' ),
+					array( 'label' => 'Ink', 'value' => 'ink' ),
+				) ),
+				array( 'key' => 'text', 'label' => __( 'Inhalt', 'idt' ), 'type' => 'textarea', 'default' => 'Karteninhalt.' ),
 			),
-			'render'   => function ( $a ) { return idt_sc_card( array(), $a['text'] ); },
+			'render'   => function ( $a ) { return idt_sc_card( array( 'variant' => $a['variant'], 'color' => $a['color'] ), $a['text'] ); },
 		),
 		'stat' => array(
 			'title'    => __( 'Kennzahl', 'idt' ),
@@ -97,14 +113,26 @@ function idt_blocks_config() {
 			'keywords' => array( 'stat', 'kennzahl', 'zahl', 'dt' ),
 			'fields'   => array(
 				array( 'key' => 'number', 'label' => __( 'Zahl', 'idt' ), 'type' => 'text', 'default' => '2008' ),
+				array( 'key' => 'title', 'label' => __( 'Titel (optional)', 'idt' ), 'type' => 'text', 'default' => '' ),
 				array( 'key' => 'label', 'label' => __( 'Label', 'idt' ), 'type' => 'text', 'default' => 'gegründet' ),
+				array( 'key' => 'size', 'label' => __( 'Größe', 'idt' ), 'type' => 'select', 'default' => 'md', 'options' => array(
+					array( 'label' => 'Normal (36 px)', 'value' => 'md' ),
+					array( 'label' => 'Groß (88 px, Kennzahlenband)', 'value' => 'lg' ),
+				) ),
+				array( 'key' => 'color', 'label' => __( 'Farbe der Zahl', 'idt' ), 'type' => 'select', 'default' => 'violet', 'options' => array(
+					array( 'label' => 'Violett', 'value' => 'violet' ),
+					array( 'label' => 'Cyan', 'value' => 'cyan' ),
+					array( 'label' => 'Gelb', 'value' => 'yellow' ),
+					array( 'label' => 'Ink', 'value' => 'ink' ),
+				) ),
 			),
-			'render'   => function ( $a ) { return idt_sc_stat( array( 'number' => $a['number'], 'label' => $a['label'] ) ); },
+			'render'   => function ( $a ) { return idt_sc_stat( array( 'number' => $a['number'], 'title' => $a['title'], 'label' => $a['label'], 'size' => $a['size'], 'color' => $a['color'] ) ); },
 		),
 		'takt' => array(
 			'title'    => __( 'Takt-Rhythmus', 'idt' ),
 			'icon'     => 'marker',
 			'keywords' => array( 'takt', 'rhythmus', 'dt' ),
+			'hidden'   => true, // veraltet: nicht mehr im Inserter, bestehende Blöcke rendern weiter
 			'fields'   => array(
 				array( 'key' => 'count', 'label' => __( 'Anzahl Punkte', 'idt' ), 'type' => 'range', 'default' => 6, 'min' => 1, 'max' => 24 ),
 			),
@@ -204,6 +232,7 @@ function idt_blocks_config() {
 					array( 'label' => 'Cyan', 'value' => 'cyan' ),
 					array( 'label' => 'Gelb', 'value' => 'yellow' ),
 					array( 'label' => 'Ink', 'value' => 'ink' ),
+					array( 'label' => 'Ohne Farbkante', 'value' => 'none' ),
 				) ),
 				array( 'key' => 'icon', 'label' => __( 'Icon', 'idt' ), 'type' => 'select', 'default' => 'clock', 'options' => array(
 					array( 'label' => 'Uhr (clock)', 'value' => 'clock' ),
@@ -453,10 +482,12 @@ function idt_register_blocks() {
 			'keywords'   => $def['keywords'],
 			'fields'     => $def['fields'],
 			'attributes' => $attributes,
+			'hidden'     => ! empty( $def['hidden'] ),
 		);
 		register_block_type( 'idt/' . $name, array(
 			'api_version'     => 2,
 			'attributes'      => $attributes,
+			'supports'        => ! empty( $def['hidden'] ) ? array( 'inserter' => false ) : array(),
 			'render_callback' => $def['render'],
 			'editor_script'   => 'idt-blocks',
 			'category'        => 'idt',
@@ -611,7 +642,7 @@ add_filter( 'block_categories_all', 'idt_block_category' );
  * Trenner (core/separator) im Markenlook.
  *
  * Zwei Stile stehen unter „Trenner → Stile" zur Auswahl:
- *  - „Verlauf": Strich im Markenverlauf Violett→Cyan über die volle Textbreite,
+ *  - „Verlauf": Strich im Markenverlauf Cyan→Violett über die volle Textbreite,
  *    ohne dass im Farbbereich erst ein Verlauf gewählt werden muss.
  *  - „Kurzer Strich": kurze Akzentmarke (56 px) am linken Textrand — der
  *    Zwischenstrich zwischen zwei Abschnitten.
@@ -622,7 +653,7 @@ add_filter( 'block_categories_all', 'idt_block_category' );
 function idt_register_core_block_styles() {
 	register_block_style( 'core/separator', array(
 		'name'  => 'idt-verlauf',
-		'label' => __( 'Verlauf (Violett → Cyan)', 'idt' ),
+		'label' => __( 'Verlauf (Cyan → Violett)', 'idt' ),
 	) );
 
 	register_block_style( 'core/separator', array(

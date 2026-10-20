@@ -7,7 +7,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'IDT_VERSION', '2.7.1' );
+define( 'IDT_VERSION', '2.8.0' );
 
 /* -------------------------------------------------------------------------
  * Theme-Supports & Menüs
@@ -69,7 +69,7 @@ function idt_setup() {
 
 	/* Verlaufs-Vorschläge ebenso markenkonform (ersetzt die WP-Standards). */
 	add_theme_support( 'editor-gradient-presets', array(
-		array( 'name' => __( 'Violett → Cyan', 'idt' ), 'slug' => 'idt-verlauf', 'gradient' => 'linear-gradient(90deg, #6E50FA, #00DCFA)' ),
+		array( 'name' => __( 'Cyan → Violett', 'idt' ), 'slug' => 'idt-verlauf', 'gradient' => 'linear-gradient(90deg, #00DCFA, #6E50FA)' ),
 		array( 'name' => __( 'Tinte → Violett', 'idt' ), 'slug' => 'idt-verlauf-dunkel', 'gradient' => 'linear-gradient(131deg, #00373C, #6E50FA)' ),
 	) );
 }
@@ -438,6 +438,7 @@ require get_template_directory() . '/inc/blocks.php';
 require get_template_directory() . '/inc/patterns.php';
 require get_template_directory() . '/inc/search.php';
 require get_template_directory() . '/inc/social-meta.php';
+require get_template_directory() . '/inc/favicons.php';
 require get_template_directory() . '/inc/mobil-variante.php';
 require get_template_directory() . '/inc/login.php';
 

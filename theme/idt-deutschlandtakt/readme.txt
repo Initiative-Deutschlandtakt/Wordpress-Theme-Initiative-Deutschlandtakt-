@@ -50,6 +50,7 @@ Initiative Deutschlandtakt e. V. — insbesondere:
 * assets/logo-idt-transparent.png
 * assets/logo-idt-inverse.png
 * assets/site-icon.png
+* assets/favicons/
 * assets/social-preview.png
 * screenshot.png
 

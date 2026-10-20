@@ -229,3 +229,8 @@ Jede Entscheidung gilt in Design System (DS) und Theme. „Wie vorgeschlagen“ 
 | Q5 Fußkante (F11) | Website-Fußzeile mit 3px Violett oben | `.site-footer` mit Kante | Kante auch im UI-Kit, nicht mehr nur „Anwendung“ |
 | Q6 Takt und Diagonal (F12) | Shortcodes bleiben als veraltete Hülle registriert (Auslegung, zu bestätigen) | `[diagonal]` gibt den Inhalt als normalen Block aus, `[takt]` nichts; CSS und Demo-Inhalt entfallen | Takt und Diagonal werden nicht aufgenommen |
 | Q7 Übrige Bausteine (F12) | wie vorgeschlagen | beige Varianten: Radius 0; Social-Kachel eckig | README-Abschnitt „Theme-Bausteine“, Eyebrow mit Pfeil |
+### Umsetzung (2026-10-20)
+- Design System: Version 8 des Artefakts. Geändert: `tokens.json` (`idt-gradient-page`, `header-logo-h`, Notiz zu `idt-gradient-accent`), `components/bundle.js` und die Dateien von Button, Card, Stat und Callout (README, `.d.ts`, Preview), `index.d.ts`, `README.md` (Regeln, „Website building blocks“, „Header and footer“), Splash 3 (eckige Pills, Hover-Rand Cyan → Violett), Landing Page (Hover-Rand), UI-Kit (`size="lg"` an den Kennzahlenbändern). `tokens.css` wird vom Artefakt beim nächsten Speichern neu erzeugt. Die alten Komponentenkopien unter `components/core|feedback|forms` blieben unangetastet.
+- Theme: Version 2.8.0 auf dem Branch `claude/focused-faraday-pnxvdc`, Eintrag in `todo.md`. `bin/check-theme.sh` und `bin/check-zip.sh` bestehen. Der Smoke-Test lief nicht (keine Datenbank in dieser Umgebung).
+- Beige Buttons und Pills entsprechen jetzt dem DS-Button `inverse`; eine eigene DS-Variante `onColor` war deshalb nicht nötig.
+- Offen: Live-Version und Verwendung von `[takt]`/`[diagonal]` auf der Live-Seite (F16).
