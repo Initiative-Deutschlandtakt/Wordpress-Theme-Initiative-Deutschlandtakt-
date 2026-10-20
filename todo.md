@@ -35,9 +35,10 @@ _(keine offenen Aufgaben)_
     ohne Website-Icon aus dem Customizer); `assets/site-icon.png` ersetzt.
   - **Formularfelder:** Input und Checkbox des DS für Fluent Forms und das
     Kommentarformular (style.css 7b).
+  - **Smoke-Test:** `bin/smoke-render.php` lässt veraltete Blöcke (`hidden`)
+    leer rendern; sie müssen nur ohne Fehler laufen.
   - **Offen:** Live-Seite war beim Abgleich nicht erreichbar (Proxy); ob `[takt]`
-    und `[diagonal]` dort benutzt werden, ist ungeprüft. Der Smoke-Test lief
-    nicht (keine Datenbank in der Entwicklungsumgebung).
+    und `[diagonal]` dort benutzt werden, ist ungeprüft.
 
 - **Kern-Buttons in den Vereinsfarben (v2.7.1).** Die Download-Schaltfläche
   des Blocks „Datei" (Presseseite) stand im WordPress-Grau `#32373c`. Jetzt
