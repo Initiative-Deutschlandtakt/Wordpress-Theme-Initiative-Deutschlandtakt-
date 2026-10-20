@@ -205,17 +205,27 @@ Jede Entscheidung gilt in Design System (DS) und Theme. „Wie vorgeschlagen“ 
 | Frage | Entscheidung | Theme | Design System |
 |---|---|---|---|
 | F2 Verlaufsrichtung | wie vorgeschlagen (c): waagerecht Cyan → Violett, senkrechte Verlaufsseite als einzige Ausnahme (F2b ja) | Hover-Rand der Pills, Verlaufs-Button, Trenner, Suchkante und Block „Verlauf“ auf Cyan → Violett; Verlaufsseite bleibt Violett oben, Cyan unten | Token für den Seitenverlauf, Ausnahme im README, Splash 3 umstellen |
-| F3 Runde Formen | (c) alles eckig. Umfang bei Bildmotiven offen, siehe Runde 3 | beige Pill, beiger Button, Social-Kachel eckig; `--radius-bar` und `--radius-soft` entfallen | Splash 3 eckig; README „Radius 0“ bleibt ohne Ausnahme |
+| F3 Runde Formen | (c) eckig gilt für Bedienelemente; die Balken bleiben rund (Runde 3, Q1) | beige Pill, beiger Button und Social-Kachel eckig; `--radius-soft` entfällt; `--radius-bar` bleibt nur für die Balken (Splash, Diagonal-Motive) | Splash 3 und Instagram-Bänder bleiben rund; README: Radius 0 für alle Bedienelemente, runde Enden nur bei Bildmotiven |
 | F10 Linkskante | Linkskante bleibt erlaubt und gilt als Standard (Auslegung, zu bestätigen) | Suchtreffer und Zitat behalten die Kante | Regel „keine Linkskante“ wird nicht ins README aufgenommen; Callout behält die Kante (siehe F5) |
 | F4 Card | Theme-Karte (Haarlinie, `shadow-sm`, Hover) ist der Standard; die Farbe (Oberkante) ist optional | `.idt-card` bleibt; Farb-Oberkante als Modifier | `soft` wird Standard, `accent` bleibt optional; weitere Varianten offen, siehe Runde 3 |
-| F5 Callout | DS-Form (Kante links), aber ohne eigene Hintergrundfarbe: nur die farbige Markierung | Block-Schatten und Tint-Flächen entfallen; Typen cyan/violet/yellow färben nur die Kante | Callout ohne Tint-Fläche, Fläche neutral; Töne und Titel bleiben |
+| F5 Callout | DS-Kante links, ohne Hintergrundfarbe; „fast ohne Rahmen“ (Runde 3, Q3: Option b, nur Kante) | Block-Schatten, Tint-Flächen und 2px-Rahmen entfallen; Typen cyan/violet/yellow färben nur die Kante | Callout ohne Fläche und Rahmen; Töne und Titel bleiben |
 | F6 Kennzahl | wie vorgeschlagen (a): zwei Größen | `.idt-stat--lg` (88px), Farbmodifier, optionale Label-Zeile | `size="md"` (36px) und `"lg"` (88px) |
 | F7 Button | wie vorgeschlagen (a bis d) | Disabled-Regel ergänzen; beige und gradient bleiben (beige wird eckig, F3) | Varianten onColor und gradient ergänzen; Hover hebt 2px an, Press 0; Größen dokumentiert; Ghost transparent |
 | F8 Tag | wie vorgeschlagen (a) | Textfarbe `--idt-violet-hover`; Literal `#C9A100` durch Token ersetzen | Token für das Gelb-Icon oder Ink |
 | F9 Formularfelder | DS-Felder gelten | Input und Checkbox des DS in CSS umsetzen (Fluent Forms, Kommentare, Suche); eigener Folgeauftrag | keine Änderung |
-| F11 Kopf- und Fußzeile | Website behält die Theme-Kopfzeile; andere Anwendungen dürfen die durchgehende Kopfzeile des DS nutzen | keine Änderung | beide Formen dokumentieren (Website, Anwendung); `--header-logo-h` als Token; Fußkante offen, siehe Runde 3 |
+| F11 Kopf- und Fußzeile | Website behält die Theme-Kopfzeile; andere Anwendungen dürfen die durchgehende Kopfzeile des DS nutzen. Die Fußzeile bekommt die 3px-Violett-Kante (Runde 3, Q5) | `.site-footer`: 3px Violett oben | beide Kopf-Formen dokumentieren (Website, Anwendung); `--header-logo-h` als Token; Fußkante gilt auch im UI-Kit |
 | F12 Bausteine nur im Theme | Takt-Rhythmus und Diagonal-Akzent entfallen. Marker, Initiale, Pill-Stack und Eyebrow (mit Pfeil) werden ins DS aufgenommen. Übrige Bausteine wie vorgeschlagen | `.idt-takt` und `.idt-diagonal` samt Shortcodes entfernen, Umgang mit bestehendem Inhalt offen | README-Abschnitt „Theme-Bausteine“ ohne Takt und Diagonal |
 | F13 Icons | DS-Set gilt | `site-icon.png` ersetzen, Favicon-Set und Manifest ergänzen, `readme.txt` anpassen | keine Änderung |
 | F14 Tokens | wie vorgeschlagen (a) | alle DS-Tokens außer Print (Print als Kommentar) | Theme-Tokens aufnehmen, soweit sie bleiben |
 | F15 Logo-Regeln | wie vorgeschlagen | keine Änderung | Vermerk im README, beim Verein nachfragen |
 | F16 Live-Version | offen | | |
+### Runde 3 (2026-10-20)
+| Frage | Entscheidung | Theme | Design System |
+|---|---|---|---|
+| Q1 Bildmotive (F3) | Die Balken bleiben unbedingt rund; „eckig“ betrifft nur Buttons, Pills und Kacheln. In der Vorschau lag ein Titelkasten über dem Balken, das war ein Fehler der Vorschau, nicht der Splash-Seite | Splash-Balken und Diagonal-Motive bleiben | Splash 3 und Instagram-Bänder bleiben |
+| Q2 Linkskante (F10) | ja, Linkskante ist Standard | keine Änderung | Linkskante als Gestaltungsmittel im README |
+| Q3 Callout (F5) | „fast ohne Rahmen“: Option b, nur Kante. Zu bestätigen, falls eine Haarlinie gemeint war | `.idt-callout`: Kante links, kein Rahmen, keine Fläche | Callout entsprechend |
+| Q4 Card-Reichweite (F4) | wie empfohlen: Varianten bleiben, Farbkante optional, auch bei `[concept]` | Modifier `--frame`, `--block`, `--filled`, `--inverse`; `[concept]` ohne `color=` erlaubt | Card: Standard `soft`, `accent` optional, übrige Varianten bleiben |
+| Q5 Fußkante (F11) | Website-Fußzeile mit 3px Violett oben | `.site-footer` mit Kante | Kante auch im UI-Kit, nicht mehr nur „Anwendung“ |
+| Q6 Takt und Diagonal (F12) | Shortcodes bleiben als veraltete Hülle registriert (Auslegung, zu bestätigen) | `[diagonal]` gibt den Inhalt als normalen Block aus, `[takt]` nichts; CSS und Demo-Inhalt entfallen | Takt und Diagonal werden nicht aufgenommen |
+| Q7 Übrige Bausteine (F12) | wie vorgeschlagen | beige Varianten: Radius 0; Social-Kachel eckig | README-Abschnitt „Theme-Bausteine“, Eyebrow mit Pfeil |
